@@ -11,19 +11,25 @@ export interface Database {
     Tables: {
       recipe: {
         Row: {
-          created_at: string | null
-          id: number
+          category: string
+          id: string
           name: string
+          rating_average: number | null
+          rating_count: number
         }
         Insert: {
-          created_at?: string | null
-          id?: number
+          category: string
+          id: string
           name: string
+          rating_average?: number | null
+          rating_count: number
         }
         Update: {
-          created_at?: string | null
-          id?: number
+          category?: string
+          id?: string
           name?: string
+          rating_average?: number | null
+          rating_count?: number
         }
       }
     }
