@@ -9,7 +9,9 @@ export default async function SearchPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { sort, q: searchValue } = searchParams as { [key: string]: string }
+  const { cat: category, q: searchValue } = searchParams as {
+    [key: string]: string
+  }
 
   const {
     count,
@@ -17,14 +19,17 @@ export default async function SearchPage({
     error,
     status,
     statusText,
-  } = await searchRecipes(searchValue)
+  } = await searchRecipes({ searchValue, category })
 
   if (error) return <Alert>{error.message}</Alert>
 
   return (
     <>
       {items.length > 0 ? (
-        <div key={searchValue} className="grid grid-cols-5 gap-6 my-4">
+        <div
+          key={searchValue + category}
+          className="grid grid-cols-5 gap-6 my-4"
+        >
           <RecipesList recipes={items} />
         </div>
       ) : (

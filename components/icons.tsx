@@ -14,7 +14,7 @@ import {
 
 export type Icon = LucideIcon
 
-export const Icons = {
+export const Icons: Record<string, Icon> = {
   logo: Refrigerator,
   close: X,
   veggie: Carrot,

@@ -1,5 +1,6 @@
 import Image from "next/image"
 
+import { Recipe } from "@/types/data"
 import { Recipes } from "@/lib/supabase"
 
 export function RecipesList({ recipes }: { recipes: Recipes }) {
@@ -14,7 +15,8 @@ export function RecipesList({ recipes }: { recipes: Recipes }) {
               src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${r.id}.png`}
               alt={r.name}
               fill
-              className="object-cover"
+              className="object-cover bg-muted"
+              quality={25}
             />
           </div>
           <div className="space-y-1">

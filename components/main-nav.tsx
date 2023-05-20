@@ -19,7 +19,28 @@ export function MainNav() {
           {siteConfig.name}
         </span>
       </Link>
-      <Link href="/recipes">Recipes</Link>
+      <nav className="flex items-center space-x-6 text-sm font-medium">
+        <Link
+          href="/recipes"
+          className={cn(
+            "transition-colors hover:text-foreground/80",
+            pathname === "/recipes" ? "text-foreground" : "text-foreground/60"
+          )}
+        >
+          Recipes
+        </Link>
+        <Link
+          href="/ingredients"
+          className={cn(
+            "transition-colors hover:text-foreground/80",
+            pathname === "/ingredients"
+              ? "text-foreground"
+              : "text-foreground/60"
+          )}
+        >
+          Inredients
+        </Link>
+      </nav>
     </div>
   )
 }
