@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import { createUrl } from "@/lib/utils"
 
@@ -10,6 +10,7 @@ import { Input } from "../ui/input"
 export default function Search() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathName = usePathname()
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -23,7 +24,7 @@ export default function Search() {
     } else {
       newParams.delete("q")
     }
-    router.push(createUrl("/search", newParams))
+    router.push(createUrl(pathName, newParams))
   }
 
   return (

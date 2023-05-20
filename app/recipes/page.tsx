@@ -22,7 +22,7 @@ export default async function SearchPage({
   if (error) return <Alert>{error.message}</Alert>
 
   return (
-    <div className="container">
+    <>
       {items.length > 0 ? (
         <div key={searchValue} className="grid grid-cols-5 gap-6 my-4">
           <RecipesList recipes={items} />
@@ -30,6 +30,6 @@ export default async function SearchPage({
       ) : (
         <h1>No results</h1>
       )}
-    </div>
+    </>
   )
 }
