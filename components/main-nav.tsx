@@ -8,6 +8,8 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 
+import Search from "./layout/search"
+
 export function MainNav() {
   const pathname = usePathname()
 
@@ -19,7 +21,8 @@ export function MainNav() {
           {siteConfig.name}
         </span>
       </Link>
-      <nav className="flex items-center space-x-6 text-sm font-medium"></nav>
+
+      <Search />
     </div>
   )
 }

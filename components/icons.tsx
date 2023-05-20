@@ -6,6 +6,7 @@ import {
   LucideProps,
   PiggyBank,
   Refrigerator,
+  Search,
   Waves,
   X,
   type Icon as LucideIcon,
@@ -22,4 +23,5 @@ export const Icons = {
   porc: PiggyBank,
   seafood: Waves,
   fish: Fish,
+  search: Search,
 }
