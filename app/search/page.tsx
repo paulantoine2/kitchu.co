@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 
 import { Recipes, searchRecipes, supabase } from "@/lib/supabase"
@@ -11,18 +13,24 @@ export default async function SearchPage({
 }) {
   const { sort, q: searchValue } = searchParams as { [key: string]: string }
 
-  const { count, data, error, status, statusText } = await searchRecipes(
-    searchValue
-  )
+  const {
+    count,
+    data: items,
+    error,
+    status,
+    statusText,
+  } = await searchRecipes(searchValue)
 
   if (error) return <Alert>{error.message}</Alert>
 
   return (
     <div className="container">
-      {data.length > 0 && (
+      {items.length > 0 ? (
         <div key={searchValue} className="grid grid-cols-5 gap-6 my-4">
-          <RecipesList recipes={data} />
+          <RecipesList recipes={items} />
         </div>
+      ) : (
+        <h1>No results</h1>
       )}
     </div>
   )

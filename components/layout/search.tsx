@@ -23,7 +23,6 @@ export default function Search() {
     } else {
       newParams.delete("q")
     }
-
     router.push(createUrl("/search", newParams))
   }
 
