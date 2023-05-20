@@ -1,10 +1,8 @@
-"use client"
-
-import Image from "next/image"
-
 import { Recipes, searchRecipes, supabase } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
 import { RecipesList } from "@/components/recipes-list"
+
+export const revalidate = 0
 
 export default async function SearchPage({
   searchParams,
