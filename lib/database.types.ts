@@ -9,6 +9,20 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      ingredient: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+      }
       recipe: {
         Row: {
           category: string
@@ -18,11 +32,11 @@ export interface Database {
           rating_count: number
         }
         Insert: {
-          category: string
+          category?: string
           id: string
           name: string
           rating_average?: number | null
-          rating_count: number
+          rating_count?: number
         }
         Update: {
           category?: string

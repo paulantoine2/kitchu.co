@@ -4,7 +4,7 @@ import { RecipesList } from "@/components/recipes-list"
 
 export const revalidate = 0
 
-export default async function SearchPage({
+export default async function RecipesPage({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined }

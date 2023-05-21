@@ -38,7 +38,7 @@ export function MainNav() {
               : "text-foreground/60"
           )}
         >
-          Inredients
+          Ingredients
         </Link>
       </nav>
     </div>
