@@ -6,11 +6,5 @@ export default function RecipesLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <div className="container pt-4">
-      <Search />
-      <CategoryNav />
-      {children}
-    </div>
-  )
+  return <div className="container pt-4">{children}</div>
 }

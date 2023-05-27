@@ -13,7 +13,7 @@ export async function searchRecipes({
   searchValue: string
   category?: string
 }) {
-  let req = supabase.from("recipe").select()
+  let req = supabase.from("recipe").select("*")
   if (category) req = req.eq("category", category)
 
   if (searchValue)
@@ -28,5 +28,30 @@ type RecipesResponse = Awaited<ReturnType<typeof searchRecipes>>
 export type Recipes = RecipesResponse["data"]
 
 export async function getAllIngredients() {
-  return await supabase.from("ingredient").select()
+  return await supabase.from("ingredient").select("*")
+}
+
+export async function getRecipe(id: string) {
+  return await supabase
+    .from("recipe")
+    .select(
+      `
+  *,
+  tag (
+    name
+  ),
+  cuisine (
+    name
+  )
+  `
+    )
+    .eq("id", id)
+    .single()
+}
+
+export async function getRecipeYields(id: string) {
+  return await supabase
+    .from("quantity")
+    .select("amount,unit,ingredient(id,name)")
+    .eq("recipe_id", id)
 }

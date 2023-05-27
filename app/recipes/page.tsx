@@ -1,5 +1,7 @@
 import { Recipes, searchRecipes, supabase } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
+import CategoryNav from "@/components/category-nav"
+import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
 
 export const revalidate = 0
@@ -25,6 +27,8 @@ export default async function RecipesPage({
 
   return (
     <>
+      <Search />
+      <CategoryNav />
       {items.length > 0 ? (
         <div
           key={searchValue + category}
