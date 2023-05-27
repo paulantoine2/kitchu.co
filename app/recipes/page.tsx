@@ -28,7 +28,7 @@ export default async function RecipesPage({
   return (
     <>
       <Search />
-      <CategoryNav />
+      {/* <CategoryNav /> */}
       {items.length > 0 ? (
         <div
           key={searchValue + category}
