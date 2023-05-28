@@ -32,6 +32,10 @@ export async function getAllIngredients() {
 }
 
 export async function getRecipe(id: string) {
+  return await supabase.from("recipe").select().eq("id", id)
+}
+
+export async function getFullRecipe(id: string) {
   return await supabase
     .from("recipe")
     .select(

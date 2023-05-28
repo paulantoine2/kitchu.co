@@ -28,7 +28,7 @@ export default function Search() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="w-full">
       <Input
         type="search"
         name="search"

@@ -1,6 +1,7 @@
 import { Recipes, searchRecipes, supabase } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
 import CategoryNav from "@/components/category-nav"
+import { ImportDialog } from "@/components/layout/import-dialog"
 import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
 
@@ -27,7 +28,10 @@ export default async function RecipesPage({
 
   return (
     <>
-      <Search />
+      <div className="flex space-x-4 w-full">
+        <Search />
+        <ImportDialog />
+      </div>
       {/* <CategoryNav /> */}
       {items.length > 0 ? (
         <div

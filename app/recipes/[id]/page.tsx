@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { getRecipe } from "@/lib/supabase"
+import { getFullRecipe } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -17,7 +17,7 @@ export default async function RecipePage({
 }: {
   params: { id: string }
 }) {
-  const { data, error } = await getRecipe(params.id)
+  const { data, error } = await getFullRecipe(params.id)
 
   if (error) return <Alert variant={"destructive"}>{error.message}</Alert>
 
