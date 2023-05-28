@@ -40,14 +40,14 @@ export async function getFullRecipe(id: string) {
     .from("recipe")
     .select(
       `
-  *,
-  tag (
-    name
-  ),
-  cuisine (
-    name
-  )
-  `
+        *,
+        tag (
+          name
+        ),
+        cuisine (
+          name
+        )
+      `
     )
     .eq("id", id)
     .single()

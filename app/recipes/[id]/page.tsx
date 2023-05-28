@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 import { getFullRecipe } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
@@ -19,7 +20,7 @@ export default async function RecipePage({
 }) {
   const { data, error } = await getFullRecipe(params.id)
 
-  if (error) return <Alert variant={"destructive"}>{error.message}</Alert>
+  if (!data) notFound()
 
   return (
     <div>
