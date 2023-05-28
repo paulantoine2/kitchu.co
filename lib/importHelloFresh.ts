@@ -116,7 +116,7 @@ async function upsertRecipes(recipes: Item[]) {
 async function upsertQuantity(recipe: Item) {
   console.time("upsertQuantity")
 
-  const recipe_id = uuid(recipe.id, RECIPE_NAMESPACE)
+  const recipe_id = createRecipeUuid(recipe.id)
   if (!recipe.yields[1]) return
   const { error } = await supabase.from("quantity").upsert(
     recipe.yields[1].ingredients.map((ingr) => ({
@@ -134,7 +134,7 @@ async function upsertQuantity(recipe: Item) {
 async function upsertRecipeTagRelations(recipe: Item) {
   console.time("upsertRecipeTagRelations")
 
-  const recipe_id = uuid(recipe.id, RECIPE_NAMESPACE)
+  const recipe_id = createRecipeUuid(recipe.id)
   const { error } = await supabase.from("recipe_tag").upsert(
     recipe.tags.map((tag) => ({
       tag_id: uuid(tag.id, TAG_NAMESPACE),
@@ -149,7 +149,7 @@ async function upsertRecipeTagRelations(recipe: Item) {
 async function upsertRecipeCuisineRelations(recipe: Item) {
   console.time("upsertRecipeCuisineRelations")
 
-  const recipe_id = uuid(recipe.id, RECIPE_NAMESPACE)
+  const recipe_id = createRecipeUuid(recipe.id)
   const { error } = await supabase.from("recipe_cuisine").upsert(
     recipe.cuisines.map((cuisine) => ({
       cuisine_id: uuid(cuisine.id, CUISINE_NAMESPACE),

@@ -28,7 +28,10 @@ type RecipesResponse = Awaited<ReturnType<typeof searchRecipes>>
 export type Recipes = RecipesResponse["data"]
 
 export async function getAllIngredients() {
-  return await supabase.from("ingredient").select("*")
+  return await supabase
+    .from("ingredient")
+    .select("*")
+    .order("name", { ascending: true })
 }
 
 export async function getRecipe(id: string) {
