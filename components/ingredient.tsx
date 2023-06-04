@@ -7,9 +7,15 @@ type Props = {
   }
   amount?: number | null
   unit?: string
+  show_name?: boolean
 }
 
-export default function Ingredient({ ingredient, amount, unit }: Props) {
+export default function Ingredient({
+  ingredient,
+  amount,
+  unit,
+  show_name = true,
+}: Props) {
   return (
     <div className="space-x-3 transition-all animate-fade-in flex items-center">
       <div className="overflow-hidden rounded-full aspect-square relative w-16 h-16 p-2 ">
@@ -23,7 +29,9 @@ export default function Ingredient({ ingredient, amount, unit }: Props) {
         />
       </div>
       <div>
-        <h3 className="text-sm font-medium truncate">{ingredient.name}</h3>
+        {show_name && (
+          <h3 className="text-sm font-medium truncate">{ingredient.name}</h3>
+        )}
         {(amount || unit) && (
           <p className="text-sm text-muted-foreground">{`${amount} ${unit}`}</p>
         )}

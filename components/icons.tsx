@@ -1,10 +1,13 @@
 import {
+  ArrowRight,
   Beef,
   Carrot,
+  Check,
   Drumstick,
   Fish,
   LucideProps,
   PiggyBank,
+  PlusCircle,
   Refrigerator,
   Search,
   Waves,
@@ -24,4 +27,7 @@ export const Icons: Record<string, Icon> = {
   seafood: Waves,
   fish: Fish,
   search: Search,
+  add: PlusCircle,
+  right: ArrowRight,
+  check: Check,
 }
