@@ -1,9 +1,11 @@
-import { Recipes, searchRecipes, supabase } from "@/lib/supabase"
+import { getAllIngredients } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
 import CategoryNav from "@/components/category-nav"
+import IngredientsFilter from "@/components/ingredients-filter"
 import { ImportDialog } from "@/components/layout/import-dialog"
 import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
+import { SearchToolbar } from "@/components/search-toolbar"
 
 export const revalidate = 0
 
@@ -12,19 +14,14 @@ export default async function RecipesPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { cat: category, q: searchValue } = searchParams as {
+  const {
+    tag,
+    cuisine,
+    ingredient,
+    q: searchValue,
+  } = searchParams as {
     [key: string]: string
   }
-
-  const {
-    count,
-    data: items,
-    error,
-    status,
-    statusText,
-  } = await searchRecipes({ searchValue, category })
-
-  if (error) return <Alert>{error.message}</Alert>
 
   return (
     <>
@@ -32,17 +29,17 @@ export default async function RecipesPage({
         <Search />
         <ImportDialog />
       </div>
+      {/* @ts-expect-error Async Server Component */}
+      <SearchToolbar />
+      <div className="grid grid-cols-5 gap-6 my-4">
+        <RecipesList
+          searchValue={searchValue}
+          tag={tag}
+          cuisine={cuisine}
+          ingredient={ingredient}
+        />
+      </div>
       {/* <CategoryNav /> */}
-      {items.length > 0 ? (
-        <div
-          key={searchValue + category}
-          className="grid grid-cols-5 gap-6 my-4"
-        >
-          <RecipesList recipes={items} />
-        </div>
-      ) : (
-        <h1>No results</h1>
-      )}
     </>
   )
 }

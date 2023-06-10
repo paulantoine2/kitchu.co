@@ -1,6 +1,6 @@
 import { getRecipeYields } from "@/lib/supabase"
 
-import Ingredient from "./ingredient"
+import IngredientListItem from "./ingredient-list-item"
 import { Card } from "./ui/card"
 
 export async function RecipeIngredientsList({ id }: { id: string }) {
@@ -14,7 +14,7 @@ export async function RecipeIngredientsList({ id }: { id: string }) {
       {data?.map(
         (item, key) =>
           item.ingredient && (
-            <Ingredient
+            <IngredientListItem
               key={key}
               ingredient={
                 Array.isArray(item.ingredient)

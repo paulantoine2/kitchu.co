@@ -30,14 +30,17 @@ export interface Database {
         Row: {
           id: string
           name: string
+          category: string
         }
         Insert: {
           id: string
           name: string
+          category: string
         }
         Update: {
           id?: string
           name?: string
+          category?: string
         }
       }
       quantity: {

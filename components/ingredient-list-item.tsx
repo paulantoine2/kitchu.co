@@ -10,7 +10,7 @@ type Props = {
   show_name?: boolean
 }
 
-export default function Ingredient({
+export default function IngredientListItem({
   ingredient,
   amount,
   unit,

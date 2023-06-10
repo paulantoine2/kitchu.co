@@ -8,18 +8,27 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey)
 
 export async function searchRecipes({
   searchValue,
-  category,
+  tag,
+  cuisine,
+  ingredient,
 }: {
   searchValue: string
-  category?: string
+  cuisine?: string
+  tag?: string
+  ingredient?: string
 }) {
-  let req = supabase.from("recipe").select("*")
-  if (category) req = req.eq("category", category)
+  let req = supabase
+    .from("recipe")
+    .select(`*,tag!inner(*),cuisine!inner(*),ingredient!inner(*)`)
 
   if (searchValue)
     req = req.textSearch("name", searchValue, {
       type: "websearch",
     })
+
+  if (cuisine) req = req.in("cuisine.id", cuisine.split(","))
+  if (tag) req = req.in("tag.id", tag.split(","))
+  if (ingredient) req = req.in("ingredient.id", ingredient.split(","))
 
   return await req
 }
@@ -30,6 +39,20 @@ export type Recipes = RecipesResponse["data"]
 export async function getAllIngredients() {
   return await supabase
     .from("ingredient")
+    .select("*")
+    .order("name", { ascending: true })
+}
+
+export async function getAllTags() {
+  return await supabase
+    .from("tag")
+    .select("*")
+    .order("name", { ascending: true })
+}
+
+export async function getAllCuisines() {
+  return await supabase
+    .from("cuisine")
     .select("*")
     .order("name", { ascending: true })
 }

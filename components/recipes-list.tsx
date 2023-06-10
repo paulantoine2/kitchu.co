@@ -1,16 +1,37 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
-import { Recipe } from "@/types/data"
-import { Recipes } from "@/lib/supabase"
+import { Recipes, searchRecipes } from "@/lib/supabase"
 
-export function RecipesList({ recipes }: { recipes: Recipes }) {
-  if (recipes === null) return null
+import { Alert } from "./ui/alert"
+
+export function RecipesList(props: {
+  searchValue: string
+  cuisine?: string
+  tag?: string
+  ingredient?: string
+}) {
+  const [recipes, setRecipes] = useState<Recipes>([])
+  const [render, setRender] = useState<number>(0)
+
+  useEffect(() => {
+    searchRecipes(props).then(
+      ({ count, data: recipes, error, status, statusText }) => {
+        if (error) return
+        setRender((prev) => prev + 1)
+        setRecipes(recipes)
+      }
+    )
+  }, [props])
 
   return (
     <>
-      {recipes.map((r, index) => (
-        <Link href={`/recipes/${r.id}`} key={r.id}>
+      {recipes?.map((r, index) => (
+        <Link href={`/recipes/${r.id}`} key={r.id + render}>
           <div
             className="space-y-3 transition-all animate-fade-in opacity-0"
             style={{ animationDelay: `${index * 25}ms` }}
@@ -26,7 +47,7 @@ export function RecipesList({ recipes }: { recipes: Recipes }) {
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-medium truncate">{r.name}</h3>
-              <p className="text-sm text-muted-foreground">{r.headline}</p>
+              <p className="text-sm text-muted-foreground">{r.headline}</p>{" "}
             </div>
           </div>
         </Link>
