@@ -7,8 +7,6 @@ import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
 import { SearchToolbar } from "@/components/search-toolbar"
 
-export const revalidate = 0
-
 export default async function RecipesPage({
   searchParams,
 }: {
