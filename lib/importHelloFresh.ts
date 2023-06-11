@@ -89,6 +89,7 @@ async function upsertIngredients(ingredients: ItemIngredient[]) {
     ingredients.map((ingr) => ({
       id: uuid(ingr.id, INGREDIENT_NAMESPACE),
       name: ingr.name,
+      category: "other",
     }))
   )
   console.timeEnd("upsertIngredients")
