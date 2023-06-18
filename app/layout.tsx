@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
+import { SessionProvider } from "@/components/layout/session-context"
 import { SiteHeader } from "@/components/site-header"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -24,12 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <ThemeProvider attribute="class" enableSystem defaultTheme="system">
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <div className="flex-1">{children}</div>
-            {/* <SiteFooter /> */}
-          </div>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <SessionProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              {/* <SiteFooter /> */}
+            </div>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

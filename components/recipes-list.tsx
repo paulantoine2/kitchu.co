@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation"
 
 import { Recipes, searchRecipes } from "@/lib/supabase"
 
+import { RecipePrice } from "./recipe-price"
 import { Alert } from "./ui/alert"
 
 export function RecipesList(props: {
@@ -47,7 +48,10 @@ export function RecipesList(props: {
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-medium truncate">{r.name}</h3>
-              <p className="text-sm text-muted-foreground">{r.headline}</p>{" "}
+              <p className="text-sm text-muted-foreground truncate">
+                {r.headline}
+              </p>
+              <RecipePrice id={r.id} />
             </div>
           </div>
         </Link>

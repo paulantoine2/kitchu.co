@@ -1,4 +1,5 @@
 import { ReadonlyURLSearchParams } from "next/navigation"
+import { PostgrestSingleResponse } from "@supabase/supabase-js"
 import { ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 

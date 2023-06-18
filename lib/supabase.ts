@@ -85,3 +85,20 @@ export async function getRecipeYields(id: string) {
     .select("amount,unit,ingredient(id,name)")
     .eq("recipe_id", id)
 }
+
+export async function getMarketSalespoints() {
+  return await supabase.from("market_chain").select("*,market_salepoint(*)")
+}
+
+export async function getRecipePrice(id: string, salepoint_id?: number) {
+  return await supabase
+    .from("quantity")
+    .select(
+      "amount,unit,ingredient(id,name,market_product(name,market_product_price!inner(price_kg)))"
+    )
+    .eq("recipe_id", id)
+    .eq(
+      "ingredient.market_product.market_product_price.salepoint_id",
+      salepoint_id
+    )
+}

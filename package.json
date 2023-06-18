@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "gentypes": "supabase gen types typescript --project-id siaczrmgpovlpruiitkw > lib/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",
