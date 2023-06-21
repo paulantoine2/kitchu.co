@@ -2,6 +2,7 @@ import Image from "next/image"
 
 import { Ingredient } from "@/types/data"
 import { getAllIngredients } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Alert } from "@/components/ui/alert"
 import IngredientListItem from "@/components/ingredient-list-item"
 
@@ -14,7 +15,7 @@ export default async function IngredientsPage() {
     error,
     status,
     statusText,
-  } = await getAllIngredients()
+  } = await getAllIngredients(createServerSupabaseClient())
 
   if (error) return <Alert>{error.message}</Alert>
 

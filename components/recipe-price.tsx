@@ -4,8 +4,8 @@ import { useMemo } from "react"
 
 import { getRecipePrice } from "@/lib/supabase"
 import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
+import { useSupabase } from "@/app/supabase-provider"
 
-import { useSession } from "./layout/session-context"
 import { Badge } from "./ui/badge"
 
 type RecipePrice = {
@@ -13,12 +13,11 @@ type RecipePrice = {
 }
 
 export function RecipePrice({ id }: RecipePrice) {
-  const { session } = useSession()
-  const { data, isError } = useSupabaseQuery(
-    getRecipePrice,
+  const { session } = useSupabase()
+  const { data, isError } = useSupabaseQuery(getRecipePrice, {
     id,
-    session?.market_salepoint.id
-  )
+    salepoint_id: session?.user.user_metadata.market_salepoint?.id,
+  })
 
   const price = useMemo(() => {
     const result = {

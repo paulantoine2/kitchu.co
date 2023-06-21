@@ -1,14 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import {
+  SupabaseClient,
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs"
 
-import { Recipes, searchRecipes } from "@/lib/supabase"
+import { searchRecipes } from "@/lib/supabase"
+import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
+import { useSupabase } from "@/app/supabase-provider"
 
 import { RecipePrice } from "./recipe-price"
-import { Alert } from "./ui/alert"
 
 export function RecipesList(props: {
   searchValue: string
@@ -16,18 +20,12 @@ export function RecipesList(props: {
   tag?: string
   ingredient?: string
 }) {
-  const [recipes, setRecipes] = useState<Recipes>([])
+  const {
+    data: recipes,
+    isError,
+    isLoading,
+  } = useSupabaseQuery(searchRecipes, props)
   const [render, setRender] = useState<number>(0)
-
-  useEffect(() => {
-    searchRecipes(props).then(
-      ({ count, data: recipes, error, status, statusText }) => {
-        if (error) return
-        setRender((prev) => prev + 1)
-        setRecipes(recipes)
-      }
-    )
-  }, [props])
 
   return (
     <>

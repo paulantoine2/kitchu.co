@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { getFullRecipe } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -19,7 +20,9 @@ export default async function RecipePage({
 }: {
   params: { id: string }
 }) {
-  const { data, error } = await getFullRecipe(params.id)
+  const { data, error } = await getFullRecipe(createServerSupabaseClient(), {
+    id: params.id,
+  })
 
   if (!data) notFound()
 

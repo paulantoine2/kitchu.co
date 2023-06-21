@@ -1,11 +1,14 @@
 import { getRecipePrice, getRecipeYields } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 import IngredientListItem from "./ingredient-list-item"
 import { RecipePrice } from "./recipe-price"
 import { Card } from "./ui/card"
 
 export async function RecipeIngredientsList({ id }: { id: string }) {
-  const { data, error } = await getRecipeYields(id)
+  const { data, error } = await getRecipeYields(createServerSupabaseClient(), {
+    id,
+  })
 
   console.log(data)
 

@@ -1,28 +1,46 @@
-import { useEffect, useState } from "react"
-import { PostgrestSingleResponse } from "@supabase/supabase-js"
+import { useCallback, useEffect, useState } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { PostgrestSingleResponse, SupabaseClient } from "@supabase/supabase-js"
+
+import { Database } from "@/lib/database.types"
 
 export type ResponseData<
-  T extends (...args: any[]) => Promise<PostgrestSingleResponse<any>>
-> = T extends (...args: any[]) => Promise<PostgrestSingleResponse<infer U>>
+  T extends (
+    supabase: SupabaseClient<Database>,
+    params?: any
+  ) => Promise<PostgrestSingleResponse<any>>
+> = T extends (
+  supabase: SupabaseClient<Database>,
+  params?: any
+) => Promise<PostgrestSingleResponse<infer U>>
   ? U
   : never
 
 export function useSupabaseQuery<
-  Q extends (...args: any[]) => Promise<PostgrestSingleResponse<any>>,
-  P extends Parameters<Q>
->(query: Q, ...args: P) {
+  Q extends (
+    supabase: SupabaseClient<Database>,
+    params: any
+  ) => Promise<PostgrestSingleResponse<any>>,
+  P extends Parameters<Q>["1"]
+>(query: Q, params?: P) {
+  const supabase = createClientComponentClient()
   const [data, setData] = useState<ResponseData<typeof query>>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isError, setIsError] = useState<boolean>(false)
 
-  useEffect(() => {
-    query(...args)
+  const getData = useCallback(async () => {
+    query(supabase, params)
       .then((response) => {
         if (response.data) setData(response.data)
+        if (response.error) setIsError(true)
       })
       .catch(() => setIsError(true))
       .finally(() => setIsLoading(false))
-  }, [...args])
+  }, [params, supabase, query])
+
+  useEffect(() => {
+    getData()
+  }, [getData])
 
   return { data, isError, isLoading }
 }

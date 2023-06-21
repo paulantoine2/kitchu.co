@@ -1,10 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Session } from "@supabase/supabase-js"
 
 import { getMarketSalespoints } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
+import { useSupabase } from "@/app/supabase-provider"
 
 import { Icons, MarketChainIcons } from "../icons"
 import { Button } from "../ui/button"
@@ -18,7 +21,6 @@ import {
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
-import { useSession } from "./session-context"
 
 function renderIcon(id: number) {
   const Icon = MarketChainIcons[id]
@@ -26,18 +28,18 @@ function renderIcon(id: number) {
   return Icon ? <Icon className="mr-2 h-6 w-6" /> : null
 }
 
-export function StoreSelectorDialog() {
-  const { session } = useSession()
+export function StoreSelectorDialog({ session }: { session: Session | null }) {
   const [open, setIsOpen] = useState<boolean>(false)
+
   return (
     <>
       <Dialog open={open} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm">
-            {session?.market_salepoint ? (
+          <Button variant="secondary" size="sm">
+            {session?.user.user_metadata.market_salepoint ? (
               <>
-                {renderIcon(session.market_salepoint.chain)}{" "}
-                {session.market_salepoint.name}
+                {renderIcon(session.user.user_metadata.market_salepoint.chain)}{" "}
+                {session.user.user_metadata.market_salepoint.name}
               </>
             ) : (
               <>Choisir un magasin</>
@@ -66,12 +68,11 @@ type StoreSelector = {
 }
 
 function StoreSelector({ onDone }: StoreSelector) {
-  const { session, updateSession } = useSession()
   const [selected, setSelected] = useState<number>()
-  console.log("render")
   const { data, isError, isLoading } = useSupabaseQuery(getMarketSalespoints)
 
-  console.log(data)
+  const { supabase } = useSupabase()
+  const router = useRouter()
 
   return (
     <div className="grid grid-cols-2 gap-4 h-[300px]">
@@ -107,8 +108,15 @@ function StoreSelector({ onDone }: StoreSelector) {
               ?.market_salepoint.map((salepoint) => (
                 <Button
                   onClick={() => {
-                    updateSession({ market_salepoint: salepoint })
-                    onDone()
+                    supabase.auth
+                      .updateUser({
+                        data: { market_salepoint: salepoint },
+                      })
+                      .then((res) => {
+                        console.log(res)
+                        onDone()
+                      })
+                      .catch(console.error)
                   }}
                   variant="outline"
                   className="w-full"

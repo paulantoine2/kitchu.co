@@ -1,12 +1,17 @@
 import { getAllCuisines, getAllIngredients, getAllTags } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 import { SearchFilter } from "./search-filter"
 
 export async function SearchToolbar() {
-  const { data: tags, error: tagsError } = await getAllTags()
-  const { data: cuisines, error: cuisinesError } = await getAllCuisines()
-  const { data: ingredients, error: ingredientError } =
-    await getAllIngredients()
+  const supabase = createServerSupabaseClient()
+  const { data: tags, error: tagsError } = await getAllTags(supabase)
+  const { data: cuisines, error: cuisinesError } = await getAllCuisines(
+    supabase
+  )
+  const { data: ingredients, error: ingredientError } = await getAllIngredients(
+    supabase
+  )
 
   return (
     <div className="my-4 gap-4 flex">

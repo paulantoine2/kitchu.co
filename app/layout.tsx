@@ -3,8 +3,10 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
-import { SessionProvider } from "@/components/layout/session-context"
+import { Toaster } from "@/components/ui/toaster"
 import { SiteHeader } from "@/components/site-header"
+
+import SupabaseProvider from "./supabase-provider"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -25,15 +27,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <SessionProvider>
+        <SupabaseProvider>
+          <ThemeProvider attribute="class" defaultTheme="light">
             <div className="relative flex min-h-screen flex-col">
+              {/* @ts-expect-error Async Server Component */}
               <SiteHeader />
               <div className="flex-1">{children}</div>
               {/* <SiteFooter /> */}
             </div>
-          </SessionProvider>
-        </ThemeProvider>
+            <Toaster />
+          </ThemeProvider>
+        </SupabaseProvider>
       </body>
     </html>
   )

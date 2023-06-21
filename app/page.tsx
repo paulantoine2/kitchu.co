@@ -1,4 +1,5 @@
 import { getAllIngredients } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Fridge } from "@/components/fridge"
 
 export const revalidate = 60
@@ -10,7 +11,7 @@ export default async function HomePage() {
     error,
     status,
     statusText,
-  } = await getAllIngredients()
+  } = await getAllIngredients(createServerSupabaseClient())
 
   if (!items) return <></>
 
