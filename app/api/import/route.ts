@@ -1,3 +1,6 @@
+import { cookies } from "next/headers"
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+
 import { InvalidImportUrlError } from "@/lib/exceptions"
 import {
   createRecipeUuid,
@@ -19,12 +22,14 @@ export async function POST(request: Request) {
 
     const recipe_uuid = createRecipeUuid(id)
 
+    const supabase = createRouteHandlerClient({ cookies })
+
     // Check if recipe already exists
-    const { data, error } = await getRecipe(recipe_uuid)
+    const { data, error } = await getRecipe(supabase, { id: recipe_uuid })
     if (error) throw error
     if (data?.length) return new Response(JSON.stringify({ uuid: recipe_uuid }))
 
-    await importHelloFreshRecipe(id)
+    await importHelloFreshRecipe(supabase, id)
 
     return new Response(JSON.stringify({ uuid: recipe_uuid }))
   } catch (err) {

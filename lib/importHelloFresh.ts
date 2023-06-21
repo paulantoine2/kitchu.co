@@ -1,8 +1,9 @@
+import { SupabaseClient } from "@supabase/supabase-js"
 import { v5 as uuid } from "uuid"
 
 import { Category, Item, ItemIngredient, Search, Tag } from "@/types/hellofresh"
 
-import { supabase } from "./supabase"
+import { Database } from "./database.types"
 
 const TAG_NAMESPACE = "6fce2565-e1ee-4b99-9f8c-03c44d7bf4d8"
 const RECIPE_NAMESPACE = "a3c53881-173f-4573-b868-37736c7ecbea"
@@ -13,16 +14,22 @@ export function createRecipeUuid(id: string) {
   return uuid(id, RECIPE_NAMESPACE)
 }
 
-export async function importHelloFreshRecipe(id: string) {
+export async function importHelloFreshRecipe(
+  supabase: SupabaseClient<Database>,
+  id: string
+) {
   const res = await fetchHelloFreshRecipe(id)
   await Promise.all([
-    importManyRecipes((res as Search).items),
-    uploadRecipesImages((res as Search).items),
-    uploadIngredientsImages((res as Search).items),
+    importManyRecipes(supabase, (res as Search).items),
+    uploadRecipesImages(supabase, (res as Search).items),
+    uploadIngredientsImages(supabase, (res as Search).items),
   ])
 }
 
-async function importManyRecipes(items: Item[]) {
+async function importManyRecipes(
+  supabase: SupabaseClient<Database>,
+  items: Item[]
+) {
   try {
     const tags: Record<string, Tag> = {}
     const cuisines: Record<string, Category> = {}
@@ -39,15 +46,15 @@ async function importManyRecipes(items: Item[]) {
       })
     })
 
-    await upsertTags(Object.values(tags))
-    await upsertCuisines(Object.values(cuisines))
-    await upsertIngredients(Object.values(ingredients))
-    const ids = await upsertRecipes(items)
+    await upsertTags(supabase, Object.values(tags))
+    await upsertCuisines(supabase, Object.values(cuisines))
+    await upsertIngredients(supabase, Object.values(ingredients))
+    const ids = await upsertRecipes(supabase, items)
 
     for (const recipe of items) {
-      await upsertQuantity(recipe)
-      await upsertRecipeTagRelations(recipe)
-      await upsertRecipeCuisineRelations(recipe)
+      await upsertQuantity(supabase, recipe)
+      await upsertRecipeTagRelations(supabase, recipe)
+      await upsertRecipeCuisineRelations(supabase, recipe)
     }
     return ids
   } catch (error) {
@@ -55,7 +62,7 @@ async function importManyRecipes(items: Item[]) {
   }
 }
 
-async function upsertTags(tags: Tag[]) {
+async function upsertTags(supabase: SupabaseClient<Database>, tags: Tag[]) {
   console.time("upsertTags")
   const { error } = await supabase.from("tag").upsert(
     tags.map((tag) => ({
@@ -68,7 +75,10 @@ async function upsertTags(tags: Tag[]) {
   if (error) throw error
 }
 
-async function upsertCuisines(cuisines: Category[]) {
+async function upsertCuisines(
+  supabase: SupabaseClient<Database>,
+  cuisines: Category[]
+) {
   console.time("upsertCuisines")
 
   const { error } = await supabase.from("cuisine").upsert(
@@ -82,7 +92,10 @@ async function upsertCuisines(cuisines: Category[]) {
   if (error) throw error
 }
 
-async function upsertIngredients(ingredients: ItemIngredient[]) {
+async function upsertIngredients(
+  supabase: SupabaseClient<Database>,
+  ingredients: ItemIngredient[]
+) {
   console.time("upsertIngredients")
 
   const { error } = await supabase.from("ingredient").upsert(
@@ -97,7 +110,10 @@ async function upsertIngredients(ingredients: ItemIngredient[]) {
   if (error) throw error
 }
 
-async function upsertRecipes(recipes: Item[]) {
+async function upsertRecipes(
+  supabase: SupabaseClient<Database>,
+  recipes: Item[]
+) {
   console.time("upsertRecipes")
   const { error } = await supabase.from("recipe").upsert(
     recipes.map((recipe) => {
@@ -114,7 +130,10 @@ async function upsertRecipes(recipes: Item[]) {
   if (error) throw error
 }
 
-async function upsertQuantity(recipe: Item) {
+async function upsertQuantity(
+  supabase: SupabaseClient<Database>,
+  recipe: Item
+) {
   console.time("upsertQuantity")
 
   const recipe_id = createRecipeUuid(recipe.id)
@@ -132,7 +151,10 @@ async function upsertQuantity(recipe: Item) {
   if (error) throw error
 }
 
-async function upsertRecipeTagRelations(recipe: Item) {
+async function upsertRecipeTagRelations(
+  supabase: SupabaseClient<Database>,
+  recipe: Item
+) {
   console.time("upsertRecipeTagRelations")
 
   const recipe_id = createRecipeUuid(recipe.id)
@@ -147,7 +169,10 @@ async function upsertRecipeTagRelations(recipe: Item) {
   if (error) throw error
 }
 
-async function upsertRecipeCuisineRelations(recipe: Item) {
+async function upsertRecipeCuisineRelations(
+  supabase: SupabaseClient<Database>,
+  recipe: Item
+) {
   console.time("upsertRecipeCuisineRelations")
 
   const recipe_id = createRecipeUuid(recipe.id)
@@ -162,7 +187,10 @@ async function upsertRecipeCuisineRelations(recipe: Item) {
   if (error) throw error
 }
 
-async function uploadRecipesImages(items: Item[]) {
+async function uploadRecipesImages(
+  supabase: SupabaseClient<Database>,
+  items: Item[]
+) {
   const remote = `https://img.hellofresh.com/w_1170,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3`
 
   for (let recipe of items) {
@@ -189,7 +217,10 @@ async function uploadRecipesImages(items: Item[]) {
   }
 }
 
-async function uploadIngredientsImages(items: Item[]) {
+async function uploadIngredientsImages(
+  supabase: SupabaseClient<Database>,
+  items: Item[]
+) {
   const remote = `https://img.hellofresh.com/w_100,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3`
   const ingredients: Record<string, ItemIngredient> = {}
   items.forEach((item) => {
