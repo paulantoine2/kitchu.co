@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { PostgrestSingleResponse, SupabaseClient } from "@supabase/supabase-js"
 
@@ -29,14 +29,16 @@ export function useSupabaseQuery<
   const [isError, setIsError] = useState<boolean>(false)
 
   const getData = useCallback(async () => {
+    console.log("query", params)
     query(supabase, params)
       .then((response) => {
+        console.log("query", params)
         if (response.data) setData(response.data)
         if (response.error) setIsError(true)
       })
       .catch(() => setIsError(true))
       .finally(() => setIsLoading(false))
-  }, [params, supabase, query])
+  }, [params])
 
   useEffect(() => {
     getData()

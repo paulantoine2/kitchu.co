@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Session } from "@supabase/supabase-js"
+import { Session, User } from "@supabase/supabase-js"
 
 import { cn } from "@/lib/utils"
 
@@ -11,7 +11,7 @@ import { Icons } from "./icons"
 import { StoreSelectorDialog } from "./layout/store-selector"
 import { Button } from "./ui/button"
 
-export function MainNav({ session }: { session: Session | null }) {
+export function MainNav({ user }: { user: User | null }) {
   const pathname = usePathname()
 
   return (
@@ -28,7 +28,7 @@ export function MainNav({ session }: { session: Session | null }) {
           fill="#1A1A1A"
         />
       </svg>
-      <StoreSelectorDialog session={session} />
+      <StoreSelectorDialog user={user} />
       <Link
         href="/recipes"
         className={cn(

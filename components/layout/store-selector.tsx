@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Session } from "@supabase/supabase-js"
+import { Session, User } from "@supabase/supabase-js"
 
 import { getMarketSalespoints } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
@@ -28,7 +28,7 @@ function renderIcon(id: number) {
   return Icon ? <Icon className="mr-2 h-6 w-6" /> : null
 }
 
-export function StoreSelectorDialog({ session }: { session: Session | null }) {
+export function StoreSelectorDialog({ user }: { user: User | null }) {
   const [open, setIsOpen] = useState<boolean>(false)
 
   return (
@@ -36,10 +36,10 @@ export function StoreSelectorDialog({ session }: { session: Session | null }) {
       <Dialog open={open} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="secondary" size="sm">
-            {session?.user.user_metadata.market_salepoint ? (
+            {user?.user_metadata.market_salepoint ? (
               <>
-                {renderIcon(session.user.user_metadata.market_salepoint.chain)}{" "}
-                {session.user.user_metadata.market_salepoint.name}
+                {renderIcon(user.user_metadata.market_salepoint.chain)}{" "}
+                {user.user_metadata.market_salepoint.name}
               </>
             ) : (
               <>Choisir un magasin</>
@@ -113,6 +113,7 @@ function StoreSelector({ onDone }: StoreSelector) {
                         data: { market_salepoint: salepoint },
                       })
                       .then((res) => {
+                        supabase.auth.refreshSession()
                         console.log(res)
                         onDone()
                       })

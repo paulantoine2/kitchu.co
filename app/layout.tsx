@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <SupabaseProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
+          <ThemeProvider attribute="class" defaultTheme="system">
             <div className="relative flex min-h-screen flex-col">
               {/* @ts-expect-error Async Server Component */}
               <SiteHeader />

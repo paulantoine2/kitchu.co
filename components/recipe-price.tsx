@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
+import { Session } from "@supabase/supabase-js"
 
 import { getRecipePrice } from "@/lib/supabase"
 import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
@@ -14,10 +15,20 @@ type RecipePrice = {
 
 export function RecipePrice({ id }: RecipePrice) {
   const { session } = useSupabase()
-  const { data, isError } = useSupabaseQuery(getRecipePrice, {
-    id,
-    salepoint_id: session?.user.user_metadata.market_salepoint?.id,
-  })
+  const salepoint_id = session?.user.user_metadata.market_salepoint?.id
+
+  if (!salepoint_id)
+    return (
+      <p className="text-sm font-medium truncate text-red-500">
+        Prix indisponible
+      </p>
+    )
+
+  return <Price salepoint_id={salepoint_id} id={id} />
+}
+
+function Price(props: { salepoint_id: number; id: string }) {
+  const { data, isError } = useSupabaseQuery(getRecipePrice, props)
 
   const price = useMemo(() => {
     const result = {
@@ -38,11 +49,8 @@ export function RecipePrice({ id }: RecipePrice) {
       }
       result.total += (q.amount / 1000) * price_kg
     }
-    console.log(result)
     return result
   }, [data])
-
-  console.log(price)
 
   if (!price)
     return (

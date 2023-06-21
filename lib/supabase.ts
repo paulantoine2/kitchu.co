@@ -114,6 +114,18 @@ export async function getRecipePrice(
     )
 }
 
+export async function getUser(supabase: SupabaseClient<Database>) {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    return user
+  } catch (error) {
+    console.error("Error:", error)
+    return null
+  }
+}
+
 export async function getSession(supabase: SupabaseClient<Database>) {
   try {
     const {

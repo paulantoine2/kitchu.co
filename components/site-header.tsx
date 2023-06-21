@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { getSession } from "@/lib/supabase"
+import { getSession, getUser } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { MainNav } from "@/components/main-nav"
 
@@ -9,14 +9,13 @@ import { Button } from "./ui/button"
 import { UserNav } from "./user-nav"
 
 export async function SiteHeader() {
+  const user = await getUser(createServerSupabaseClient())
   const session = await getSession(createServerSupabaseClient())
-
-  console.log(session?.user.user_metadata)
 
   return (
     <header className="supports-backdrop-blur:bg-background/60 sticky top-0 z-40 w-full border-b bg-background/60 shadow-sm backdrop-blur">
       <div className="container flex h-16 items-center">
-        <MainNav session={session} />
+        <MainNav user={user} />
         {session ? (
           <div className="flex items-center space-x-4">
             <Button variant="secondary" size="sm">
