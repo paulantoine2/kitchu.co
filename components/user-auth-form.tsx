@@ -65,7 +65,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   async function signInGoogle() {
     setIsGoogleLoading(true)
-    const result = await supabase.auth.signInWithOAuth({ provider: "google" })
+    const result = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${location.origin}/auth/callback` },
+    })
 
     if (result.error) {
       return toast({
@@ -74,8 +77,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         variant: "destructive",
       })
     }
-
-    setIsGoogleLoading(false)
   }
 
   return (
