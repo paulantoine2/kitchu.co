@@ -63,6 +63,21 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     })
   }
 
+  async function signInGoogle() {
+    setIsGoogleLoading(true)
+    const result = await supabase.auth.signInWithOAuth({ provider: "google" })
+
+    if (result.error) {
+      return toast({
+        title: "Something went wrong.",
+        description: "Your sign in request failed. Please try again.",
+        variant: "destructive",
+      })
+    }
+
+    setIsGoogleLoading(false)
+  }
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -110,8 +125,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           type="button"
           className={cn(buttonVariants({ variant: "secondary" }))}
           onClick={() => {
-            setIsGoogleLoading(true)
-            // signIn("github")
+            signInGoogle()
           }}
           disabled={disabled}
         >
@@ -122,7 +136,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           )}{" "}
           Google
         </button>
-        <button
+        {/* <button
           type="button"
           className={cn(buttonVariants({ variant: "secondary" }))}
           onClick={() => {
@@ -137,7 +151,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Icons.apple className="mr-2 h-4 w-4" />
           )}{" "}
           Apple
-        </button>
+        </button> */}
         <button
           type="button"
           className={cn(buttonVariants({ variant: "secondary" }))}
