@@ -105,7 +105,7 @@ export async function getRecipePrice(
   return await supabase
     .from("quantity")
     .select(
-      "amount,unit,ingredient(id,name,market_product(name,market_product_price!inner(price_kg)))"
+      "amount,unit,ingredient(id,name,market_product(*,market_product_price!inner(*)))"
     )
     .eq("recipe_id", id)
     .eq(
