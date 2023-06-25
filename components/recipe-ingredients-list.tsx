@@ -10,14 +10,12 @@ export async function RecipeIngredientsList({ id }: { id: string }) {
     id,
   })
 
-  console.log(data)
-
   return (
     <Card className="p-8">
       <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         Ingredients list
       </h2>
-      <RecipePrice id={id} />
+      <RecipePrice id={id} persons={10} />
       {data?.map(
         (item, key) =>
           item.ingredient && (
