@@ -4,9 +4,11 @@ import { getSession, getUser } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { MainNav } from "@/components/main-nav"
 
-import { Icons } from "./icons"
-import { Button } from "./ui/button"
-import { UserNav } from "./user-nav"
+import { Icons } from "../icons"
+import { Button } from "../ui/button"
+import { UserNav } from "../user-nav"
+import Cart from "./cart"
+import Fridge from "./fridge"
 
 export async function SiteHeader() {
   const user = await getUser(createServerSupabaseClient())
@@ -18,14 +20,8 @@ export async function SiteHeader() {
         <MainNav user={user} />
         {session ? (
           <div className="flex items-center space-x-4">
-            <Button variant="secondary" size="sm">
-              <Icons.fridge className="mr-2 h-4 w-4" />
-              Fridge
-            </Button>
-            <Button variant="secondary" size="sm">
-              <Icons.cart className="mr-2 h-4 w-4" />
-              Panier
-            </Button>
+            <Fridge />
+            <Cart />
             <UserNav session={session} />
           </div>
         ) : (

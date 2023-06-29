@@ -1,5 +1,9 @@
 import Image from "next/image"
 
+import { Icons } from "./icons"
+import { Button } from "./ui/button"
+import { Card } from "./ui/card"
+
 type Props = {
   ingredient: {
     id: string
@@ -17,7 +21,7 @@ export default function IngredientListItem({
   show_name = true,
 }: Props) {
   return (
-    <div className="space-x-3 transition-all animate-fade-in flex items-center">
+    <Card className=" pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center">
       <div className="overflow-hidden rounded-full aspect-square relative w-16 h-16 p-2 ">
         <Image
           src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${ingredient.id}.png`}
@@ -28,7 +32,7 @@ export default function IngredientListItem({
           placeholder="empty"
         />
       </div>
-      <div>
+      <div className="overflow-hidden flex-1">
         {show_name && (
           <h3 className="text-sm font-medium truncate">{ingredient.name}</h3>
         )}
@@ -36,6 +40,12 @@ export default function IngredientListItem({
           <p className="text-sm text-muted-foreground">{`${amount} ${unit}`}</p>
         )}
       </div>
-    </div>
+      <Button variant="secondary">
+        <Icons.fridge className="h-4 w-4" />
+      </Button>
+      <Button variant="secondary">
+        <Icons.cart className="h-4 w-4" />
+      </Button>
+    </Card>
   )
 }

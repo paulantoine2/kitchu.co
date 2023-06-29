@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
-import { SiteHeader } from "@/components/site-header"
+import { SiteHeader } from "@/components/layout/site-header"
 
 import SupabaseProvider from "./supabase-provider"
 
@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <SupabaseProvider>
-          <ThemeProvider attribute="class" defaultTheme="system">
+          <ThemeProvider attribute="class" defaultTheme="light">
             <div className="relative flex min-h-screen flex-col">
               {/* @ts-expect-error Async Server Component */}
               <SiteHeader />

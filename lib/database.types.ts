@@ -27,6 +27,40 @@ export interface Database {
         }
         Relationships: []
       }
+      fridge: {
+        Row: {
+          ingredient_id: string
+          quantity: number
+          unit: string
+          user_id: string
+        }
+        Insert: {
+          ingredient_id: string
+          quantity: number
+          unit: string
+          user_id: string
+        }
+        Update: {
+          ingredient_id?: string
+          quantity?: number
+          unit?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fridge_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            referencedRelation: "ingredient"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fridge_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       ingredient: {
         Row: {
           category: string

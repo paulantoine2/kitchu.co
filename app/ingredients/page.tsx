@@ -33,7 +33,7 @@ export default async function IngredientsPage() {
           <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 capitalize">
             {id}
           </h1>
-          <div className="grid grid-cols-5 gap-6 my-4">
+          <div className="grid grid-cols-3 gap-6 my-4">
             {ingredients.map((i) => (
               <IngredientListItem key={i.id} ingredient={i} />
             ))}

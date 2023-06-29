@@ -6,7 +6,7 @@ import {
 import { Database } from "./database.types"
 
 export async function searchRecipes(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   {
     searchValue,
     tag,
@@ -136,4 +136,14 @@ export async function getSession(supabase: SupabaseClient<Database>) {
     console.error("Error:", error)
     return null
   }
+}
+
+export async function getFridge(
+  supabase: SupabaseClient<Database>,
+  { user_id }: { user_id: string }
+) {
+  return await supabase
+    .from("fridge")
+    .select("*,ingredient(*)")
+    .eq("user_id", user_id)
 }
