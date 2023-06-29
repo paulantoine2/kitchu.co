@@ -1,5 +1,3 @@
-"use client"
-
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -9,28 +7,27 @@ import {
 } from "@supabase/auth-helpers-nextjs"
 
 import { searchRecipes } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { RecipePrice } from "./recipe-price"
 
-export function RecipesList(props: {
+export async function RecipesList(props: {
   searchValue: string
   cuisine?: string
   tag?: string
   ingredient?: string
 }) {
-  const {
-    data: recipes,
-    isError,
-    isLoading,
-  } = useSupabaseQuery(searchRecipes, props)
-  const [render, setRender] = useState<number>(0)
+  const { data: recipes, error } = await searchRecipes(
+    createServerSupabaseClient(),
+    props
+  )
 
   return (
     <>
       {recipes?.map((r, index) => (
-        <Link href={`/recipes/${r.id}`} key={r.id + render}>
+        <Link key={r.id} href={`/recipes/${r.id}`}>
           <div
             className="space-y-3 transition-all animate-fade-in opacity-0"
             style={{ animationDelay: `${index * 25}ms` }}
@@ -49,7 +46,7 @@ export function RecipesList(props: {
               <p className="text-sm text-muted-foreground truncate">
                 {r.headline}
               </p>
-              <RecipePrice id={r.id} />
+              <RecipePrice persons={2} id={r.id} />
             </div>
           </div>
         </Link>
