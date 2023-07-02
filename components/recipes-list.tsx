@@ -1,28 +1,43 @@
-import { useCallback, useEffect, useId, useState } from "react"
+import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  SupabaseClient,
-  createClientComponentClient,
-} from "@supabase/auth-helpers-nextjs"
 
-import { searchRecipes } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
-import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
-import { useSupabase } from "@/app/supabase-provider"
 
 import { RecipePrice } from "./recipe-price"
 
-export async function RecipesList(props: {
+type Props = {
   searchValue: string
   cuisine?: string
   tag?: string
   ingredient?: string
-}) {
-  const { data: recipes, error } = await searchRecipes(
-    createServerSupabaseClient(),
-    props
-  )
+}
+
+export async function RecipesList({
+  searchValue,
+  cuisine,
+  ingredient,
+  tag,
+}: Props) {
+  let req = supabase
+    .from("recipe")
+    .select(`*,tag!inner(*),cuisine!inner(*),ingredient!inner(*)`)
+
+  if (searchValue)
+    req = req.textSearch("name", searchValue, {
+      type: "websearch",
+    })
+
+  if (cuisine) req = req.in("cuisine.id", cuisine.split(","))
+  if (tag) req = req.in("tag.id", tag.split(","))
+  if (ingredient) req = req.in("ingredient.id", ingredient.split(","))
+
+  const { data: recipes, error } = await req
+
+  if (!recipes || !recipes.length) return <p>No results</p>
+
+  const session = await createServerSupabaseClient().auth.getSession()
 
   const id = new Date().toISOString()
 
@@ -48,7 +63,16 @@ export async function RecipesList(props: {
               <p className="text-sm text-muted-foreground truncate">
                 {r.headline}
               </p>
-              <RecipePrice persons={2} id={r.id} />
+              <Suspense>
+                <RecipePrice
+                  persons={2}
+                  id={r.id}
+                  salepoint_id={
+                    session?.data?.session?.user.user_metadata?.market_salepoint
+                      ?.id || undefined
+                  }
+                />
+              </Suspense>
             </div>
           </div>
         </Link>

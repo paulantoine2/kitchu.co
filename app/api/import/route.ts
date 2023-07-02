@@ -6,7 +6,6 @@ import {
   createRecipeUuid,
   importHelloFreshRecipe,
 } from "@/lib/importHelloFresh"
-import { getRecipe } from "@/lib/supabase"
 
 export async function POST(request: Request) {
   try {
@@ -25,7 +24,7 @@ export async function POST(request: Request) {
     const supabase = createRouteHandlerClient({ cookies })
 
     // Check if recipe already exists
-    const { data, error } = await getRecipe(supabase, { id: recipe_uuid })
+    const { data, error } = await supabase.from("recipe").select().eq("id", id)
     if (error) throw error
     if (data?.length) return new Response(JSON.stringify({ uuid: recipe_uuid }))
 

@@ -1,8 +1,5 @@
-import { getAllIngredients } from "@/lib/supabase"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { supabase } from "@/lib/supabase"
 import { Fridge } from "@/components/fridge"
-
-export const revalidate = 60
 
 export default async function HomePage() {
   const {
@@ -11,7 +8,10 @@ export default async function HomePage() {
     error,
     status,
     statusText,
-  } = await getAllIngredients(createServerSupabaseClient())
+  } = await supabase
+    .from("ingredient")
+    .select("*")
+    .order("name", { ascending: true })
 
   if (!items) return <></>
 

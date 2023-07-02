@@ -1,24 +1,17 @@
-"use client"
-
-import { useMemo } from "react"
-import { Session } from "@supabase/supabase-js"
-
-import { getRecipePrice } from "@/lib/supabase"
-import { useRecipePrice } from "@/hooks/useRecipePrice"
-import { useSupabaseQuery } from "@/hooks/useSupabaseQuery"
-import { useSupabase } from "@/app/supabase-provider"
-
-import { Badge } from "./ui/badge"
+import { supabase } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 type RecipePrice = {
   id: string
   persons: number
+  salepoint_id: number | undefined
 }
 
-export function RecipePrice({ id, persons = 2 }: RecipePrice) {
-  const { session } = useSupabase()
-  const salepoint_id = session?.user.user_metadata.market_salepoint?.id
-
+export async function RecipePrice({
+  id,
+  persons = 2,
+  salepoint_id,
+}: RecipePrice) {
   if (!salepoint_id)
     return (
       <p className="text-sm font-medium truncate text-red-500">
@@ -26,12 +19,48 @@ export function RecipePrice({ id, persons = 2 }: RecipePrice) {
       </p>
     )
 
-  return <Price salepoint_id={salepoint_id} id={id} persons={persons} />
-}
+  const { data } = await supabase
+    .from("quantity")
+    .select(
+      "amount,unit,ingredient(id,name,market_product(*,market_product_price!inner(*)))"
+    )
+    .eq("recipe_id", id)
+    .eq(
+      "ingredient.market_product.market_product_price.salepoint_id",
+      salepoint_id
+    )
 
-function Price(props: { salepoint_id: number; id: string; persons: number }) {
-  const { averagePricePerPerson, productTotalSalePrice, unavailableProducts } =
-    useRecipePrice(props)
+  let averagePricePerPerson = 0,
+    unavailableProducts = 0,
+    productTotalSalePrice = 0,
+    productPricePerPerson = 0
+  if (!data) return
+  for (const q of data) {
+    const price_kg =
+      q.ingredient?.market_product[0]?.market_product_price[0]?.price_kg
+
+    const sale_price =
+      q.ingredient?.market_product[0]?.market_product_price[0]?.sale_price
+    const sale_unit = q.ingredient?.market_product[0]?.sale_unit
+    const sale_volume = q.ingredient?.market_product[0]?.sale_volume
+
+    /** @todo test that q.unit is g or kg, convert otherwise */
+
+    if (!q.amount) continue
+
+    if (!price_kg || !sale_price || !sale_volume || !sale_unit) {
+      unavailableProducts++
+      continue
+    }
+
+    const amount = (q.amount / 2) * persons
+
+    const quantity_to_buy = Math.ceil(amount / sale_volume)
+
+    productTotalSalePrice += sale_price * quantity_to_buy
+    productPricePerPerson += (sale_price * quantity_to_buy) / persons
+    averagePricePerPerson += ((amount / 1000) * price_kg) / persons
+  }
 
   if (!averagePricePerPerson)
     return (

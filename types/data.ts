@@ -1,4 +1,4 @@
-export type Recipe = {
+export type Salepoint = {
   category: string
   id: string
   name: string

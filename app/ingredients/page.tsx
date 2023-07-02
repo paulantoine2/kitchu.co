@@ -1,12 +1,9 @@
 import { Ingredient } from "@/types/data"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { supabase } from "@/lib/supabase"
 import { Alert } from "@/components/ui/alert"
 import IngredientListItem from "@/components/ingredient-list-item"
 
-// export const revalidate = 60
-
 export default async function IngredientsPage() {
-  const supabase = createServerSupabaseClient()
   const { data: items, error } = await supabase
     .from("ingredient")
     .select("*")

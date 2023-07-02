@@ -1,6 +1,7 @@
 "use client"
 
-import { Link, LogOut } from "lucide-react"
+import Link from "next/link"
+import { LogOut } from "lucide-react"
 import md5 from "md5"
 
 import { useSupabase } from "@/app/supabase-provider"

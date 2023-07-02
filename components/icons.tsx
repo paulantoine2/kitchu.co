@@ -98,6 +98,6 @@ export const Icons: Record<string, Icon> = {
 }
 
 export const MarketChainIcons: Record<number, Icon> = {
-  1: Icons.mockmarket,
+  1: Icons.carrefour,
   2: Icons.carrefour,
 }

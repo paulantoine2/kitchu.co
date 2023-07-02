@@ -1,41 +1,64 @@
-import { getAllCuisines, getAllIngredients, getAllTags } from "@/lib/supabase"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { supabase } from "@/lib/supabase"
 
 import { SearchFilter } from "./search-filter"
 
 export async function SearchToolbar() {
-  const supabase = createServerSupabaseClient()
-  const { data: tags, error: tagsError } = await getAllTags(supabase)
-  const { data: cuisines, error: cuisinesError } = await getAllCuisines(
-    supabase
-  )
-  const { data: ingredients, error: ingredientError } = await getAllIngredients(
-    supabase
-  )
-
   return (
     <div className="my-4 gap-4 flex">
-      {!tagsError && (
-        <SearchFilter
-          name="tag"
-          options={tags.map((t) => ({ label: t.name, value: t.id }))}
-          title="Tags"
-        />
-      )}
-      {!cuisinesError && (
-        <SearchFilter
-          name="cuisine"
-          options={cuisines.map((t) => ({ label: t.name, value: t.id }))}
-          title="Cuisines"
-        />
-      )}
-      {!ingredientError && (
-        <SearchFilter
-          name="ingredient"
-          options={ingredients.map((t) => ({ label: t.name, value: t.id }))}
-          title="Ingredients"
-        />
-      )}
+      <TagFilter />
+      <CuisineFilter />
+      <IngredientFilter />
     </div>
+  )
+}
+
+async function TagFilter() {
+  const { data, error } = await supabase
+    .from("tag")
+    .select("*")
+    .order("name", { ascending: true })
+
+  if (!data) return
+
+  return (
+    <SearchFilter
+      name="tag"
+      options={data.map((t) => ({ label: t.name, value: t.id }))}
+      title="Tags"
+    />
+  )
+}
+
+async function CuisineFilter() {
+  const { data, error } = await supabase
+    .from("cuisine")
+    .select("*")
+    .order("name", { ascending: true })
+
+  if (!data) return
+
+  return (
+    <SearchFilter
+      name="cuisine"
+      options={data.map((t) => ({ label: t.name, value: t.id }))}
+      title="Cuisines"
+    />
+  )
+}
+
+async function IngredientFilter() {
+  const { data, error } = await supabase
+    .from("ingredient")
+    .select("*")
+    .order("name", { ascending: true })
+
+  if (!data) return
+
+  return (
+    <SearchFilter
+      name="ingredient"
+      options={data.map((t) => ({ label: t.name, value: t.id }))}
+      title="Ingredients"
+    />
   )
 }

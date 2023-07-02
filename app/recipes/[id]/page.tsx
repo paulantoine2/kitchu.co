@@ -2,27 +2,32 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { getFullRecipe } from "@/lib/supabase"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
-import { Alert } from "@/components/ui/alert"
+import { supabase } from "@/lib/supabase"
 import { Badge } from "@/components/ui/badge"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
 import { RecipeIngredientsList } from "@/components/recipe-ingredients-list"
-import { RecipePrice } from "@/components/recipe-price"
-
-export const revalidate = 0
 
 export default async function RecipePage({
   params,
 }: {
   params: { id: string }
 }) {
-  const { data, error } = await getFullRecipe(createServerSupabaseClient(), {
-    id: params.id,
-  })
+  const { data, error } = await supabase
+    .from("recipe")
+    .select(
+      `
+        *,
+        tag (
+          name
+        ),
+        cuisine (
+          name
+        )
+      `
+    )
+    .eq("id", params.id)
+    .single()
 
   if (!data) notFound()
 
@@ -67,7 +72,6 @@ export default async function RecipePage({
           </div>
         </div>
         <div className="pt-6">
-          {/* @ts-expect-error Async Server Component */}
           <RecipeIngredientsList id={params.id} />
         </div>
       </div>

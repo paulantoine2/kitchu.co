@@ -1,6 +1,4 @@
 import React from "react"
-import { Label } from "@radix-ui/react-dropdown-menu"
-import { Input } from "postcss"
 
 import { Icons } from "../icons"
 import { Button } from "../ui/button"

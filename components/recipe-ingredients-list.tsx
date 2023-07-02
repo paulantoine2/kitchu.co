@@ -1,16 +1,20 @@
-import { getRecipePrice, getRecipeYields } from "@/lib/supabase"
+import { Suspense } from "react"
+
+import { supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 import { Icons } from "./icons"
 import IngredientListItem from "./ingredient-list-item"
 import { RecipePrice } from "./recipe-price"
 import { Button } from "./ui/button"
-import { Card } from "./ui/card"
 
 export async function RecipeIngredientsList({ id }: { id: string }) {
-  const { data, error } = await getRecipeYields(createServerSupabaseClient(), {
-    id,
-  })
+  const { data, error } = await supabase
+    .from("quantity")
+    .select("amount,unit,ingredient(id,name)")
+    .eq("recipe_id", id)
+
+  const session = await createServerSupabaseClient().auth.getSession()
 
   return (
     <div className="space-y-4 pb-10">
@@ -18,8 +22,16 @@ export async function RecipeIngredientsList({ id }: { id: string }) {
         <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Ingredients list
         </h2>
-
-        <RecipePrice id={id} persons={10} />
+        <Suspense>
+          <RecipePrice
+            id={id}
+            persons={10}
+            salepoint_id={
+              session?.data?.session?.user.user_metadata?.market_salepoint
+                ?.id || undefined
+            }
+          />
+        </Suspense>
       </div>
       <Button className="w-full" size="lg">
         <Icons.cart className="h-4 w-4 mr-2" />
