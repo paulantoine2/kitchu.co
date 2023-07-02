@@ -45,6 +45,7 @@ export function SearchFilter({ name, title, options }: Props) {
     if (!values || !values.length) newParams.delete(name)
     else newParams.set(name, values.join(","))
     router.push(createUrl(pathName, newParams))
+    console.log("pushed")
   }
 
   return (

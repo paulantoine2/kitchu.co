@@ -30,10 +30,8 @@ export default function RootLayout({
         <SupabaseProvider>
           <ThemeProvider attribute="class" defaultTheme="light">
             <div className="relative flex min-h-screen flex-col">
-              {/* @ts-expect-error Async Server Component */}
               <SiteHeader />
               <div className="flex-1">{children}</div>
-              {/* <SiteFooter /> */}
             </div>
             <Toaster />
           </ThemeProvider>

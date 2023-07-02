@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useId, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -24,10 +24,12 @@ export async function RecipesList(props: {
     props
   )
 
+  const id = new Date().toISOString()
+
   return (
     <>
       {recipes?.map((r, index) => (
-        <Link key={r.id} href={`/recipes/${r.id}`}>
+        <Link key={r.id + id} href={`/recipes/${r.id}`}>
           <div
             className="space-y-3 transition-all animate-fade-in opacity-0"
             style={{ animationDelay: `${index * 25}ms` }}

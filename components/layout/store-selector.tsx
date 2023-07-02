@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Session, User } from "@supabase/supabase-js"
 
 import { getMarketSalespoints } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
@@ -19,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
-import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
 
 function renderIcon(id: number) {
@@ -28,8 +26,11 @@ function renderIcon(id: number) {
   return Icon ? <Icon className="mr-2 h-6 w-6" /> : null
 }
 
-export function StoreSelectorDialog({ user }: { user: User | null }) {
+export function StoreSelectorDialog() {
+  const { session } = useSupabase()
   const [open, setIsOpen] = useState<boolean>(false)
+
+  const user = session?.user || null
 
   return (
     <>
