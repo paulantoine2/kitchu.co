@@ -1,21 +1,22 @@
+import { cookies } from "next/headers"
 import Image from "next/image"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@supabase/supabase-js"
 
 import { Ingredient } from "@/types/data"
-import { getAllIngredients } from "@/lib/supabase"
+import { getAllIngredients, supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Alert } from "@/components/ui/alert"
 import IngredientListItem from "@/components/ingredient-list-item"
 
-export const revalidate = 60
+// export const revalidate = 60
 
 export default async function IngredientsPage() {
-  const {
-    count,
-    data: items,
-    error,
-    status,
-    statusText,
-  } = await getAllIngredients(createServerSupabaseClient())
+  const supabase = createServerSupabaseClient()
+  const { data: items, error } = await supabase
+    .from("ingredient")
+    .select("*")
+    .order("name", { ascending: true })
 
   if (error) return <Alert>{error.message}</Alert>
 

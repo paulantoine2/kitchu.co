@@ -7,6 +7,5 @@ import {
 
 import { Database } from "./database.types"
 
-export const createServerSupabaseClient = cache(() =>
+export const createServerSupabaseClient = () =>
   createServerComponentClient<Database>({ cookies })
-)

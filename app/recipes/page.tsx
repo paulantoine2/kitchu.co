@@ -30,8 +30,17 @@ export default async function RecipesPage({
         <Search />
         <ImportDialog />
       </div>
-      {/* @ts-expect-error Async Server Component */}
-      <SearchToolbar />
+      <Suspense
+        fallback={
+          <div>
+            <Skeleton className="h-full w-full" />
+          </div>
+        }
+      >
+        {/* @ts-expect-error Async Server Component */}
+        <SearchToolbar />
+      </Suspense>
+
       <div className="grid grid-cols-5 gap-6 my-4">
         <Suspense
           fallback={
