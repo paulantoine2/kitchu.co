@@ -1,10 +1,4 @@
-import { cookies } from "next/headers"
-import Image from "next/image"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { createClient } from "@supabase/supabase-js"
-
 import { Ingredient } from "@/types/data"
-import { getAllIngredients, supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Alert } from "@/components/ui/alert"
 import IngredientListItem from "@/components/ingredient-list-item"
