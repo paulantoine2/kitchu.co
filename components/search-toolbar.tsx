@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase"
+import { makeSupabase, supabase } from "@/lib/supabase"
 
 import { SearchFilter } from "./search-filter"
 
@@ -13,7 +13,10 @@ export async function SearchToolbar() {
 }
 
 async function TagFilter() {
-  const { data, error } = await supabase
+  const { data, error } = await makeSupabase({
+    cache: "force-cache",
+    next: { tags: ["filter", "tag"] },
+  })
     .from("tag")
     .select("*")
     .order("name", { ascending: true })
@@ -30,7 +33,10 @@ async function TagFilter() {
 }
 
 async function CuisineFilter() {
-  const { data, error } = await supabase
+  const { data, error } = await makeSupabase({
+    cache: "force-cache",
+    next: { tags: ["filter", "cuisine"] },
+  })
     .from("cuisine")
     .select("*")
     .order("name", { ascending: true })
@@ -47,7 +53,10 @@ async function CuisineFilter() {
 }
 
 async function IngredientFilter() {
-  const { data, error } = await supabase
+  const { data, error } = await makeSupabase({
+    cache: "force-cache",
+    next: { tags: ["filter", "ingredient"] },
+  })
     .from("ingredient")
     .select("*")
     .order("name", { ascending: true })

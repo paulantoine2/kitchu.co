@@ -50,7 +50,7 @@
     "eslint-config-prettier": "^8.8.0",
     "lucide-react": "^0.219.0",
     "md5": "^2.3.0",
-    "next": "^13.4.4",
+    "next": "^13.4.8",
     "next-themes": "^0.2.1",
     "postcss": "8.4.23",
     "prettier": "^2.8.8",

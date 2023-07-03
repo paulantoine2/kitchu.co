@@ -34,6 +34,7 @@ interface Props {
 }
 
 export function SearchFilter({ name, title, options }: Props) {
+  const [open, setOpen] = React.useState<boolean>(false)
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathName = usePathname()
@@ -48,7 +49,7 @@ export function SearchFilter({ name, title, options }: Props) {
   }
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -107,6 +108,7 @@ export function SearchFilter({ name, title, options }: Props) {
                       }
                       const filterValues = Array.from(selectedValues)
                       onSet(filterValues.length ? filterValues : undefined)
+                      setOpen(false)
                     }}
                   >
                     <div

@@ -2,10 +2,10 @@ import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 
-import { supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 import { RecipePrice } from "./recipe-price"
+import { Skeleton } from "./ui/skeleton"
 
 type Props = {
   searchValue: string
@@ -20,6 +20,7 @@ export async function RecipesList({
   ingredient,
   tag,
 }: Props) {
+  const supabase = createServerSupabaseClient()
   let req = supabase
     .from("recipe")
     .select(`*,tag!inner(*),cuisine!inner(*),ingredient!inner(*)`)
@@ -37,7 +38,7 @@ export async function RecipesList({
 
   if (!recipes || !recipes.length) return <p>No results</p>
 
-  const session = await createServerSupabaseClient().auth.getSession()
+  const session = await supabase.auth.getSession()
 
   const id = new Date().toISOString()
 
@@ -63,7 +64,9 @@ export async function RecipesList({
               <p className="text-sm text-muted-foreground truncate">
                 {r.headline}
               </p>
-              <Suspense>
+              <Suspense
+                fallback={<Skeleton className="h-5 w-[100px]"></Skeleton>}
+              >
                 <RecipePrice
                   persons={2}
                   id={r.id}

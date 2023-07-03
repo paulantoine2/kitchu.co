@@ -1,5 +1,6 @@
-import { supabase } from "@/lib/supabase"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { cache } from "react"
+
+import { makeSupabase, supabase } from "@/lib/supabase"
 
 type RecipePrice = {
   id: string
@@ -19,7 +20,7 @@ export async function RecipePrice({
       </p>
     )
 
-  const { data } = await supabase
+  const { data } = await makeSupabase({ cache: "force-cache" })
     .from("quantity")
     .select(
       "amount,unit,ingredient(id,name,market_product(*,market_product_price!inner(*)))"
