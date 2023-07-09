@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
 import Cart from "./cart"
-import Fridge from "./fridge"
 
 function getGravatarURL(email: string) {
   // Trim leading and trailing whitespace from
@@ -32,13 +31,13 @@ function getGravatarURL(email: string) {
   return `https://www.gravatar.com/avatar/${hash}`
 }
 
-export function UserNav() {
+export function UserNav({ Buttons }: { Buttons: React.ReactNode }) {
   const { session, supabase } = useSupabase()
 
   if (session)
     return (
       <div className="flex items-center space-x-4">
-        <Fridge />
+        {Buttons}
         <Cart />
 
         <DropdownMenu>

@@ -1,5 +1,10 @@
+import { useTransition } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
+import { useSupabase } from "@/app/supabase-provider"
+
+import { AddToFridge } from "./fridge/add-to-fridge"
 import { Icons } from "./icons"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
@@ -40,9 +45,11 @@ export default function IngredientListItem({
           <p className="text-sm text-muted-foreground">{`${amount} ${unit}`}</p>
         )}
       </div>
-      <Button variant="secondary">
-        <Icons.fridge className="h-4 w-4" />
-      </Button>
+      <AddToFridge
+        ingredient={ingredient}
+        defaultAmount={amount || 1}
+        unit={unit || "g"}
+      />
       <Button variant="secondary">
         <Icons.cart className="h-4 w-4" />
       </Button>

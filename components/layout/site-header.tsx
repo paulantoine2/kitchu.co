@@ -1,8 +1,10 @@
+import { Suspense } from "react"
 import Link from "next/link"
 
 import { supabase } from "@/lib/supabase"
 import { MainNav } from "@/components/main-nav"
 
+import { Fridge } from "../fridge/fridge"
 import { StoreSelectorDialog } from "./store-selector"
 import { UserNav } from "./user-nav"
 
@@ -34,7 +36,13 @@ export async function SiteHeader() {
           <MainNav />
         </nav>
 
-        <UserNav />
+        <UserNav
+          Buttons={
+            <Suspense>
+              <Fridge />
+            </Suspense>
+          }
+        />
       </div>
     </header>
   )

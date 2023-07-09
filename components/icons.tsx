@@ -5,6 +5,7 @@ import {
   Beef,
   Carrot,
   Check,
+  CheckCircle2,
   ChevronDown,
   Drumstick,
   Facebook,
