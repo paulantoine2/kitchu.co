@@ -12,7 +12,9 @@ import {
   Fish,
   Loader2,
   LucideProps,
+  Minus,
   PiggyBank,
+  Plus,
   PlusCircle,
   Refrigerator,
   Search,
@@ -43,6 +45,8 @@ export const Icons: Record<string, Icon> = {
   user: User,
   spinner: Loader2,
   cart: ShoppingCart,
+  plus: Plus,
+  minus: Minus,
   apple: (props: LucideProps) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <path

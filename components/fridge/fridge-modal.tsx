@@ -8,7 +8,17 @@ import { useRouter } from "next/navigation"
 import { Icons } from "../icons"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
+import { Input } from "../ui/input"
 import { ScrollArea } from "../ui/scroll-area"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
 import { Separator } from "../ui/separator"
 import {
   Sheet,
@@ -50,6 +60,22 @@ export default function FridgeModal({ items }: Props) {
     }
   }, [isOpen, items.length, quantityRef])
 
+  function renderAddButton(className?: string) {
+    return (
+      <Button
+        onClick={() => {
+          router.push("/ingredients")
+          setIsOpen(false)
+        }}
+        size="sm"
+        className={className}
+      >
+        <Icons.add className="mr-2 h-4 w-4" />
+        Ajouter des ingrédients
+      </Button>
+    )
+  }
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -64,34 +90,66 @@ export default function FridgeModal({ items }: Props) {
         </SheetHeader>
         <Separator />
         {items.length > 0 ? (
-          <ScrollArea className="flex-1 px-4">
-            <div className="mt-4"></div>
-            {items.map((item) => (
-              <Card
-                key={item.ingredient?.id}
-                className="mb-2 pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center"
-              >
-                {item.ingredient && (
-                  <div className="overflow-hidden rounded-full aspect-square relative w-16 h-16 p-2 ">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${item.ingredient.id}.png`}
-                      alt={item.ingredient.name}
-                      width={100}
-                      height={100}
-                      className="object-cover"
-                      placeholder="empty"
-                    />
+          <>
+            <ScrollArea className="flex-1 px-4">
+              <div className="mt-4"></div>
+              {items.map((item) => (
+                <React.Fragment key={item.ingredient?.id}>
+                  <div className="pl-3 pr-1 pt-4 pb-4 space-x-3 flex ">
+                    <div className="flex-1">
+                      <div className="text-sm font-medium truncate">
+                        {item.ingredient?.name}
+                      </div>
+                      <div className="text-sm truncate text-muted-foreground capitalize">
+                        {item.ingredient?.category}
+                      </div>
+                      <div className="flex space-x-2 mt-2">
+                        <div className="border border-input rounded-sm flex">
+                          <Button variant="ghost" className="p-2  h-[30px]">
+                            <Icons.minus className="w-4 h-4" />
+                          </Button>
+                          <Input
+                            value={item.quantity}
+                            className="w-[40px] text-center p-0 border-none z-10  h-[30px]"
+                          />
+                          <Button variant="ghost" className="p-2 h-[30px]">
+                            <Icons.plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        <Select value="pce">
+                          <SelectTrigger className="w-[100px] h-8">
+                            <SelectValue placeholder="Select a fruit" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="g">g</SelectItem>
+                              <SelectItem value="pce">pièce</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    {item.ingredient && (
+                      <div className="overflow-hidden rounded-full aspect-square relative w-16 h-16 ">
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${item.ingredient.id}.png`}
+                          alt={item.ingredient.name}
+                          width={100}
+                          height={100}
+                          className="object-cover"
+                          placeholder="empty"
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-                <div className="overflow-hidden flex-1">
-                  <h3 className="text-sm font-medium truncate">
-                    {item.ingredient?.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{`${item.quantity} ${item.unit}`}</p>
-                </div>
-              </Card>
-            ))}
-          </ScrollArea>
+                  <Separator />
+                </React.Fragment>
+              ))}
+            </ScrollArea>
+            <Separator />
+            <div className="p-4">{renderAddButton("w-full")}</div>
+          </>
         ) : (
           <div className="h-full flex-col flex items-center justify-center px-8 space-y-2">
             <Icons.fridge className="text-muted-foreground" />
@@ -101,16 +159,7 @@ export default function FridgeModal({ items }: Props) {
               aider a vous proposer des recettes les utilisant en priorité
             </p>
 
-            <Button
-              onClick={() => {
-                router.push("/ingredients")
-                setIsOpen(false)
-              }}
-              size="sm"
-            >
-              <Icons.add className="mr-2 h-4 w-4" />
-              Ajouter des ingrédients
-            </Button>
+            {renderAddButton()}
           </div>
         )}
         {/* <Separator />

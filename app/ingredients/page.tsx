@@ -27,7 +27,7 @@ export default async function IngredientsPage() {
           </h1>
           <div className="grid grid-cols-3 gap-6 my-4">
             {ingredients.map((i) => (
-              <IngredientListItem key={i.id} ingredient={i} />
+              <IngredientListItem key={i.id} ingredient={i} addToFridge />
             ))}
           </div>
         </div>

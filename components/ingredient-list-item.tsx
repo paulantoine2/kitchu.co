@@ -17,6 +17,8 @@ type Props = {
   amount?: number | null
   unit?: string
   show_name?: boolean
+  addToFridge?: boolean
+  addToCart?: boolean
 }
 
 export default function IngredientListItem({
@@ -24,6 +26,8 @@ export default function IngredientListItem({
   amount,
   unit,
   show_name = true,
+  addToFridge = false,
+  addToCart = false,
 }: Props) {
   return (
     <Card className=" pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center">
@@ -45,14 +49,18 @@ export default function IngredientListItem({
           <p className="text-sm text-muted-foreground">{`${amount} ${unit}`}</p>
         )}
       </div>
-      <AddToFridge
-        ingredient={ingredient}
-        defaultAmount={amount || 1}
-        unit={unit || "g"}
-      />
-      <Button variant="secondary">
-        <Icons.cart className="h-4 w-4" />
-      </Button>
+      {addToFridge && (
+        <AddToFridge
+          ingredient={ingredient}
+          defaultAmount={amount || 1}
+          unit={unit || "g"}
+        />
+      )}
+      {addToCart && (
+        <Button variant="secondary">
+          <Icons.cart className="h-4 w-4" />
+        </Button>
+      )}
     </Card>
   )
 }
