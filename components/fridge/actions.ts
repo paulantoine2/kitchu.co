@@ -24,12 +24,28 @@ export async function removeItemFromFridge(props: {
     .eq("ingredient_id", props.ingredient_id)
 }
 
-export async function updateFridgeItemQuantity(props: {
+export async function updateFridgeItem(props: {
   ingredient_id: string
-  quantity: number
-  unit: string
+  updates: { quantity?: number; unit?: string }
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
-  return supabase.from("fridge").upsert(props)
+  const res = await supabase
+    .from("fridge")
+    .update(props.updates)
+    .eq("user_id", props.user_id)
+    .eq("ingredient_id", props.ingredient_id)
+    .select()
+  return res
+}
+
+export async function clearFridge(props: { user_id: string }) {
+  const supabase = createServerSupabaseClient()
+  const res = await supabase
+    .from("fridge")
+    .delete()
+    .match({ user_id: props.user_id })
+    .eq("user_id", props.user_id)
+
+  return res
 }

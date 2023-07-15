@@ -1,13 +1,11 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState, useTransition } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 import { Icons } from "../icons"
 import { Button } from "../ui/button"
-import { Card } from "../ui/card"
 import { Input } from "../ui/input"
 import { ScrollArea } from "../ui/scroll-area"
 import {
@@ -15,50 +13,60 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../ui/select"
 import { Separator } from "../ui/separator"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet"
+import { useFridge } from "./fridge-provider"
 
-type Props = {
-  items: {
-    quantity: number
-    unit: string
-    ingredient: {
-      category: string
-      id: string
-      name: string
-    } | null
-  }[]
+type FridgeItem = {
+  quantity: number
+  unit: string
+  ingredient: {
+    category: string
+    id: string
+    name: string
+  } | null
 }
 
-export default function FridgeModal({ items }: Props) {
+type Props = {
+  items: FridgeItem[]
+  user_id: string
+}
+
+export default function FridgeModal() {
   const [isOpen, setIsOpen] = useState(false)
-  const quantityRef = useRef(items.length)
+  const {
+    addItemToFridge,
+    clearFridge,
+    fridge,
+    fridgeIsUpdating,
+    removeItemFromFridge,
+    startFridgeTransition,
+    updateFridgeItem,
+  } = useFridge()
+  const quantityRef = useRef(fridge.items.length)
   const router = useRouter()
+  const isPending = fridgeIsUpdating
 
   useEffect(() => {
-    if (items.length !== quantityRef.current) {
+    if (fridge.items.length !== quantityRef.current) {
       // But only if it's not already open (quantity also changes when editing items in cart).
       if (!isOpen) {
         setIsOpen(true)
       }
 
       // Always update the quantity reference
-      quantityRef.current = items.length
+      quantityRef.current = fridge.items.length
     }
-  }, [isOpen, items.length, quantityRef])
+  }, [isOpen, fridge.items.length, quantityRef])
 
   function renderAddButton(className?: string) {
     return (
@@ -85,17 +93,17 @@ export default function FridgeModal({ items }: Props) {
         </Button>
       </SheetTrigger>
       <SheetContent className="flex flex-col px-0 gap-0">
-        <SheetHeader className="px-4 pb-4">
+        <SheetHeader className="px-4 pb-4 flex flew-row justify-between">
           <SheetTitle>Fridge</SheetTitle>
         </SheetHeader>
         <Separator />
-        {items.length > 0 ? (
+        {fridge.items.length > 0 ? (
           <>
             <ScrollArea className="flex-1 px-4">
               <div className="mt-4"></div>
-              {items.map((item) => (
+              {fridge.items.map((item) => (
                 <React.Fragment key={item.ingredient?.id}>
-                  <div className="pl-3 pr-1 pt-4 pb-4 space-x-3 flex ">
+                  <div className="group pl-3 pr-1 pt-4 pb-4 space-x-3 flex ">
                     <div className="flex-1">
                       <div className="text-sm font-medium truncate">
                         {item.ingredient?.name}
@@ -105,20 +113,37 @@ export default function FridgeModal({ items }: Props) {
                       </div>
                       <div className="flex space-x-2 mt-2">
                         <div className="border border-input rounded-sm flex">
-                          <Button variant="ghost" className="p-2  h-[30px]">
+                          {/* <Button
+                            variant="ghost"
+                            className="p-2  h-[30px]"
+                            disabled={isPending || item.quantity === 1}
+                            onClick={() => decrement(item)}
+                          >
                             <Icons.minus className="w-4 h-4" />
-                          </Button>
+                          </Button> */}
                           <Input
                             value={item.quantity}
-                            className="w-[40px] text-center p-0 border-none z-10  h-[30px]"
+                            className="w-[60px] text-center p-0 px-2 border-none z-10  h-[30px]"
+                            disabled={isPending}
+                            type="number"
+                            onChange={(e) =>
+                              updateFridgeItem(item, {
+                                quantity: +e.target.value,
+                              })
+                            }
                           />
-                          <Button variant="ghost" className="p-2 h-[30px]">
+                          {/* <Button
+                            variant="ghost"
+                            className="p-2 h-[30px]"
+                            disabled={isPending}
+                            onClick={() => increment(item)}
+                          >
                             <Icons.plus className="w-4 h-4" />
-                          </Button>
+                          </Button> */}
                         </div>
 
                         <Select value="pce">
-                          <SelectTrigger className="w-[100px] h-8">
+                          <SelectTrigger className="w-[80px] h-8">
                             <SelectValue placeholder="Select a fruit" />
                           </SelectTrigger>
                           <SelectContent>
@@ -128,6 +153,13 @@ export default function FridgeModal({ items }: Props) {
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                        <Button
+                          variant="ghost"
+                          className="p-2 h-[32px]"
+                          onClick={() => removeItemFromFridge(item)}
+                        >
+                          <Icons.trash className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
                     {item.ingredient && (
@@ -148,7 +180,12 @@ export default function FridgeModal({ items }: Props) {
               ))}
             </ScrollArea>
             <Separator />
-            <div className="p-4">{renderAddButton("w-full")}</div>
+            <div className="p-4 space-y-2">
+              {renderAddButton("w-full")}
+              <Button variant="ghost" className="w-full" onClick={clearFridge}>
+                Vider le fridge
+              </Button>
+            </div>
           </>
         ) : (
           <div className="h-full flex-col flex items-center justify-center px-8 space-y-2">

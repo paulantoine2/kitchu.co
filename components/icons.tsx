@@ -7,6 +7,7 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  Delete,
   Drumstick,
   Facebook,
   Fish,
@@ -19,6 +20,7 @@ import {
   Refrigerator,
   Search,
   ShoppingCart,
+  Trash,
   User,
   Waves,
   X,
@@ -47,6 +49,7 @@ export const Icons: Record<string, Icon> = {
   cart: ShoppingCart,
   plus: Plus,
   minus: Minus,
+  trash: Trash,
   apple: (props: LucideProps) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <path

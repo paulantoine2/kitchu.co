@@ -4,7 +4,7 @@ import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { MainNav } from "@/components/main-nav"
 
-import { Fridge } from "../fridge/fridge"
+import FridgeModal from "../fridge/fridge-modal"
 import { StoreSelectorDialog } from "./store-selector"
 import { UserNav } from "./user-nav"
 
@@ -39,7 +39,7 @@ export async function SiteHeader() {
         <UserNav
           Buttons={
             <Suspense>
-              <Fridge />
+              <FridgeModal />
             </Suspense>
           }
         />

@@ -6,6 +6,7 @@ import "./globals.css"
 import { Suspense } from "react"
 
 import { Toaster } from "@/components/ui/toaster"
+import { Fridge } from "@/components/fridge/fridge"
 import { SiteHeader } from "@/components/layout/site-header"
 
 import SupabaseProvider from "./supabase-provider"
@@ -30,15 +31,17 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <SupabaseProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              <Suspense>
-                <div className="flex-1">{children}</div>
-              </Suspense>
-            </div>
-            <Toaster />
-          </ThemeProvider>
+          <Fridge>
+            <ThemeProvider attribute="class" defaultTheme="light">
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                <Suspense>
+                  <div className="flex-1">{children}</div>
+                </Suspense>
+              </div>
+              <Toaster />
+            </ThemeProvider>
+          </Fridge>
         </SupabaseProvider>
       </body>
     </html>
