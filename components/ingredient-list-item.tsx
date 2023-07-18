@@ -30,7 +30,7 @@ export default function IngredientListItem({
   addToCart = false,
 }: Props) {
   return (
-    <Card className=" pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center">
+    <div className=" pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center">
       <div className="overflow-hidden rounded-full aspect-square relative w-16 h-16 p-2 ">
         <Image
           src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${ingredient.id}.png`}
@@ -61,6 +61,6 @@ export default function IngredientListItem({
           <Icons.cart className="h-4 w-4" />
         </Button>
       )}
-    </Card>
+    </div>
   )
 }

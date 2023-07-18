@@ -10,3 +10,9 @@ export type Ingredient = {
   id: string
   name: string
 }
+
+export type Quantity = {
+  ingredient: Ingredient | null
+  amount: number | null
+  unit: string
+}

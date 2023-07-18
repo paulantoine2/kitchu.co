@@ -1,18 +1,20 @@
 import { cache } from "react"
 
 import { makeSupabase, supabase } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 type RecipePrice = {
   id: string
   persons: number
-  salepoint_id: number | undefined
 }
 
-export async function RecipePrice({
-  id,
-  persons = 2,
-  salepoint_id,
-}: RecipePrice) {
+export async function RecipePrice({ id, persons = 2 }: RecipePrice) {
+  const session = await createServerSupabaseClient().auth.getSession()
+
+  const salepoint_id =
+    session?.data?.session?.user.user_metadata?.market_salepoint?.id ||
+    undefined
+
   if (!salepoint_id)
     return (
       <p className="text-sm font-medium truncate text-red-500">

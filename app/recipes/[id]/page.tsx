@@ -1,19 +1,31 @@
+import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { supabase } from "@/lib/supabase"
+import { makeSupabase, supabase } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Badge } from "@/components/ui/badge"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Icons } from "@/components/icons"
+import IngredientListItem from "@/components/ingredient-list-item"
 import { RecipeIngredientsList } from "@/components/recipe-ingredients-list"
+import { RecipePrice } from "@/components/recipe-price"
 
 export default async function RecipePage({
   params,
 }: {
   params: { id: string }
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await makeSupabase({ cache: "force-cache" })
     .from("recipe")
     .select(
       `
@@ -23,6 +35,9 @@ export default async function RecipePage({
         ),
         cuisine (
           name
+        ),
+        quantity (
+          amount,unit,ingredient(id,name)
         )
       `
     )
@@ -72,7 +87,13 @@ export default async function RecipePage({
           </div>
         </div>
         <div className="pt-6">
-          <RecipeIngredientsList id={params.id} />
+          <Card className="space-y-4 p-6">
+            <Suspense>
+              <RecipePrice id={params.id} persons={2} />
+            </Suspense>
+
+            <RecipeIngredientsList quantity={data.quantity} />
+          </Card>
         </div>
       </div>
     </div>

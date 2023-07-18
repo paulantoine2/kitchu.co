@@ -11,6 +11,7 @@ import {
   Drumstick,
   Facebook,
   Fish,
+  Info,
   Loader2,
   LucideProps,
   Minus,
@@ -50,6 +51,7 @@ export const Icons: Record<string, Icon> = {
   plus: Plus,
   minus: Minus,
   trash: Trash,
+  info: Info,
   apple: (props: LucideProps) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <path
