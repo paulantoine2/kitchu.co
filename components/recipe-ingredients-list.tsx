@@ -61,8 +61,8 @@ export function RecipeIngredientsList({
               <p className="w-[300px]">
                 Les produits dont vous avez besoin pour préparer cette recette
                 sont automatiquement ajoutés au panier en quantité necessaire en
-                fonction du nombre de personnes, des excès d'ingredients
-                d'autres recettes ajoutées, et des ingrédients présents dans
+                fonction du nombre de personnes, des excès d&aposingredients
+                d&aposautres recettes ajoutées, et des ingrédients présents dans
                 votre fridge.
               </p>
             </TooltipContent>
