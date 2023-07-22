@@ -8,7 +8,7 @@ export async function Cart({ children }: { children: React.ReactNode }) {
 
   const user_id = session.data.session?.user.id
 
-  if (!user_id) return null
+  if (!user_id) return <>{children}</>
 
   const { data, error } = await supabase
     .from("cart_recipe")

@@ -34,16 +34,18 @@ export default function RootLayout({
       <body>
         <SupabaseProvider>
           <Fridge>
-            <ThemeProvider attribute="class" defaultTheme="light">
-              <div className="relative flex min-h-screen flex-col">
-                <SiteHeader />
-                <Suspense>
-                  <div className="flex-1">{children}</div>
-                </Suspense>
-                <Analytics />
-              </div>
-              <Toaster />
-            </ThemeProvider>
+            <Cart>
+              <ThemeProvider attribute="class" defaultTheme="light">
+                <div className="relative flex min-h-screen flex-col">
+                  <SiteHeader />
+                  <Suspense>
+                    <div className="flex-1">{children}</div>
+                  </Suspense>
+                  <Analytics />
+                </div>
+                <Toaster />
+              </ThemeProvider>
+            </Cart>
           </Fridge>
         </SupabaseProvider>
       </body>
