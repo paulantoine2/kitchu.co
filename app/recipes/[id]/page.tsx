@@ -91,8 +91,10 @@ export default async function RecipePage({
             <Suspense>
               <RecipePrice id={params.id} persons={2} />
             </Suspense>
-
-            <RecipeIngredientsList quantity={data.quantity} />
+            <RecipeIngredientsList
+              quantity={data.quantity}
+              recipe_id={params.id}
+            />
           </Card>
         </div>
       </div>

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { MainNav } from "@/components/main-nav"
 
+import CartModal from "../cart/cart-modal"
 import FridgeModal from "../fridge/fridge-modal"
 import { StoreSelectorDialog } from "./store-selector"
 import { UserNav } from "./user-nav"
@@ -40,6 +41,7 @@ export async function SiteHeader() {
           Buttons={
             <Suspense>
               <FridgeModal />
+              <CartModal />
             </Suspense>
           }
         />

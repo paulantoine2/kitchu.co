@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { Fragment, useState, useTransition } from "react"
 
 import { Ingredient, Quantity } from "@/types/data"
 import { supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
+import { useCart } from "./cart/cart-provider"
 import { Icons } from "./icons"
 import IngredientListItem from "./ingredient-list-item"
 import { RecipePrice } from "./recipe-price"
@@ -22,10 +23,16 @@ import {
 
 export function RecipeIngredientsList({
   quantity,
+  recipe_id,
 }: {
   quantity: (Quantity | null)[]
+  recipe_id: string
 }) {
   const [persons, setPersons] = useState(2)
+  const { cart, cartIsUpdating, addItemToCart } = useCart()
+
+  const pending = cartIsUpdating
+
   return (
     <>
       <div className="flex items-center w-full">
@@ -33,6 +40,7 @@ export function RecipeIngredientsList({
           variant="outline"
           size="icon"
           onClick={() => setPersons((prev) => prev - 1)}
+          disabled={pending}
         >
           <Icons.minus className="h-4 w-4" />
         </Button>
@@ -41,11 +49,17 @@ export function RecipeIngredientsList({
           variant="outline"
           size="icon"
           onClick={() => setPersons((prev) => prev + 1)}
+          disabled={pending}
         >
           <Icons.plus className="h-4 w-4" />
         </Button>
       </div>
-      <Button className="w-full" size="lg">
+      <Button
+        className="w-full"
+        size="lg"
+        disabled={pending}
+        onClick={() => addItemToCart(recipe_id, persons)}
+      >
         <Icons.cart className="h-4 w-4 mr-2" />
         Ajouter au panier
       </Button>
@@ -74,10 +88,9 @@ export function RecipeIngredientsList({
 
       <div className="space-y-2">
         {quantity?.map((item, key) => (
-          <>
+          <Fragment key={key}>
             {item && (
               <IngredientListItem
-                key={key}
                 ingredient={
                   Array.isArray(item) ? item[0].ingredient : item.ingredient
                 }
@@ -85,7 +98,7 @@ export function RecipeIngredientsList({
                 unit={item.unit}
               />
             )}
-          </>
+          </Fragment>
         ))}
       </div>
     </>

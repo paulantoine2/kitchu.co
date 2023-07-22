@@ -3,12 +3,43 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
   public: {
     Tables: {
+      cart_recipe: {
+        Row: {
+          persons: number
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          persons: number
+          recipe_id: string
+          user_id: string
+        }
+        Update: {
+          persons?: number
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_recipe_recipe_id_fkey"
+            columns: ["recipe_id"]
+            referencedRelation: "recipe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_recipe_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       cuisine: {
         Row: {
           icon: string | null

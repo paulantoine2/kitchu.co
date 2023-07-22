@@ -16,7 +16,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
-import Cart from "./cart"
 
 function getGravatarURL(email: string) {
   // Trim leading and trailing whitespace from
@@ -38,8 +37,6 @@ export function UserNav({ Buttons }: { Buttons: React.ReactNode }) {
     return (
       <div className="flex items-center space-x-4">
         {Buttons}
-        <Cart />
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">

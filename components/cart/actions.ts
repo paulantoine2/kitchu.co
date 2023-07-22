@@ -2,47 +2,46 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
-export async function addItemToFridge(props: {
-  ingredient_id: string
-  quantity: number
-  unit: string
+export async function addItemToCart(props: {
+  persons: number
+  recipe_id: string
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
-  return supabase.from("fridge").insert(props)
+  return supabase.from("cart_recipe").insert(props)
 }
 
-export async function removeItemFromFridge(props: {
-  ingredient_id: string
+export async function removeItemFromCart(props: {
+  recipe_id: string
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
   return supabase
-    .from("fridge")
+    .from("cart_recipe")
     .delete()
     .eq("user_id", props.user_id)
-    .eq("ingredient_id", props.ingredient_id)
+    .eq("recipe_id", props.recipe_id)
 }
 
-export async function updateFridgeItem(props: {
-  ingredient_id: string
-  updates: { quantity?: number; unit?: string }
+export async function updateCartItem(props: {
+  recipe_id: string
+  updates: { persons: number }
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
   const res = await supabase
-    .from("fridge")
+    .from("cart_recipe")
     .update(props.updates)
     .eq("user_id", props.user_id)
-    .eq("ingredient_id", props.ingredient_id)
+    .eq("recipe_id", props.recipe_id)
     .select()
   return res
 }
 
-export async function clearFridge(props: { user_id: string }) {
+export async function clearCart(props: { user_id: string }) {
   const supabase = createServerSupabaseClient()
   const res = await supabase
-    .from("fridge")
+    .from("cart_recipe")
     .delete()
     .eq("user_id", props.user_id)
 

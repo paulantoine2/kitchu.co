@@ -67,14 +67,7 @@ export async function RecipesList({
               <Suspense
                 fallback={<Skeleton className="h-5 w-[100px]"></Skeleton>}
               >
-                <RecipePrice
-                  persons={2}
-                  id={r.id}
-                  salepoint_id={
-                    session?.data?.session?.user.user_metadata?.market_salepoint
-                      ?.id || undefined
-                  }
-                />
+                <RecipePrice persons={2} id={r.id} />
               </Suspense>
             </div>
           </div>
