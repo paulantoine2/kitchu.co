@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
 import { Suspense } from "react"
+import { Analytics } from "@vercel/analytics/react"
 
 import { Toaster } from "@/components/ui/toaster"
 import { Cart } from "@/components/cart/cart"
@@ -40,6 +41,7 @@ export default function RootLayout({
                   <Suspense>
                     <div className="flex-1">{children}</div>
                   </Suspense>
+                  <Analytics />
                 </div>
                 <Toaster />
               </ThemeProvider>
