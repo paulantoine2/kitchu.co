@@ -33,20 +33,16 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <SupabaseProvider>
-          <Fridge>
-            <Cart>
-              <ThemeProvider attribute="class" defaultTheme="light">
-                <div className="relative flex min-h-screen flex-col">
-                  <SiteHeader />
-                  <Suspense>
-                    <div className="flex-1">{children}</div>
-                  </Suspense>
-                  <Analytics />
-                </div>
-                <Toaster />
-              </ThemeProvider>
-            </Cart>
-          </Fridge>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <Suspense>
+                <div className="flex-1">{children}</div>
+              </Suspense>
+              <Analytics />
+            </div>
+            <Toaster />
+          </ThemeProvider>
         </SupabaseProvider>
       </body>
     </html>
