@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 import "./globals.css"
 import { Suspense } from "react"
+import { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/react"
 
 import { Toaster } from "@/components/ui/toaster"
@@ -15,13 +16,16 @@ import SupabaseProvider from "./supabase-provider"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Fridge",
   description: "Find your next meal",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
+  verification: {
+    google: "DycCTMA2fAoHLPsWpbYWaNP_Ha-7adVhJz3WEpgoHNo",
+  },
 }
 
 export default function RootLayout({
