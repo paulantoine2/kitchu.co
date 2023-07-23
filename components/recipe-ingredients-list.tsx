@@ -1,10 +1,12 @@
 "use client"
 
 import { Fragment, useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 
 import { Ingredient, Quantity } from "@/types/data"
 import { supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { useSupabase } from "@/app/supabase-provider"
 
 import { useCart } from "./cart/cart-provider"
 import { Icons } from "./icons"
@@ -30,8 +32,15 @@ export function RecipeIngredientsList({
 }) {
   const [persons, setPersons] = useState(2)
   const { cart, cartIsUpdating, addItemToCart } = useCart()
+  const { session } = useSupabase()
+  const router = useRouter()
 
   const pending = cartIsUpdating
+
+  const handleAddToCart = () => {
+    if (session) addItemToCart(recipe_id, persons)
+    else router.push("/auth")
+  }
 
   return (
     <>
@@ -58,7 +67,7 @@ export function RecipeIngredientsList({
         className="w-full"
         size="lg"
         disabled={pending}
-        onClick={() => addItemToCart(recipe_id, persons)}
+        onClick={handleAddToCart}
       >
         <Icons.cart className="h-4 w-4 mr-2" />
         Ajouter au panier

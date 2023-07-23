@@ -5,6 +5,7 @@ import Link from "next/link"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 import { RecipePrice } from "./recipe-price"
+import RecipeCard from "./recipe/recipe-card"
 import { Skeleton } from "./ui/skeleton"
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   cuisine?: string
   tag?: string
   ingredient?: string
+  limit?: number
 }
 
 export async function RecipesList({
@@ -19,6 +21,7 @@ export async function RecipesList({
   cuisine,
   ingredient,
   tag,
+  limit,
 }: Props) {
   const supabase = createServerSupabaseClient()
   let req = supabase
@@ -33,6 +36,7 @@ export async function RecipesList({
   if (cuisine) req = req.in("cuisine.id", cuisine.split(","))
   if (tag) req = req.in("tag.id", tag.split(","))
   if (ingredient) req = req.in("ingredient.id", ingredient.split(","))
+  if (limit) req = req.limit(limit)
 
   const { data: recipes, error } = await req
 
@@ -45,33 +49,7 @@ export async function RecipesList({
   return (
     <>
       {recipes?.map((r, index) => (
-        <Link key={r.id + id} href={`/recipes/${r.id}`}>
-          <div
-            className="space-y-3 transition-all animate-fade-in opacity-0"
-            style={{ animationDelay: `${index * 25}ms` }}
-          >
-            <div className="overflow-hidden rounded-md aspect-square relative">
-              <Image
-                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${r.id}.png`}
-                alt={r.name}
-                fill
-                className="object-cover bg-muted"
-                quality={25}
-              />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium truncate">{r.name}</h3>
-              <p className="text-sm text-muted-foreground truncate">
-                {r.headline}
-              </p>
-              <Suspense
-                fallback={<Skeleton className="h-5 w-[100px]"></Skeleton>}
-              >
-                <RecipePrice persons={2} id={r.id} />
-              </Suspense>
-            </div>
-          </div>
-        </Link>
+        <RecipeCard key={r.id + id} animationDelay={index * 25} recipe={r} />
       ))}
     </>
   )

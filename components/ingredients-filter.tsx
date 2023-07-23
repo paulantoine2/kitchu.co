@@ -2,7 +2,7 @@
 
 import { Ingredient } from "@/types/data"
 
-import { IngredientItem } from "./fridge"
+import { IngredientItem } from "./fridge-old"
 import IngredientListItem from "./ingredient-list-item"
 
 export default function IngredientsFilter({

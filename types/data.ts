@@ -11,8 +11,30 @@ export type Ingredient = {
   name: string
 }
 
+export type Tag = {
+  id: string
+  name: string
+}
+
+export type Cuisine = {
+  icon: string | null
+  id: string
+  name: string
+}
+
 export type Quantity = {
   ingredient: Ingredient | null
   amount: number | null
   unit: string
+}
+
+export type Recipe = {
+  headline: string | null
+  id: string
+  link: string | null
+  name: string
+  full_name: string | null
+  tag: Tag[]
+  cuisine: Cuisine[]
+  ingredient: Ingredient[]
 }
