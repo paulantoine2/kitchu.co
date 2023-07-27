@@ -3,6 +3,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
+import { Step } from "@/types/data"
+import markdownToHtml from "@/lib/markDownToHTML"
 import { makeSupabase, supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 import { Badge } from "@/components/ui/badge"
@@ -74,17 +76,9 @@ export default async function RecipePage({
               data.tag.map((tag, key) => <Badge key={key}>{tag.name}</Badge>)}
           </div>
           <Separator className="my-4" />
-          <div className="flex items-center justify-center h-[400px]">
-            {data.link && (
-              <Link
-                className={buttonVariants({ size: "lg" })}
-                href={data.link}
-                target="_blank"
-              >
-                Open recipe on HelloFresh
-              </Link>
-            )}
-          </div>
+
+          {data.steps &&
+            data.steps.map((step) => <StepBody key={step.index} step={step} />)}
         </div>
         <div className="pt-6">
           <Card className="space-y-4 p-6">
@@ -98,6 +92,23 @@ export default async function RecipePage({
           </Card>
         </div>
       </div>
+    </div>
+  )
+}
+
+async function StepBody({ step }: { step: Step }) {
+  const content = await markdownToHtml(step?.instructionsMarkdown)
+
+  return (
+    <div>
+      <h3>Step {step.index}</h3>
+      <div
+        className="p-6"
+        key={step.index}
+        dangerouslySetInnerHTML={{
+          __html: content,
+        }}
+      />
     </div>
   )
 }

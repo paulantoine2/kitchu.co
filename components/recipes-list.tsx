@@ -42,8 +42,6 @@ export async function RecipesList({
 
   if (!recipes || !recipes.length) return <p>No results</p>
 
-  const session = await supabase.auth.getSession()
-
   const id = new Date().toISOString()
 
   return (

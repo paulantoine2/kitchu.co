@@ -1,3 +1,5 @@
+import { Suspense } from "react"
+
 import { ImportDialog } from "@/components/layout/import-dialog"
 import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
@@ -25,12 +27,14 @@ export default async function RecipesPage({
       </div>
       <SearchToolbar />
       <div className="grid grid-cols-5 gap-6 my-4">
-        <RecipesList
-          searchValue={searchValue}
-          tag={tag}
-          cuisine={cuisine}
-          ingredient={ingredient}
-        />
+        <Suspense>
+          <RecipesList
+            searchValue={searchValue}
+            tag={tag}
+            cuisine={cuisine}
+            ingredient={ingredient}
+          />
+        </Suspense>
       </div>
     </>
   )

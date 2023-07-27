@@ -1,6 +1,8 @@
 import { SupabaseClient } from "@supabase/supabase-js"
+import { NodeHtmlMarkdown } from "node-html-markdown"
 import { v5 as uuid } from "uuid"
 
+import { Step } from "@/types/data"
 import { Category, Item, ItemIngredient, Search, Tag } from "@/types/hellofresh"
 
 import { Database } from "./database.types"
@@ -122,6 +124,17 @@ async function upsertRecipes(
         headline: recipe.headline,
         link: recipe.link,
         name: recipe.name,
+        steps: recipe.steps.map(
+          (step) =>
+            ({
+              index: step.index,
+              images: [],
+              instructionsMarkdown: NodeHtmlMarkdown.translate(
+                step.instructionsMarkdown
+              ),
+              videos: [],
+            } as Step)
+        ),
       }
     })
   )

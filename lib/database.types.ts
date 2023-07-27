@@ -1,3 +1,5 @@
+import { Step } from "@/types/data"
+
 export type Json =
   | string
   | number
@@ -264,6 +266,7 @@ export interface Database {
           id: string
           link: string | null
           name: string
+          steps: Step[] | null
           full_name: string | null
         }
         Insert: {
@@ -271,12 +274,14 @@ export interface Database {
           id: string
           link?: string | null
           name: string
+          steps?: Step[] | null
         }
         Update: {
           headline?: string | null
           id?: string
           link?: string | null
           name?: string
+          steps?: Step[] | null
         }
         Relationships: []
       }

@@ -28,6 +28,13 @@ export type Quantity = {
   unit: string
 }
 
+export type Step = {
+  index: number
+  instructionsMarkdown: string
+  images: string[]
+  videos: string[]
+}
+
 export type Recipe = {
   headline: string | null
   id: string
@@ -37,4 +44,5 @@ export type Recipe = {
   tag: Tag[]
   cuisine: Cuisine[]
   ingredient: Ingredient[]
+  steps: Step[]
 }

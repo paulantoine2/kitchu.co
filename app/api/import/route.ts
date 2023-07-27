@@ -24,9 +24,9 @@ export async function POST(request: Request) {
     const supabase = createRouteHandlerClient({ cookies })
 
     // Check if recipe already exists
-    const { data, error } = await supabase.from("recipe").select().eq("id", id)
-    if (error) throw error
-    if (data?.length) return new Response(JSON.stringify({ uuid: recipe_uuid }))
+    // const { data, error } = await supabase.from("recipe").select().eq("id", id)
+    // if (error) throw error
+    // if (data?.length) return new Response(JSON.stringify({ uuid: recipe_uuid }))
 
     await importHelloFreshRecipe(supabase, id)
 
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
   } catch (err) {
     if (err instanceof InvalidImportUrlError)
       return new Response(err.message, { status: 400 })
+    console.error(err)
     return new Response(null, { status: 500 })
   }
 }
