@@ -17,8 +17,7 @@ import SupabaseProvider from "./supabase-provider"
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 export const metadata: Metadata = {
-  title: "Fridge",
-  description: "Find your next meal",
+  title: "Kitchu",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
@@ -36,22 +35,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <SupabaseProvider>
-          <Fridge>
-            <Cart>
-              <ThemeProvider attribute="class" defaultTheme="light">
-                <div className="relative flex min-h-screen flex-col">
-                  <SiteHeader />
-                  <Suspense>
-                    <div className="flex-1">{children}</div>
-                  </Suspense>
-                  <Analytics />
-                </div>
-                <Toaster />
-              </ThemeProvider>
-            </Cart>
-          </Fridge>
-        </SupabaseProvider>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <SupabaseProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Suspense>
+                <div className="flex-1">{children}</div>
+              </Suspense>
+              <Analytics />
+            </div>
+            <Toaster />
+          </SupabaseProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

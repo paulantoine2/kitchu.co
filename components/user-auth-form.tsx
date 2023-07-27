@@ -51,15 +51,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     if (result.error) {
       return toast({
-        title: "Something went wrong.",
-        description: "Your sign in request failed. Please try again.",
+        title: "Une erreur est survenue.",
+        description:
+          "Votre tentative d'inscription à échoué. Veuillez réessayer.",
         variant: "destructive",
       })
     }
 
     return toast({
-      title: "Check your email",
-      description: "We sent you a login link. Be sure to check your spam too.",
+      title: "Vérifiez vos emails",
+      description:
+        "Nous vous avons envoyé un lien de connexion. Pensez à vérifier vos spam.",
     })
   }
 
@@ -72,8 +74,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     if (result.error) {
       return toast({
-        title: "Something went wrong.",
-        description: "Your sign in request failed. Please try again.",
+        title: "Une erreur est survenue.",
+        description:
+          "Votre tentative d'inscription à échoué. Veuillez réessayer.",
         variant: "destructive",
       })
     }
@@ -107,7 +110,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Continue
+            Pré-inscription
           </button>
         </div>
       </form>
@@ -117,7 +120,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Ou se pré-inscrire avec
           </span>
         </div>
       </div>
@@ -153,7 +156,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           )}{" "}
           Apple
         </button> */}
-        <button
+        {/* <button
           type="button"
           className={cn(buttonVariants({ variant: "secondary" }))}
           onClick={() => {
@@ -168,7 +171,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Icons.facebook className="mr-2 h-4 w-4" />
           )}{" "}
           Facebook
-        </button>
+        </button> */}
       </div>
     </div>
   )
