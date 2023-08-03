@@ -1,25 +1,18 @@
 "use client"
 
 import React from "react"
-import Link from "next/link"
 
 import { useSupabase } from "@/app/supabase-provider"
 
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
-import { Button } from "../ui/button"
 
 export default function SignUpAlert() {
   const { session } = useSupabase()
 
-  if (!session)
-    return (
-      <Button asChild size="lg">
-        <Link href="/auth">Pré-inscription</Link>
-      </Button>
-    )
+  if (!session) return null
 
   return (
-    <Alert variant="primary" className="mb-5 w-[500px]">
+    <Alert variant="primary" className="mt-2">
       <AlertTitle>
         Félicitations ! Vous êtes maintenant pré-inscrit à Kitchu.
       </AlertTitle>
