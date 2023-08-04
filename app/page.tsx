@@ -91,7 +91,7 @@ export default async function HomePage() {
             height={350}
           />
         </div>
-        <div className="relative flex gap-4 justify-around my-20 lg:my-[150px] grayscale">
+        <div className="relative flex flex-wrap gap-8 justify-around my-20 lg:my-[150px] grayscale">
           <Image height={30} width={181} src="/carrefour.png" alt="Carrefour" />
           <Image height={30} width={121} src="/leclerc.png" alt="Carrefour" />
           <Image height={30} width={100} src="/auchan.png" alt="Carrefour" />

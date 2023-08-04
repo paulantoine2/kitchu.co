@@ -87,7 +87,10 @@ export function TypographyP({
 }: PropsWithChildren<TypographyProps>) {
   return (
     <p
-      className={cn("leading-7 [&:not(:first-child)]:mt-6", className)}
+      className={cn(
+        "text-sm lg:text-base leading-7 [&:not(:first-child)]:mt-6",
+        className
+      )}
       {...props}
     >
       {children}
