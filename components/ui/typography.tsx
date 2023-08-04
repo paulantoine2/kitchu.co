@@ -14,7 +14,7 @@ export function TypographyH1({
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl",
+        "scroll-m-20 text-2xl font-extrabold tracking-tighter lg:tracking-tight lg:text-5xl",
         className
       )}
       {...props}
@@ -101,7 +101,10 @@ export function TypographyLead({
   ...props
 }: PropsWithChildren<TypographyProps>) {
   return (
-    <p className={cn("text-xl text-muted-foreground", className)} {...props}>
+    <p
+      className={cn("text-md lg:text-xl text-muted-foreground", className)}
+      {...props}
+    >
       {children}
     </p>
   )

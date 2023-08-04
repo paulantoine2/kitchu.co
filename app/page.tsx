@@ -34,7 +34,7 @@ export default async function HomePage() {
     <div>
       <div className="transition-all animate-fade-in container">
         <SignUpAlert />
-        <div className="flex flex-col justify-center items-start h-[700px] gap-5">
+        <div className="flex flex-col justify-center items-start mt-10 lg:h-[700px] gap-5 z-20 relative">
           <Logo height="30" />
           <h1 className="hidden">Kitchu</h1>
           <TypographyH1>
@@ -43,14 +43,23 @@ export default async function HomePage() {
             meilleures recettes
           </TypographyH1>
           <TypographyLead>
-            Trouvez des idées de recettes, évitez le gaspillage,
-            <br /> estimez le cout de vos repas
+            Trouvez des idées de recettes, <br />
+            évitez le gaspillage, <br />
+            estimez le cout de vos repas
           </TypographyLead>
           <Button asChild aria-label="signup">
             <Link href="#signup">Pré-inscription</Link>
           </Button>
         </div>
-        <div className="flex gap-10 relative">
+        <Image
+          alt="demo"
+          className="lg:hidden -mt-[50px] -ml-[100px]"
+          style={{ maxWidth: "calc(100% + 100px)" }}
+          src="/ui-mobile.png"
+          width={1104}
+          height={883}
+        />
+        <div className="gap-10 relative z-10 hidden lg:flex ">
           <RecipeCard
             name="Mafé revisité au poulet & carotte"
             headline="avec des cacahuètes & du riz"
@@ -82,7 +91,7 @@ export default async function HomePage() {
             height={350}
           />
         </div>
-        <div className="relative flex justify-around my-[150px] grayscale">
+        <div className="relative flex gap-4 justify-around my-20 lg:my-[150px] grayscale">
           <Image height={30} width={181} src="/carrefour.png" alt="Carrefour" />
           <Image height={30} width={121} src="/leclerc.png" alt="Carrefour" />
           <Image height={30} width={100} src="/auchan.png" alt="Carrefour" />
@@ -105,7 +114,7 @@ export default async function HomePage() {
             repas et vos courses de manière intelligente.
           </TypographyLead>
         </div>
-        <div className="grid gap-4 grid-rows-2 grid-flow-col my-[100px]">
+        <div className="flex flex-col md:grid gap-4 grid-rows-2 grid-flow-col my-[100px]">
           <FeatureCard
             icon="💡"
             title="Trouvez des idées de recettes"
@@ -143,7 +152,7 @@ export default async function HomePage() {
                 enseignes préférées.
               </>
             }
-            className="row-span-2"
+            className="md:row-span-2"
           />
         </div>
         <div
