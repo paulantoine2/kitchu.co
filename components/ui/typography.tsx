@@ -2,7 +2,9 @@ import { PropsWithChildren } from "react"
 
 import { cn } from "@/lib/utils"
 
-export interface TypographyProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface TypographyProps extends React.HTMLAttributes<HTMLDivElement> {
+  component?: "p" | "h1" | "h2" | "h3" | "h4" | "span" | "div"
+}
 
 export function TypographyH1({
   children,
@@ -43,10 +45,12 @@ export function TypographyH2({
 export function TypographyH3({
   children,
   className,
+  component,
   ...props
 }: PropsWithChildren<TypographyProps>) {
+  const Comp = component || "h3"
   return (
-    <h3
+    <Comp
       className={cn(
         "scroll-m-20 text-2xl font-semibold tracking-tight",
         className
@@ -54,7 +58,7 @@ export function TypographyH3({
       {...props}
     >
       {children}
-    </h3>
+    </Comp>
   )
 }
 

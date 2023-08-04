@@ -34,7 +34,7 @@ export default async function HomePage() {
     <div>
       <div className="transition-all animate-fade-in container">
         <SignUpAlert />
-        <div className="flex flex-col justify-center items-start h-[60vh] gap-5">
+        <div className="flex flex-col justify-center items-start h-[700px] gap-5">
           <Logo height="30" />
           <h1 className="hidden">Kitchu</h1>
           <TypographyH1>
@@ -46,7 +46,7 @@ export default async function HomePage() {
             Trouvez des idées de recettes, évitez le gaspillage,
             <br /> estimez le cout de vos repas
           </TypographyLead>
-          <Button asChild>
+          <Button asChild aria-label="signup">
             <Link href="#signup">Pré-inscription</Link>
           </Button>
         </div>
@@ -219,7 +219,9 @@ function List() {
       className="z-10 space-y-4 py-4 w-[450px] absolute right-0 bottom-[-50px]  backdrop-blur-lg bg-white/90 transition-all animate-fade-in opacity-0"
       style={{ animationDelay: `500ms` }}
     >
-      <TypographyH3 className="px-4">Liste de courses</TypographyH3>
+      <TypographyH3 className="px-4" component="div">
+        Liste de courses
+      </TypographyH3>
       <Separator />
       <div className="px-4">
         <div className="group space-x-3 flex">
@@ -238,7 +240,11 @@ function List() {
                   type="number"
                 />
               </div>
-              <Button variant="ghost" className="p-2 h-[32px]">
+              <Button
+                variant="ghost"
+                className="p-2 h-[32px]"
+                aria-label="trash"
+              >
                 <Icons.trash className="w-4 h-4" />
               </Button>
             </div>
@@ -276,7 +282,9 @@ function List() {
       </div>
       <Separator />
       <div className="px-4">
-        <Button className="w-full">Commander sur Carrefour.fr</Button>
+        <Button className="w-full" role="none">
+          Commander sur Carrefour.fr
+        </Button>
       </div>
     </Card>
   )
@@ -325,9 +333,9 @@ function Product({
             </TypographySmall>
           )}
           {info && (
-            <TypographyMuted>
+            <TypographySmall className="font-normal">
               Partagé avec 1 autre(s) recette(s)
-            </TypographyMuted>
+            </TypographySmall>
           )}
         </div>
       </div>
@@ -348,7 +356,7 @@ function FeatureCard({
 }) {
   return (
     <Card className={cn("p-5 space-y-1", className)}>
-      <TypographyH4>{icon}</TypographyH4>
+      <TypographyLarge className="text-xl">{icon}</TypographyLarge>
       <TypographyLarge>{title}</TypographyLarge>
       <TypographyP className="text-muted-foreground">{description}</TypographyP>
     </Card>

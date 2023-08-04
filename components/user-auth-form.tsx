@@ -103,7 +103,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               </p>
             )}
           </div>
-          <button className={cn(buttonVariants())} disabled={disabled}>
+          <button
+            className={cn(buttonVariants())}
+            disabled={disabled}
+            aria-label="signup"
+          >
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
@@ -129,6 +133,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             signInGoogle()
           }}
           disabled={disabled}
+          aria-label="google"
         >
           {isGoogleLoading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
