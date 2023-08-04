@@ -60,7 +60,7 @@ module.exports = {
       },
       keyframes: {
         "fade-in": {
-          from: { opacity: 0, transform: "translateY(5px)" },
+          from: { opacity: 0.01, transform: "translateY(5px)" },
           to: { opacity: 1, transform: "translateY(0px)" },
         },
         "accordion-down": {

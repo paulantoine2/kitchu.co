@@ -195,6 +195,7 @@ function RecipeCard({
           fill
           className="object-cover bg-muted"
           quality={25}
+          sizes="240px"
         />
       </div>
       <div className="space-y-2">
@@ -232,7 +233,7 @@ function List() {
             <div className="flex space-x-2">
               <div className="border border-input rounded-sm flex">
                 <Input
-                  value={2}
+                  placeholder="2"
                   className="w-[60px] text-center p-0 px-2 border-none z-10  h-[30px]"
                   type="number"
                 />
@@ -250,6 +251,7 @@ function List() {
               className="object-cover bg-muted"
               quality={25}
               placeholder="empty"
+              sizes="64px"
             />
           </div>
         </div>
@@ -308,6 +310,7 @@ function Product({
             className="object-cover bg-muted"
             quality={25}
             placeholder="empty"
+            sizes="48px"
           />
         </div>
         <div className="flex-1 space-y-2 overflow-hidden">

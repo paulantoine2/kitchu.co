@@ -29,13 +29,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   })
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false)
-  const [isAppleLoading, setIsAppleLoading] = useState<boolean>(false)
-  const [isFacebookLoading, setIsFacebookLoading] = useState<boolean>(false)
 
   const { supabase } = useSupabase()
 
-  const disabled =
-    isLoading || isGoogleLoading || isAppleLoading || isFacebookLoading
+  const disabled = isLoading || isGoogleLoading
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
@@ -140,38 +137,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           )}{" "}
           Google
         </button>
-        {/* <button
-          type="button"
-          className={cn(buttonVariants({ variant: "secondary" }))}
-          onClick={() => {
-            setIsAppleLoading(true)
-            // signIn("github")
-          }}
-          disabled={disabled}
-        >
-          {isAppleLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.apple className="mr-2 h-4 w-4" />
-          )}{" "}
-          Apple
-        </button> */}
-        {/* <button
-          type="button"
-          className={cn(buttonVariants({ variant: "secondary" }))}
-          onClick={() => {
-            setIsFacebookLoading(true)
-            // signIn("github")
-          }}
-          disabled={disabled}
-        >
-          {isFacebookLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.facebook className="mr-2 h-4 w-4" />
-          )}{" "}
-          Facebook
-        </button> */}
       </div>
     </div>
   )
