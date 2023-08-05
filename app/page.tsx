@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     title: "Kitchu: La liste de courses intelligente",
     description:
-      "Trouvez des diées de recettes, évitez le gaspillage, estimez le cout de vos repas",
+      "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
     card: "summary_large_image",
     site: "https://www.kitchu.co/",
   },
