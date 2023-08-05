@@ -29,13 +29,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   })
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false)
-  const [isAppleLoading, setIsAppleLoading] = useState<boolean>(false)
-  const [isFacebookLoading, setIsFacebookLoading] = useState<boolean>(false)
 
   const { supabase } = useSupabase()
 
-  const disabled =
-    isLoading || isGoogleLoading || isAppleLoading || isFacebookLoading
+  const disabled = isLoading || isGoogleLoading
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
@@ -51,15 +48,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     if (result.error) {
       return toast({
-        title: "Something went wrong.",
-        description: "Your sign in request failed. Please try again.",
+        title: "Une erreur est survenue.",
+        description:
+          "Votre tentative d'inscription à échoué. Veuillez réessayer.",
         variant: "destructive",
       })
     }
 
     return toast({
-      title: "Check your email",
-      description: "We sent you a login link. Be sure to check your spam too.",
+      title: "Vérifiez vos emails",
+      description:
+        "Nous vous avons envoyé un lien de connexion. Pensez à vérifier vos spam.",
     })
   }
 
@@ -72,8 +71,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     if (result.error) {
       return toast({
-        title: "Something went wrong.",
-        description: "Your sign in request failed. Please try again.",
+        title: "Une erreur est survenue.",
+        description:
+          "Votre tentative d'inscription à échoué. Veuillez réessayer.",
         variant: "destructive",
       })
     }
@@ -103,11 +103,15 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               </p>
             )}
           </div>
-          <button className={cn(buttonVariants())} disabled={disabled}>
+          <button
+            className={cn(buttonVariants())}
+            disabled={disabled}
+            aria-label="signup"
+          >
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Continue
+            Pré-inscription
           </button>
         </div>
       </form>
@@ -117,7 +121,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Ou se pré-inscrire avec
           </span>
         </div>
       </div>
@@ -129,6 +133,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             signInGoogle()
           }}
           disabled={disabled}
+          aria-label="google"
         >
           {isGoogleLoading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -136,38 +141,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Icons.google className="mr-2 h-4 w-4" />
           )}{" "}
           Google
-        </button>
-        {/* <button
-          type="button"
-          className={cn(buttonVariants({ variant: "secondary" }))}
-          onClick={() => {
-            setIsAppleLoading(true)
-            // signIn("github")
-          }}
-          disabled={disabled}
-        >
-          {isAppleLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.apple className="mr-2 h-4 w-4" />
-          )}{" "}
-          Apple
-        </button> */}
-        <button
-          type="button"
-          className={cn(buttonVariants({ variant: "secondary" }))}
-          onClick={() => {
-            setIsFacebookLoading(true)
-            // signIn("github")
-          }}
-          disabled={disabled}
-        >
-          {isFacebookLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.facebook className="mr-2 h-4 w-4" />
-          )}{" "}
-          Facebook
         </button>
       </div>
     </div>

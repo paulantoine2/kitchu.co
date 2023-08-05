@@ -11,7 +11,7 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1150px",
       },
     },
     extend: {
@@ -60,7 +60,7 @@ module.exports = {
       },
       keyframes: {
         "fade-in": {
-          from: { opacity: 0, transform: "translateY(5px)" },
+          from: { opacity: 0.01, transform: "translateY(5px)" },
           to: { opacity: 1, transform: "translateY(0px)" },
         },
         "accordion-down": {
