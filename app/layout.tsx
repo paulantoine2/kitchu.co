@@ -32,11 +32,16 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <SupabaseProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-            <Analytics />
-          </div>
-          <Toaster />
+          <Fridge>
+            <Cart>
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                <div className="flex-1">{children}</div>
+                <Analytics />
+              </div>
+              <Toaster />
+            </Cart>
+          </Fridge>
         </SupabaseProvider>
       </body>
     </html>

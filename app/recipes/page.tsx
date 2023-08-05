@@ -26,7 +26,7 @@ export default async function RecipesPage({
         <ImportDialog />
       </div>
       <SearchToolbar />
-      <div className="grid grid-cols-5 gap-6 my-4">
+      <div className="grid grid-cols-4 gap-6 my-4">
         <Suspense>
           <RecipesList
             searchValue={searchValue}

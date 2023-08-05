@@ -7,6 +7,7 @@ export function Logo({ height }: { height: string }) {
       viewBox="0 0 137 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ marginTop: "-6px" }}
     >
       <path
         d="M27.383 31.4951L23.6854 21.6619L27.5977 11.0594H36.5435L30.2934 20.5079L36.6867 31.4951H27.383ZM15.4314 31.4951V4.30353L14.0001 3.43802V1.2021L21.6577 0H23.2083V31.4951H15.4314Z"

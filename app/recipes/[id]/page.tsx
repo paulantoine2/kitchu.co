@@ -49,7 +49,7 @@ export default async function RecipePage({
   if (!data) notFound()
 
   return (
-    <div>
+    <>
       <div className="relative w-full h-[400px] rounded-md overflow-hidden my-4">
         <Image
           src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${params.id}.png`}
@@ -92,7 +92,7 @@ export default async function RecipePage({
           </Card>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

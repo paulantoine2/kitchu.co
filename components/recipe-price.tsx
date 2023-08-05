@@ -3,6 +3,8 @@ import { cache } from "react"
 import { makeSupabase, supabase } from "@/lib/supabase"
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
+import { TypographyLarge, TypographyMuted } from "./ui/typography"
+
 type RecipePrice = {
   id: string
   persons: number
@@ -78,10 +80,9 @@ export async function RecipePrice({ id, persons = 2 }: RecipePrice) {
       </p>
     )
   return (
-    <p className="text-sm font-medium truncate">
-      {averagePricePerPerson.toFixed(2)}
-      {" €"}
-      <span className="text-muted-foreground font-normal">/ personne</span>
-    </p>
+    <>
+      <TypographyLarge>{averagePricePerPerson.toFixed(2)} €</TypographyLarge>
+      <TypographyMuted>/ personne</TypographyMuted>
+    </>
   )
 }
