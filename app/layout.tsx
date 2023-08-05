@@ -18,10 +18,6 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 export const metadata: Metadata = {
   title: "Kitchu",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
   verification: {
     google: "DycCTMA2fAoHLPsWpbYWaNP_Ha-7adVhJz3WEpgoHNo",
   },

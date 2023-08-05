@@ -27,6 +27,14 @@ export const metadata: Metadata = {
   description: `La liste de course intelligente qui vous fait faire des économies de temps et d'argent, réduit le gaspillage alimentaire et vous fait manger mieux.`,
   keywords:
     "courses,recettes,cuisine,régime,drive,liste,gaspi,frigo,gaspillage,ingrédients",
+  twitter: {
+    title: "Kitchu: La liste de courses intelligente",
+    description:
+      "Trouvez des diées de recettes, évitez le gaspillage, estimez le cout de vos repas",
+    card: "summary_large_image",
+    site: "https://www.kitchu.co/",
+  },
+  robots: "index, follow",
 }
 
 export default async function HomePage() {
