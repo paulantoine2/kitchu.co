@@ -24,7 +24,10 @@ import { Icons } from "@/components/icons"
 import { UserAuthForm } from "@/components/user-auth-form"
 
 export const metadata: Metadata = {
-  description: `La liste de course intelligente qui vous fait faire des économies de temps et d'argent, réduit le gaspillage alimentaire et vous fait manger mieux.`,
+  title:
+    "Kitchu | La liste de courses intelligente pour préparer vos meilleures recettes",
+  description:
+    "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
   keywords:
     "courses,recettes,cuisine,régime,drive,liste,gaspi,frigo,gaspillage,ingrédients",
   twitter: {
