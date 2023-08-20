@@ -49,13 +49,7 @@ export function StoreSelectorDialog({ market_chains }: Props) {
       <Dialog open={open} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="secondary" size="sm">
-            {salepoint ? (
-              <>
-                {renderIcon(salepoint.chain)} {salepoint.name}
-              </>
-            ) : (
-              <>Choisir un magasin</>
-            )}
+            Choisir un magasin
             <Icons.chedown className="ml-2 h-4 w-4" />
           </Button>
         </DialogTrigger>

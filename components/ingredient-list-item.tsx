@@ -19,6 +19,7 @@ type Props = {
   show_name?: boolean
   addToFridge?: boolean
   addToCart?: boolean
+  onRemove?: () => void
 }
 
 export default function IngredientListItem({
@@ -28,6 +29,7 @@ export default function IngredientListItem({
   show_name = true,
   addToFridge = false,
   addToCart = false,
+  onRemove,
 }: Props) {
   return (
     <div className=" pl-1 pr-4 space-x-3 transition-all animate-fade-in flex items-center">
@@ -59,6 +61,11 @@ export default function IngredientListItem({
       {addToCart && (
         <Button variant="secondary">
           <Icons.cart className="h-4 w-4" />
+        </Button>
+      )}
+      {onRemove && (
+        <Button onClick={onRemove} variant="secondary">
+          <Icons.trash className="h-4 w-4" />
         </Button>
       )}
     </div>
