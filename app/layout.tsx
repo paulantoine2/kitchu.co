@@ -16,12 +16,7 @@ import SupabaseProvider from "./supabase-provider"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
-export const metadata: Metadata = {
-  title: "Kitchu",
-  verification: {
-    google: "DycCTMA2fAoHLPsWpbYWaNP_Ha-7adVhJz3WEpgoHNo",
-  },
-}
+export const metadata: Metadata = {}
 
 export default function RootLayout({
   children,

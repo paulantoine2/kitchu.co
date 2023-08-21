@@ -32,10 +32,6 @@ export default function SupabaseProvider({
     } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
     })
-
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [router, supabase])
 
   return (
