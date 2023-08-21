@@ -5,8 +5,6 @@ export const recipeSchema = z.object({
   is_public: z.boolean().default(false).optional(),
   steps: z.array(
     z.object({
-      index: z.number(),
-      images: z.array(z.string().url()),
       instructionsMarkdown: z.string(),
     })
   ),
@@ -19,4 +17,10 @@ export const recipeSchema = z.object({
       unit: z.string(),
     })
   ),
+})
+
+export const recipeIngredientSchema = z.object({
+  ingredient_id: z.string().uuid(),
+  amount: z.number(),
+  unit: z.string(),
 })
