@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
@@ -53,7 +54,7 @@ export default function RecipeForm() {
     defaultValues: {
       cuisine: undefined,
       name: "",
-      ingredients: [],
+      ingredients: [{ ingredient_id: "", amount: undefined, unit: undefined }],
       steps: [{ instructionsMarkdown: "" }],
     },
   })
@@ -83,6 +84,21 @@ export default function RecipeForm() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values)
+  }
+
+  function renderImage(id: string) {
+    console.log({ id })
+    return (
+      <Image
+        key={id}
+        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${id}.png`}
+        alt={"ingredient"}
+        width={100}
+        height={100}
+        className="object-cover"
+        placeholder="empty"
+      />
+    )
   }
 
   return (
@@ -120,7 +136,7 @@ export default function RecipeForm() {
           )}
         />
 
-        <div className="grid grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-3 gap-6">
           {ingredientsFieldArray.fields.map((ingredient, ingredientIndex) => (
             <IngredientListItem
               key={ingredient.id}
@@ -152,6 +168,113 @@ export default function RecipeForm() {
               ingredientsFieldArray.append(values)
             }}
           />
+        </div> */}
+
+        <div>
+          {ingredientsFieldArray.fields.map((field, index) => {
+            return (
+              <FormField
+                key={field.id}
+                control={form.control}
+                name={`ingredients.${index}`}
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel className={cn(index !== 0 && "sr-only")}>
+                      Ingrédients
+                    </FormLabel>
+                    <FormDescription className={cn(index !== 0 && "sr-only")}>
+                      Sélectionnez les ingrédients nécessaires à la préparation
+                      de cette recette et leur quantité par personne
+                    </FormDescription>
+                    <div className="flex space-x-2 flex-row">
+                      <FormField
+                        control={form.control}
+                        name={`ingredients.${index}.ingredient_id`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col flex-1">
+                            <IngredientPopover
+                              data={ingredients}
+                              selectedValue={field.value}
+                              onSelect={field.onChange}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`ingredients.${index}.amount`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col flex-1">
+                            <FormControl>
+                              <Input
+                                placeholder="Quantité"
+                                type="number"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`ingredients.${index}.unit`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-[100px]">
+                                  <SelectValue placeholder="Unit" />
+                                </SelectTrigger>
+                              </FormControl>
+                              {/* @todo Dynamic unit based on ingredient */}
+                              <SelectContent>
+                                <SelectItem value="g">g</SelectItem>
+                                <SelectItem value="p">pièce(s)</SelectItem>
+                                <SelectItem value="l">l</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        disabled={ingredientsFieldArray.fields.length === 1}
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() => ingredientsFieldArray.remove(index)}
+                      >
+                        <Icons.trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )
+          })}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="mt-2"
+            onClick={() =>
+              ingredientsFieldArray.append({
+                ingredient_id: "",
+                amount: 0,
+                unit: "",
+              })
+            }
+          >
+            <Icons.add className="h-4 w-4 mr-2" />
+            Ajouter un ingrédient
+          </Button>
         </div>
 
         <div>
@@ -197,7 +320,8 @@ export default function RecipeForm() {
                           <Icons.chedown className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="destructive"
+                          disabled={stepsFieldArray.fields.length === 1}
+                          variant="ghost"
                           size="icon"
                           type="button"
                           onClick={() => stepsFieldArray.remove(index)}
@@ -214,11 +338,12 @@ export default function RecipeForm() {
           })}
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             size="sm"
             className="mt-2"
             onClick={() => stepsFieldArray.append({ instructionsMarkdown: "" })}
           >
+            <Icons.add className="h-4 w-4 mr-2" />
             Ajouter une étape
           </Button>
         </div>
