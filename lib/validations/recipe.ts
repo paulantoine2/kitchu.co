@@ -8,8 +8,7 @@ export const recipeSchema = z.object({
       instructionsMarkdown: z.string(),
     })
   ),
-  tags: z.array(z.string().uuid()),
-  cuisine: z.string().uuid(),
+  cuisine: z.string().uuid().optional(),
   ingredients: z.array(
     z.object({
       ingredient_id: z.string().uuid(),
@@ -17,10 +16,4 @@ export const recipeSchema = z.object({
       unit: z.string(),
     })
   ),
-})
-
-export const recipeIngredientSchema = z.object({
-  ingredient_id: z.string().uuid(),
-  amount: z.number(),
-  unit: z.string(),
 })

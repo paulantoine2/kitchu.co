@@ -2,13 +2,15 @@
 
 import React from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { Cuisine, Ingredient } from "@/types/data"
 import { cn } from "@/lib/utils"
-import { recipeIngredientSchema, recipeSchema } from "@/lib/validations/recipe"
+import { recipeSchema } from "@/lib/validations/recipe"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { Icons } from "../icons"
@@ -45,10 +47,10 @@ import { Textarea } from "../ui/textarea"
 import { TypographyLead, TypographyMuted } from "../ui/typography"
 
 type FormData = z.infer<typeof recipeSchema>
-type IngredientFormData = z.infer<typeof recipeIngredientSchema>
 
 export default function RecipeForm() {
   const { supabase } = useSupabase()
+  const router = useRouter()
   const form = useForm<FormData>({
     resolver: zodResolver(recipeSchema),
     defaultValues: {
@@ -68,7 +70,7 @@ export default function RecipeForm() {
     name: "steps",
   })
 
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   const [ingredients, setIngredients] = React.useState<Ingredient[]>([])
   React.useEffect(() => {
@@ -80,29 +82,33 @@ export default function RecipeForm() {
     getItems()
   }, [])
 
-  function onSubmit(values: FormData) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: FormData) {
+    setIsSaving(true)
+
+    const response = await fetch(`/api/recipes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+
+    setIsSaving(false)
+
+    if (!response?.ok) {
+      return alert("error")
+    }
+
+    const body = await response.json()
+
+    router.push(`/recipes/${body.uuid}`)
   }
 
-  function renderImage(id: string) {
-    console.log({ id })
-    return (
-      <Image
-        key={id}
-        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${id}.png`}
-        alt={"ingredient"}
-        width={100}
-        height={100}
-        className="object-cover"
-        placeholder="empty"
-      />
-    )
-  }
+  form.watch()
 
   return (
     <Form {...form}>
+      <DevTool control={form.control} />
       <form
         id="recipe-form"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -114,6 +120,7 @@ export default function RecipeForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Nom</FormLabel>
+
               <FormControl>
                 <Input placeholder="Boeuf bourgignon" {...field} />
               </FormControl>
@@ -126,7 +133,7 @@ export default function RecipeForm() {
           name="cuisine"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Cuisine</FormLabel>
+              <FormLabel>Type de cuisine (optionnel)</FormLabel>
               <CuisinesPopover
                 selectedValue={field.value}
                 onSelect={(id) => field.onChange(id)}
@@ -178,6 +185,9 @@ export default function RecipeForm() {
                                 type="number"
                                 className="rounded-r-none border-r-0"
                                 {...field}
+                                onChange={(e) =>
+                                  field.onChange(+e.target.value)
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -339,7 +349,10 @@ export default function RecipeForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Créer</Button>
+        <Button type="submit">
+          {isSaving && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+          Créer
+        </Button>
       </form>
     </Form>
   )
@@ -349,8 +362,8 @@ function CuisinesPopover({
   selectedValue,
   onSelect,
 }: {
-  selectedValue: string
-  onSelect: (value: string) => void
+  selectedValue: string | undefined
+  onSelect: (value: string | undefined) => void
 }) {
   const [loading, setLoading] = React.useState(false)
   const [items, setItems] = React.useState<Cuisine[]>([])
@@ -391,6 +404,19 @@ function CuisinesPopover({
           <CommandInput placeholder="Rechercher des cuisines..." />
           <CommandEmpty>Aucune cuisine trouvée.</CommandEmpty>
           <CommandGroup>
+            <CommandItem
+              onSelect={() => {
+                onSelect(undefined)
+              }}
+            >
+              <Icons.check
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  undefined === selectedValue ? "opacity-100" : "opacity-0"
+                )}
+              />
+              Aucune
+            </CommandItem>
             {items.map((item) => (
               <CommandItem
                 value={item.name}
