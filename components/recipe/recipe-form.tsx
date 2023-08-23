@@ -54,7 +54,7 @@ export default function RecipeForm() {
     defaultValues: {
       cuisine: undefined,
       name: "",
-      ingredients: [{ ingredient_id: "", amount: undefined, unit: undefined }],
+      ingredients: [{ ingredient_id: "", amount: 100, unit: "g" }],
       steps: [{ instructionsMarkdown: "" }],
     },
   })
@@ -136,40 +136,6 @@ export default function RecipeForm() {
           )}
         />
 
-        {/* <div className="grid grid-cols-3 gap-6">
-          {ingredientsFieldArray.fields.map((ingredient, ingredientIndex) => (
-            <IngredientListItem
-              key={ingredient.id}
-              amount={ingredient.amount}
-              unit={ingredient.unit}
-              ingredient={
-                ingredients.find(
-                  (ingr) => ingr.id === ingredient.ingredient_id
-                ) || { id: ingredient.ingredient_id, name: "Inconnu" }
-              }
-              onRemove={() => ingredientsFieldArray.remove(ingredientIndex)}
-            />
-          ))}
-        </div>
-
-        <div className="border rounded-md p-4">
-          <IngredientForm
-            data={ingredients}
-            onSubmit={(values) => {
-              if (
-                form
-                  .getValues()
-                  .ingredients.find(
-                    (ingr) => ingr.ingredient_id === values.ingredient_id
-                  )
-              ) {
-                return alert("Cet ingrédient est déjà dans la liste.")
-              }
-              ingredientsFieldArray.append(values)
-            }}
-          />
-        </div> */}
-
         <div>
           {ingredientsFieldArray.fields.map((field, index) => {
             return (
@@ -186,12 +152,12 @@ export default function RecipeForm() {
                       Sélectionnez les ingrédients nécessaires à la préparation
                       de cette recette et leur quantité par personne
                     </FormDescription>
-                    <div className="flex space-x-2 flex-row">
+                    <div className="flex flex-row">
                       <FormField
                         control={form.control}
                         name={`ingredients.${index}.ingredient_id`}
                         render={({ field }) => (
-                          <FormItem className="flex flex-col flex-1">
+                          <FormItem className="mr-2">
                             <IngredientPopover
                               data={ingredients}
                               selectedValue={field.value}
@@ -205,11 +171,12 @@ export default function RecipeForm() {
                         control={form.control}
                         name={`ingredients.${index}.amount`}
                         render={({ field }) => (
-                          <FormItem className="flex flex-col flex-1">
+                          <FormItem className="flex-1">
                             <FormControl>
                               <Input
                                 placeholder="Quantité"
                                 type="number"
+                                className="rounded-r-none border-r-0"
                                 {...field}
                               />
                             </FormControl>
@@ -227,7 +194,7 @@ export default function RecipeForm() {
                               value={field.value}
                             >
                               <FormControl>
-                                <SelectTrigger className="w-[100px]">
+                                <SelectTrigger className="w-[100px] rounded-l-none">
                                   <SelectValue placeholder="Unit" />
                                 </SelectTrigger>
                               </FormControl>
@@ -265,11 +232,16 @@ export default function RecipeForm() {
             size="sm"
             className="mt-2"
             onClick={() =>
-              ingredientsFieldArray.append({
-                ingredient_id: "",
-                amount: 0,
-                unit: "",
-              })
+              ingredientsFieldArray.append(
+                {
+                  ingredient_id: "",
+                  amount: 100,
+                  unit: "g",
+                },
+                {
+                  shouldFocus: false,
+                }
+              )
             }
           >
             <Icons.add className="h-4 w-4 mr-2" />
@@ -442,94 +414,6 @@ function CuisinesPopover({
     </Popover>
   )
 }
-
-function IngredientForm({
-  data,
-  onSubmit,
-}: {
-  data: Ingredient[]
-  onSubmit: (values: IngredientFormData) => void
-}) {
-  const form = useForm<IngredientFormData>({
-    defaultValues: { amount: 1, ingredient_id: undefined, unit: "g" },
-    resolver: zodResolver(recipeIngredientSchema),
-  })
-
-  return (
-    <Form {...form}>
-      <div id="ingredient-form" className="space-x-2 flex flex-row">
-        <FormField
-          control={form.control}
-          name="ingredient_id"
-          render={({ field }) => (
-            <FormItem className="flex flex-col flex-1">
-              <FormLabel>Ingrédient</FormLabel>
-              <IngredientPopover
-                data={data}
-                selectedValue={field.value}
-                onSelect={(id) => form.setValue("ingredient_id", id)}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem className="flex flex-col flex-1">
-              <FormLabel>Quantité</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  {...field}
-                  onChange={(event) =>
-                    form.setValue("amount", +event.target.value)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="unit"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Unité</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Unit" />
-                  </SelectTrigger>
-                </FormControl>
-                {/* @todo Dynamic unit based on ingredient */}
-                <SelectContent>
-                  <SelectItem value="g">g</SelectItem>
-                  <SelectItem value="p">pièce(s)</SelectItem>
-                  <SelectItem value="l">l</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          className="mt-[22px]"
-          onClick={form.handleSubmit((values) => {
-            onSubmit(values)
-            form.reset()
-          })}
-        >
-          Ajouter l&apos;ingredient
-        </Button>
-      </div>
-    </Form>
-  )
-}
-
 function IngredientPopover({
   data,
   selectedValue,
@@ -549,13 +433,29 @@ function IngredientPopover({
             variant="outline"
             role="combobox"
             className={cn(
-              "w-[350px] justify-between",
+              "w-[350px] justify-start relative",
               !selectedValue && "text-muted-foreground"
+              // selectedValue && "pl-0"
             )}
           >
-            {selectedValue
-              ? items.find((item) => item.id === selectedValue)?.name
-              : "Selectionner un ingrédient"}
+            {selectedValue && (
+              <div className="overflow-hidden rounded-full aspect-square absolute w-10 h-10 p-1 mr-1 left-0">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${selectedValue}.png`}
+                  alt={"ingredient"}
+                  width={100}
+                  height={100}
+                  className="object-cover"
+                  placeholder="empty"
+                />
+              </div>
+            )}
+            <span className="flex-1 text-left pl-6">
+              {selectedValue
+                ? items.find((item) => item.id === selectedValue)?.name
+                : "Selectionner un ingrédient"}
+            </span>
+
             <Icons.chedown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </FormControl>
