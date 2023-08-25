@@ -3,7 +3,7 @@
 import React from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { DevTool } from "@hookform/devtools"
+// import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
@@ -45,21 +45,29 @@ import {
 } from "../ui/select"
 import { Textarea } from "../ui/textarea"
 import { TypographyLead, TypographyMuted } from "../ui/typography"
+import { ImportDialogV2 } from "./import-dialog-v2"
 
 type FormData = z.infer<typeof recipeSchema>
 
-export default function RecipeForm() {
+export default function RecipeFormContainer() {
+  const [data, setData] = React.useState<FormData>()
+
+  return (
+    <div>
+      <ImportDialogV2 onData={setData} />
+      {data && <RecipeForm defaultValues={data} />}
+    </div>
+  )
+}
+
+function RecipeForm({ defaultValues }: { defaultValues: FormData }) {
   const { supabase } = useSupabase()
   const router = useRouter()
   const form = useForm<FormData>({
     resolver: zodResolver(recipeSchema),
-    defaultValues: {
-      cuisine: undefined,
-      name: "",
-      ingredients: [{ ingredient_id: "", amount: 100, unit: "g" }],
-      steps: [{ instructionsMarkdown: "" }],
-    },
+    defaultValues,
   })
+
   const ingredientsFieldArray = useFieldArray({
     control: form.control,
     name: "ingredients",
@@ -108,7 +116,7 @@ export default function RecipeForm() {
 
   return (
     <Form {...form}>
-      <DevTool control={form.control} />
+      {/* <DevTool control={form.control} /> */}
       <form
         id="recipe-form"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -204,15 +212,19 @@ export default function RecipeForm() {
                               value={field.value}
                             >
                               <FormControl>
-                                <SelectTrigger className="w-[100px] rounded-l-none">
+                                <SelectTrigger className="w-[200px] rounded-l-none">
                                   <SelectValue placeholder="Unit" />
                                 </SelectTrigger>
                               </FormControl>
                               {/* @todo Dynamic unit based on ingredient */}
                               <SelectContent>
                                 <SelectItem value="g">g</SelectItem>
-                                <SelectItem value="p">pièce(s)</SelectItem>
+                                <SelectItem value="pièce(s)">
+                                  pièce(s)
+                                </SelectItem>
                                 <SelectItem value="l">l</SelectItem>
+                                <SelectItem value="cs">Cuil. soupe</SelectItem>
+                                <SelectItem value="cc">Cuil. café</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -451,6 +463,10 @@ function IngredientPopover({
 }) {
   const items = data
   const [open, setOpen] = React.useState(false)
+
+  // Specific value to warn of no matching item found on recipe import
+  const isNoMatch = selectedValue.startsWith("NOMATCH")
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -461,10 +477,10 @@ function IngredientPopover({
             className={cn(
               "w-[350px] justify-start relative",
               !selectedValue && "text-muted-foreground"
-              // selectedValue && "pl-0"
             )}
           >
-            {selectedValue && (
+            {isNoMatch && <Icons.warn className="text-red-500 w-5 h-5" />}
+            {selectedValue && !isNoMatch && (
               <div className="overflow-hidden rounded-full aspect-square absolute w-10 h-10 p-1 mr-1 left-0">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${selectedValue}.png`}
@@ -476,9 +492,16 @@ function IngredientPopover({
                 />
               </div>
             )}
-            <span className="flex-1 text-left pl-6">
+            <span
+              className={cn(
+                "flex-1 text-left pl-6",
+                isNoMatch && "text-red-500"
+              )}
+            >
               {selectedValue
-                ? items.find((item) => item.id === selectedValue)?.name
+                ? isNoMatch
+                  ? selectedValue.split("_")[1]
+                  : items.find((item) => item.id === selectedValue)?.name
                 : "Selectionner un ingrédient"}
             </span>
 

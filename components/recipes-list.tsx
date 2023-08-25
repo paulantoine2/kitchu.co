@@ -26,7 +26,7 @@ export async function RecipesList({
   const supabase = createServerSupabaseClient()
   let req = supabase
     .from("recipe")
-    .select(`*,tag!inner(*),cuisine!inner(*),ingredient!inner(*)`)
+    .select(`*,cuisine!inner(*),ingredient!inner(*)`)
 
   if (searchValue)
     req = req.textSearch("name", searchValue, {

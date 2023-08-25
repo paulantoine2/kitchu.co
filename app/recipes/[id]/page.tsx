@@ -21,6 +21,7 @@ import { Icons } from "@/components/icons"
 import IngredientListItem from "@/components/ingredient-list-item"
 import { RecipeIngredientsList } from "@/components/recipe-ingredients-list"
 import { RecipePrice } from "@/components/recipe-price"
+import { RecipeImage } from "@/components/recipe/recipe-image"
 
 export default async function RecipePage({
   params,
@@ -51,14 +52,8 @@ export default async function RecipePage({
   return (
     <>
       <div className="relative w-full h-[400px] rounded-md overflow-hidden my-4">
-        <Image
-          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${params.id}.png`}
-          alt={data.name}
-          fill
-          className="object-cover bg-muted"
-        />
+        <RecipeImage recipe={data} fill className="object-cover bg-muted" />
       </div>
-
       <div className="grid grid-cols-3 gap-16">
         <div className="col-span-2">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mt-4">

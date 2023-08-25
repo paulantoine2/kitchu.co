@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   Apple,
   ArrowLeftRight,
   ArrowRight,
@@ -54,6 +55,7 @@ export const Icons: Record<string, Icon> = {
   minus: Minus,
   trash: Trash,
   info: Info,
+  warn: AlertCircle,
   apple: (props: LucideProps) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <path

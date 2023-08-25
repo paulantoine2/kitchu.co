@@ -23,7 +23,6 @@ export default async function RecipesPage({
     <>
       <div className="flex space-x-4 w-full">
         <Search />
-        <ImportDialog />
       </div>
       <SearchToolbar />
       <div className="grid grid-cols-4 gap-6 my-4">
