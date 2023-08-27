@@ -76,11 +76,7 @@ export function ImportRecipeFormContainer() {
   )
 }
 
-export function ImportRecipeForm({
-  onData,
-}: {
-  onData: (data: FormData) => void
-}) {
+function ImportRecipeForm({ onData }: { onData: (data: FormData) => void }) {
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState("")
 
@@ -189,7 +185,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
       .then((res) => {
         if (res.data) setTags(res.data)
       })
-  }, [])
+  }, [supabase])
 
   async function onSubmit(values: FormData) {
     setIsSaving(true)
@@ -431,28 +427,16 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                       <div className="flex h-10 rounded-md border border-input bg-secondary px-3 py-2 text-sm ring-offset-background rounded-l-none border-l-0">
                         / personne
                       </div>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Button
-                              disabled={
-                                ingredientsFieldArray.fields.length === 1
-                              }
-                              variant="ghost"
-                              size="icon"
-                              type="button"
-                              onClick={() =>
-                                ingredientsFieldArray.remove(index)
-                              }
-                            >
-                              <Icons.close className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Supprimer l&apos;ingrédient
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+
+                      <Button
+                        disabled={ingredientsFieldArray.fields.length === 1}
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() => ingredientsFieldArray.remove(index)}
+                      >
+                        <Icons.close className="h-4 w-4" />
+                      </Button>
                     </div>
                   </FormItem>
                 )}
@@ -531,7 +515,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                           type="button"
                           onClick={() => stepsFieldArray.remove(index)}
                         >
-                          <Icons.trash className="h-4 w-4" />
+                          <Icons.close className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -643,15 +627,13 @@ function CuisinesPopover({
   const { supabase } = useSupabase()
 
   React.useEffect(() => {
-    async function getItems() {
-      setLoading(true)
-      const res = await supabase.from("cuisine").select("*")
-      if (res.data) setItems(res.data)
-      setLoading(false)
-    }
-
-    getItems()
-  }, [])
+    supabase
+      .from("cuisine")
+      .select("*")
+      .then((res) => {
+        if (res.data) setItems(res.data)
+      })
+  }, [supabase])
 
   return (
     <Popover>
@@ -797,7 +779,7 @@ function IngredientPopover({
                         : "opacity-0"
                     )}
                   />
-                  <div className="overflow-hidden aspect-square w-4 h-4 mr-1">
+                  <div className="overflow-hidden aspect-square w-6 h-6 mr-2">
                     <Image
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${item.id}.png`}
                       alt={"ingredient"}
