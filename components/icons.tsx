@@ -1,3 +1,5 @@
+/* eslint-disable react/display-name */
+import React from "react"
 import {
   AlertCircle,
   Apple,
@@ -13,21 +15,26 @@ import {
   Drumstick,
   Facebook,
   Fish,
+  Import,
   Info,
   Loader2,
   LucideProps,
   Minus,
+  PenLine,
+  PencilRuler,
   PiggyBank,
   Plus,
   PlusCircle,
   Refrigerator,
   Search,
+  SearchCheck,
   ShoppingCart,
   Trash,
   User,
   Waves,
   X,
-  type Icon as LucideIcon,
+  createLucideIcon,
+  type LucideIcon,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -56,16 +63,33 @@ export const Icons: Record<string, Icon> = {
   trash: Trash,
   info: Info,
   warn: AlertCircle,
-  apple: (props: LucideProps) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
+  create: PencilRuler,
+  import: Import,
+  review: SearchCheck,
+  apple: React.forwardRef((props: LucideProps, ref) => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      {...props}
+      ref={ref}
+    >
       <path
         d="M18.5209 8.13681C18.4141 8.21782 16.5273 9.25653 16.5273 11.5662C16.5273 14.2376 18.9281 15.1827 19 15.2061C18.9889 15.2637 18.6186 16.5004 17.7342 17.7606C16.9456 18.8695 16.122 19.9766 14.8691 19.9766C13.6161 19.9766 13.2937 19.2655 11.8473 19.2655C10.4378 19.2655 9.93662 20 8.79057 20C7.64452 20 6.84486 18.9739 5.92544 17.7138C4.86046 16.234 4 13.9352 4 11.7534C4 8.25383 6.32895 6.39784 8.62105 6.39784C9.83896 6.39784 10.8542 7.17912 11.6188 7.17912C12.3466 7.17912 13.4816 6.35103 14.8672 6.35103C15.3923 6.35103 17.2791 6.39784 18.5209 8.13681ZM14.2094 4.86949C14.7825 4.20522 15.1878 3.28353 15.1878 2.36184C15.1878 2.23402 15.1768 2.10441 15.1528 2C14.2205 2.0342 13.1113 2.60666 12.4425 3.36454C11.9173 3.94779 11.4272 4.86949 11.4272 5.80378C11.4272 5.94419 11.4512 6.08461 11.4622 6.12961C11.5212 6.14041 11.617 6.15302 11.7128 6.15302C12.5493 6.15302 13.6014 5.60576 14.2094 4.86949Z"
         fill="black"
       />
     </svg>
-  ),
-  google: (props: LucideProps) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
+  )),
+  google: React.forwardRef((props: LucideProps, ref) => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      {...props}
+      ref={ref}
+    >
       <path
         d="M12.1836 10.3636V13.8491H17.1261C16.9091 14.97 16.2578 15.9192 15.281 16.5573L18.2615 18.8237C19.9981 17.2529 21 14.9455 21 12.2046C21 11.5664 20.9416 10.9527 20.833 10.3637L12.1836 10.3636Z"
         fill="#4285F4"
@@ -83,9 +107,16 @@ export const Icons: Record<string, Icon> = {
         fill="#EA4335"
       />
     </svg>
-  ),
-  facebook: (props: LucideProps) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
+  )),
+  facebook: React.forwardRef((props: LucideProps, ref) => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      {...props}
+      ref={ref}
+    >
       <path
         d="M20.0081 21C20.56 21 21 20.553 21 20.0082V3.99185C21 3.44005 20.553 3 20.0081 3H3.99185C3.44703 3 3 3.44703 3 3.99185V20.0082C3 20.56 3.44703 21 3.99185 21H20.0081Z"
         fill="#157DC3"
@@ -95,9 +126,9 @@ export const Icons: Record<string, Icon> = {
         fill="white"
       />
     </svg>
-  ),
-  carrefour: (props: LucideProps) => (
-    <svg width="101" height="100" viewBox="0 0 101 100" {...props}>
+  )),
+  carrefour: React.forwardRef((props: LucideProps, ref) => (
+    <svg width="101" height="100" viewBox="0 0 101 100" {...props} ref={ref}>
       <path
         d="M29.5893 19.0847L2.23843 45.5446C0.87241 46.7045 0 48.0666 0 50.0155C0 51.9556 0.873391 53.3226 2.23843 54.4914L29.5893 80.9424C29.765 81.122 29.9347 81.1936 30.079 81.1936C30.3381 81.1936 30.5167 80.9581 30.5088 80.6814C30.501 80.5185 30.4303 80.331 30.2684 80.1691C23.8485 72.1928 19.1773 63.0448 19.1773 50.1117C19.1773 37.1708 23.8485 27.8432 30.2684 19.861C30.4303 19.701 30.501 19.5165 30.5088 19.3497C30.5177 19.0671 30.3381 18.8384 30.079 18.8384C29.9347 18.8355 29.765 18.9061 29.5893 19.0847Z"
         fill="#ED1C24"
@@ -107,8 +138,10 @@ export const Icons: Record<string, Icon> = {
         fill="#005BAB"
       />
     </svg>
-  ),
-  mockmarket: (props: LucideProps) => <Carrot color="orange" {...props} />,
+  )),
+  mockmarket: React.forwardRef((props: LucideProps, ref) => (
+    <Carrot color="orange" {...props} ref={ref} />
+  )),
 }
 
 export const MarketChainIcons: Record<number, Icon> = {

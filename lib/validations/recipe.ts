@@ -12,8 +12,11 @@ export const recipeSchema = z.object({
   ingredients: z.array(
     z.object({
       ingredient_id: z.string().uuid(),
-      amount: z.number(),
+      amount: z.number().positive(),
       unit: z.string(),
     })
   ),
+  tags: z.array(z.object({ id: z.string().uuid() })),
+  difficulty: z.number().min(1).max(3).int().optional(),
+  prep_duration_min: z.number().positive().optional(),
 })

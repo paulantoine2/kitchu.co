@@ -28,14 +28,7 @@ export async function POST(request: Request) {
 
     const recipe_uuid = createRecipeUuid(id)
 
-    // Check if recipe already exists
-    // const { data, error } = await supabase.from("recipe").select().eq("id", id)
-    // if (error) throw error
-    // if (data?.length) return new Response(JSON.stringify({ uuid: recipe_uuid }))
-
     const result = await fetchHelloFreshRecipe(id)
-
-    console.log(result)
 
     const recipe = result.items[0]
 
@@ -72,6 +65,9 @@ export async function POST(request: Request) {
         ),
       })),
       is_public: false,
+      tags: [],
+      difficulty: recipe.difficulty,
+      prep_duration_min: parseInt(recipe.prepTime.slice(2, 4)),
     }
 
     return new Response(JSON.stringify(recipeData))
@@ -88,8 +84,9 @@ async function searchIngredient(name: string) {
   const response = await supabase
     .from("ingredient")
     .select("*")
+    .order("name", { ascending: true })
     .textSearch("name", name, {
-      type: "websearch",
+      type: "plain",
     })
   const matchingDbIngredient = response.data?.[0]
   return matchingDbIngredient?.id || null
