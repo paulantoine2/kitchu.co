@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { LogOut } from "lucide-react"
 import md5 from "md5"
 
@@ -32,6 +33,7 @@ function getGravatarURL(email: string) {
 
 export function UserNav({ Buttons }: { Buttons: React.ReactNode }) {
   const { session, supabase } = useSupabase()
+  const { push } = useRouter()
 
   if (session)
     return (
@@ -50,13 +52,14 @@ export function UserNav({ Buttons }: { Buttons: React.ReactNode }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {session.user.email}
-                </p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => {
+                push("/recipes/create")
+              }}
+            >
+              <Icons.add className="mr-2 h-4 w-4" />
+              <span>Créer une recette</span>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 supabase.auth.signOut()

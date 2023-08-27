@@ -3,3 +3,9 @@ export class InvalidImportUrlError extends Error {
     super(message)
   }
 }
+
+export class InvalidRecipeError extends Error {
+  constructor(message = "Recipe is invalid or incomplete") {
+    super(message)
+  }
+}

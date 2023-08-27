@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google"
+import { Inter, Jomhuria } from "next/font/google"
 
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -7,6 +7,7 @@ import { Suspense } from "react"
 import { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/react"
 
+import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster"
 import { Cart } from "@/components/cart/cart"
 import { Fridge } from "@/components/fridge/fridge"
@@ -29,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={cn(inter.variable)}>
       <body>
         <SupabaseProvider>
           <Fridge>

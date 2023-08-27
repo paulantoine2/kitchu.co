@@ -10,12 +10,13 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "../ui/typography"
+import { RecipeImage } from "./recipe-image"
 
 export default function RecipeCard({
   recipe,
   animationDelay,
 }: {
-  recipe: { name: string; headline: string | null; id: string }
+  recipe: { name: string; id: string }
   animationDelay: number
 }) {
   return (
@@ -25,9 +26,8 @@ export default function RecipeCard({
         style={{ animationDelay: `${animationDelay}ms` }}
       >
         <div className="overflow-hidden rounded-md aspect-square relative">
-          <Image
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${recipe.id}.png`}
-            alt={recipe.name}
+          <RecipeImage
+            recipe={recipe}
             fill
             className="object-cover bg-muted"
             quality={25}
@@ -44,10 +44,9 @@ export default function RecipeCard({
               <Icons.plus />
             </div>
           </div>
-          <TypographySmall className="truncate">{recipe.name}</TypographySmall>
-          <TypographyMuted className="truncate">
-            {recipe.headline}
-          </TypographyMuted>
+          <TypographySmall className="line-clamp-2 leading-5">
+            {recipe.name}
+          </TypographySmall>
         </div>
       </div>
     </Link>

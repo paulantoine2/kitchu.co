@@ -33,6 +33,10 @@ module.exports = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        warn: {
+          DEFAULT: "hsl(var(--warn))",
+          foreground: "hsl(var(--warn-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -52,6 +56,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
+        brand: ["var(--font-brand)"],
       },
       borderRadius: {
         lg: "var(--radius)",

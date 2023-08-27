@@ -265,7 +265,7 @@ async function uploadIngredientsImages(
   }
 }
 
-async function fetchHelloFreshRecipe(id: string) {
+export async function fetchHelloFreshRecipe(id: string): Promise<Search> {
   return new Promise((resolve, reject) => {
     const myHeaders = new Headers()
     myHeaders.append("Authorization", process.env.HELLOFRESH_AUTH || "")
@@ -282,7 +282,10 @@ async function fetchHelloFreshRecipe(id: string) {
         id,
       requestOptions
     )
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) reject(response.statusText)
+        return response.json()
+      })
       .then((result) => resolve(result))
       .catch(reject)
   })
