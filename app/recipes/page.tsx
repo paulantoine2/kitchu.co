@@ -1,6 +1,5 @@
 import { Suspense } from "react"
 
-import { ImportDialog } from "@/components/layout/import-dialog"
 import Search from "@/components/layout/search"
 import { RecipesList } from "@/components/recipes-list"
 import { SearchToolbar } from "@/components/search-toolbar"
