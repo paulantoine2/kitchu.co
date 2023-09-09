@@ -7,7 +7,7 @@ export type Salepoint = {
 }
 
 export type Ingredient = {
-  id: string
+  id: number
   name: string
 }
 
@@ -36,13 +36,8 @@ export type Step = {
 }
 
 export type Recipe = {
-  headline: string | null
-  id: string
-  link: string | null
+  id: number
   name: string
-  full_name: string | null
-  tag: Tag[]
-  cuisine: Cuisine[]
   ingredient: Ingredient[]
   steps: Step[]
 }

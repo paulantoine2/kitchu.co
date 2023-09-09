@@ -2,7 +2,7 @@
 
 import React from "react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 // import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
@@ -14,8 +14,10 @@ import { recipeSchema } from "@/lib/validations/recipe"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { Icons } from "../icons"
+import IngredientListItem from "../ingredient-list-item"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { Button } from "../ui/button"
+import { Card } from "../ui/card"
 import { Checkbox } from "../ui/checkbox"
 import {
   Command,
@@ -43,7 +45,8 @@ import {
   SelectValue,
 } from "../ui/select"
 import { Textarea } from "../ui/textarea"
-import { TypographyP } from "../ui/typography"
+import { TypographyLead, TypographyMuted, TypographyP } from "../ui/typography"
+import { IngredientImage } from "./ingredient-image"
 
 type FormData = z.infer<typeof recipeSchema>
 
@@ -67,7 +70,11 @@ export function ImportRecipeFormContainer() {
   )
 }
 
-function ImportRecipeForm({ onData }: { onData: (data: FormData) => void }) {
+export function ImportRecipeForm({
+  onData,
+}: {
+  onData: (data: FormData) => void
+}) {
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState("")
 
@@ -134,19 +141,12 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
   const form = useForm<FormData>({
     resolver: zodResolver(recipeSchema),
     defaultValues: defaultValues || {
-      ingredients: [
-        { amount: undefined, ingredient_id: undefined, unit: undefined },
-      ],
+      ingredients: [],
       name: "",
       difficulty: 0,
+      prep_duration_min: 25,
       steps: [{ instructionsMarkdown: "" }],
-      tags: [],
     },
-  })
-
-  const tagsFieldArray = useFieldArray({
-    control: form.control,
-    name: "tags",
   })
 
   const ingredientsFieldArray = useFieldArray({
@@ -162,7 +162,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   const [ingredients, setIngredients] = React.useState<Ingredient[]>([])
-  const [tags, setTags] = React.useState<Tag[]>([])
+
   React.useEffect(() => {
     supabase
       .from("ingredient")
@@ -170,13 +170,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
       .then((res) => {
         if (res.data) setIngredients(res.data)
       })
-    supabase
-      .from("tag")
-      .select("*")
-      .then((res) => {
-        if (res.data) setTags(res.data)
-      })
-  }, [supabase])
+  }, [])
 
   async function onSubmit(values: FormData) {
     setIsSaving(true)
@@ -222,43 +216,6 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
-        <div className="flex flex-col items-start gap-2">
-          <FormLabel>Tags</FormLabel>
-          <div className="flex gap-2">
-            {tagsFieldArray.fields.map((field, index) => {
-              return (
-                <FormField
-                  key={field.id}
-                  control={form.control}
-                  name={`tags.${index}.id`}
-                  render={({ field }) => (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => tagsFieldArray.remove(index)}
-                    >
-                      {tags.find((tag) => tag.id === field.value)?.name}
-                      <Icons.close className="w-4 h-4 ml-2" />
-                    </Button>
-                  )}
-                />
-              )
-            })}
-          </div>
-
-          <TagsPopover
-            tags={tags}
-            onSelect={(id) => {
-              const index = form
-                .getValues()
-                .tags.findIndex((tag) => tag.id === id)
-              console.log(index, id)
-              if (index >= 0) tagsFieldArray.remove(index)
-              else tagsFieldArray.append({ id })
-            }}
-            selectedValues={form.getValues().tags.map((tag) => tag.id)}
-          />
-        </div>
 
         <FormField
           control={form.control}
@@ -310,151 +267,128 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="cuisine"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Type de cuisine</FormLabel>
-              <CuisinesPopover
-                selectedValue={field.value}
-                onSelect={(id) => field.onChange(id)}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <div>
-          {ingredientsFieldArray.fields.map((field, index) => {
-            return (
-              <FormField
-                key={field.id}
-                control={form.control}
-                name={`ingredients.${index}`}
-                render={({ field: rootField }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel className={cn(index !== 0 && "sr-only")}>
-                      Ingrédients
-                    </FormLabel>
-                    <FormDescription className={cn(index !== 0 && "sr-only")}>
-                      Sélectionnez les ingrédients nécessaires à la préparation
-                      de cette recette et leur quantité par personne
-                    </FormDescription>
-                    <div className="flex flex-row">
-                      <FormField
-                        control={form.control}
-                        name={`ingredients.${index}.ingredient_id`}
-                        render={({ field }) => (
-                          <FormItem className="mr-2">
-                            <IngredientPopover
-                              data={ingredients}
-                              selectedValue={field.value}
-                              selectedValues={form
-                                .getValues()
-                                .ingredients.map((ingr) => ingr.ingredient_id)}
-                              onSelect={field.onChange}
+          <FormLabel>Ingrédients</FormLabel>
+          <FormDescription>
+            Sélectionnez les ingrédients nécessaires à la préparation de cette
+            recette et leur quantité par personne
+          </FormDescription>
+          <div className="my-2 space-y-2">
+            {ingredientsFieldArray.fields.map((field, index) => {
+              return (
+                <FormField
+                  key={field.id}
+                  control={form.control}
+                  name={`ingredients.${index}`}
+                  render={({ field: rootField }) => (
+                    <FormItem className="flex-1">
+                      <div className="flex flex-row">
+                        <div className="mr-2 flex items-center h-10 w-[350px] rounded-md border border-input px-1 text-sm ring-offset-background">
+                          <div className="overflow-hidden aspect-square w-10 h-10 p-1">
+                            <IngredientImage
+                              ingredient={{
+                                id: rootField.value.ingredient_id,
+                                name:
+                                  ingredients.find(
+                                    (ingr) =>
+                                      ingr.id === rootField.value.ingredient_id
+                                  )?.name || "unknown",
+                              }}
+                              width={100}
+                              height={100}
+                              className="object-cover rounded-full"
                             />
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`ingredients.${index}.amount`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                placeholder="Quantité"
-                                type="number"
-                                className="rounded-r-none border-r-0"
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(+e.target.value)
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`ingredients.${index}.unit`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <Select
-                              disabled={!rootField.value.ingredient_id}
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
+                          </div>
+                          {
+                            ingredients.find(
+                              (ingr) =>
+                                ingr.id === rootField.value.ingredient_id
+                            )?.name
+                          }
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name={`ingredients.${index}.quantity`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
                               <FormControl>
-                                <SelectTrigger className="w-[150px] rounded-none z-10">
-                                  <SelectValue placeholder="Unité" />
-                                </SelectTrigger>
+                                <Input
+                                  placeholder="Quantité"
+                                  type="number"
+                                  className="rounded-r-none border-r-0"
+                                  {...field}
+                                  onChange={(e) =>
+                                    field.onChange(+e.target.value)
+                                  }
+                                />
                               </FormControl>
-                              {/* @todo Dynamic unit based on ingredient */}
-                              <SelectContent>
-                                <SelectItem value="g">g</SelectItem>
-                                <SelectItem value="pièce(s)">
-                                  pièce(s)
-                                </SelectItem>
-                                <SelectItem value="l">l</SelectItem>
-                                <SelectItem value="cs">Cuil. soupe</SelectItem>
-                                <SelectItem value="cc">Cuil. café</SelectItem>
-                                <SelectItem value="tranche(s)">
-                                  tranche(s)
-                                </SelectItem>
-                                <SelectItem value="pincée(s)">
-                                  pincée(s)
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="flex h-10 rounded-md border border-input bg-secondary px-3 py-2 text-sm ring-offset-background rounded-l-none border-l-0">
-                        / personne
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`ingredients.${index}.unit`}
+                          render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                              <Select
+                                disabled={!rootField.value.ingredient_id}
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="w-[200px] rounded-l-none">
+                                    <SelectValue placeholder="Unité" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                {/* @todo Dynamic unit based on ingredient */}
+                                <SelectContent>
+                                  <SelectItem value="g">g</SelectItem>
+                                  <SelectItem value="pièce(s)">
+                                    pièce(s)
+                                  </SelectItem>
+                                  <SelectItem value="l">l</SelectItem>
+                                  <SelectItem value="cs">
+                                    Cuil. soupe
+                                  </SelectItem>
+                                  <SelectItem value="cc">Cuil. café</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          onClick={() => ingredientsFieldArray.remove(index)}
+                        >
+                          <Icons.close className="h-4 w-4" />
+                        </Button>
                       </div>
-
-                      <Button
-                        disabled={ingredientsFieldArray.fields.length === 1}
-                        variant="ghost"
-                        size="icon"
-                        type="button"
-                        onClick={() => ingredientsFieldArray.remove(index)}
-                      >
-                        <Icons.close className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            )
-          })}
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="mt-2"
-            onClick={() =>
+                    </FormItem>
+                  )}
+                />
+              )
+            })}
+          </div>
+          <IngredientPopover
+            data={ingredients}
+            onSelect={(id) => {
               ingredientsFieldArray.append(
                 {
-                  ingredient_id: "",
-                  amount: 100,
+                  ingredient_id: id,
+                  quantity: 0,
                   unit: "g",
                 },
                 {
                   shouldFocus: false,
                 }
               )
-            }
-          >
-            <Icons.add className="h-4 w-4 mr-2" />
-            Ajouter un ingrédient
-          </Button>
+            }}
+          />
         </div>
 
         <div>
@@ -555,193 +489,24 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
     </Form>
   )
 }
-function TagsPopover({
-  selectedValues,
-  tags,
-  onSelect,
-}: {
-  selectedValues: string[]
-  tags: Tag[]
-  onSelect: (value: string) => void
-}) {
-  const items = tags
 
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <FormControl>
-          <Button variant="secondary" role="combobox">
-            <Icons.add className="w-4 h-4 mr-2" />
-            Ajouter un tag
-          </Button>
-        </FormControl>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
-        <Command>
-          <CommandInput placeholder="Rechercher des tags..." />
-          <CommandEmpty>Aucun tag trouvé.</CommandEmpty>
-          <CommandGroup>
-            {items.map((item) => (
-              <CommandItem
-                value={item.name}
-                key={item.id}
-                onSelect={() => {
-                  onSelect(item.id)
-                }}
-              >
-                <Icons.check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    selectedValues.includes(item.id)
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}
-                />
-                {item.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  )
-}
-function CuisinesPopover({
-  selectedValue,
-  onSelect,
-}: {
-  selectedValue: string | undefined
-  onSelect: (value: string | undefined) => void
-}) {
-  const [loading, setLoading] = React.useState(false)
-  const [items, setItems] = React.useState<Cuisine[]>([])
-  const { supabase } = useSupabase()
-
-  React.useEffect(() => {
-    supabase
-      .from("cuisine")
-      .select("*")
-      .then((res) => {
-        if (res.data) setItems(res.data)
-      })
-  }, [supabase])
-
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <FormControl>
-          <Button
-            variant="outline"
-            role="combobox"
-            className={cn(
-              "w-[300px] justify-between",
-              !selectedValue && "text-muted-foreground"
-            )}
-          >
-            {selectedValue
-              ? items.find((item) => item.id === selectedValue)?.name
-              : "Selectionner une cuisine"}
-            <Icons.chedown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </FormControl>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
-        <Command>
-          <CommandInput placeholder="Rechercher des cuisines..." />
-          <CommandEmpty>Aucune cuisine trouvée.</CommandEmpty>
-          <CommandGroup>
-            <CommandItem
-              onSelect={() => {
-                onSelect(undefined)
-              }}
-            >
-              <Icons.check
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  undefined === selectedValue ? "opacity-100" : "opacity-0"
-                )}
-              />
-              Aucune
-            </CommandItem>
-            {items.map((item) => (
-              <CommandItem
-                value={item.name}
-                key={item.id}
-                onSelect={() => {
-                  onSelect(item.id)
-                }}
-              >
-                <Icons.check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    item.id === selectedValue ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {item.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  )
-}
 function IngredientPopover({
   data,
-  selectedValue,
-  selectedValues,
   onSelect,
 }: {
   data: Ingredient[]
-  selectedValue: string | undefined
-  selectedValues: string[]
-  onSelect: (value: string) => void
+  onSelect: (value: number) => void
 }) {
   const items = data
   const [open, setOpen] = React.useState(false)
-
-  // Specific value to warn of no matching item found on recipe import
-  const isNoMatch = selectedValue?.startsWith("NOMATCH")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <FormControl>
-          <Button
-            variant="outline"
-            role="combobox"
-            className={cn(
-              "w-[350px] justify-start relative",
-              !selectedValue && "text-muted-foreground"
-            )}
-          >
-            {isNoMatch && <Icons.warn className="text-red-500 w-5 h-5" />}
-            {selectedValue && !isNoMatch && (
-              <div className="overflow-hidden rounded-full aspect-square absolute w-10 h-10 p-1 mr-1 left-0">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${selectedValue}.png`}
-                  alt={"ingredient"}
-                  width={100}
-                  height={100}
-                  className="object-cover"
-                  placeholder="empty"
-                />
-              </div>
-            )}
-            <span
-              className={cn(
-                "flex-1 text-left pl-6",
-                isNoMatch && "text-red-500"
-              )}
-            >
-              {selectedValue
-                ? isNoMatch
-                  ? selectedValue.split("_")[1]
-                  : items.find((item) => item.id === selectedValue)?.name
-                : "Selectionner un ingrédient"}
-            </span>
-
-            <Icons.chedown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <Button variant="secondary" size="sm">
+            <Icons.add className="h-4 w-4 mr-2" />
+            Ajouter un ingrédient
           </Button>
         </FormControl>
       </PopoverTrigger>
@@ -749,43 +514,105 @@ function IngredientPopover({
         <Command>
           <CommandInput placeholder="Rechercher des ingrédients..." />
           <CommandEmpty>Aucun ingrédient trouvée.</CommandEmpty>
-          <CommandGroup className="max-h-[350px] overflow-y-auto">
-            {items
-              .filter((item) => !selectedValues.includes(item.id))
-              .map((item) => (
-                <CommandItem
-                  value={item.name}
-                  key={item.id}
-                  onSelect={() => {
-                    onSelect(item.id)
-                    setOpen(false)
-                  }}
-                >
-                  <Icons.check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      item.id === selectedValue ||
-                        selectedValues.includes(item.id)
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  <div className="overflow-hidden aspect-square w-6 h-6 mr-2">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/ingredient/${item.id}.png`}
-                      alt={"ingredient"}
-                      width={100}
-                      height={100}
-                      className="object-cover"
-                      placeholder="empty"
-                    />
-                  </div>
-                  {item.name}
-                </CommandItem>
-              ))}
+          <CommandGroup className="h-[350px] overflow-y-auto">
+            {items.map((item) => (
+              <CommandItem
+                value={item.name}
+                key={item.id}
+                onSelect={() => {
+                  onSelect(item.id)
+                  setOpen(false)
+                }}
+              >
+                {item.name}
+              </CommandItem>
+            ))}
           </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
   )
 }
+
+// function TagsPopover({
+//   selectedValue,
+//   onSelect,
+// }: {
+//   selectedValue: string | undefined
+//   onSelect: (value: string | undefined) => void
+// }) {
+//   const [loading, setLoading] = React.useState(false)
+//   const [items, setItems] = React.useState<Cuisine[]>([])
+//   const { supabase } = useSupabase()
+
+//   React.useEffect(() => {
+//     async function getItems() {
+//       setLoading(true)
+//       const res = await supabase.from("cuisine").select("*")
+//       if (res.data) setItems(res.data)
+//       setLoading(false)
+//     }
+
+//     getItems()
+//   }, [])
+
+//   return (
+//     <Popover>
+//       <PopoverTrigger asChild>
+//         <FormControl>
+//           <Button
+//             variant="outline"
+//             role="combobox"
+//             className={cn(
+//               "w-[300px] justify-between",
+//               !selectedValue && "text-muted-foreground"
+//             )}
+//           >
+//             {selectedValue
+//               ? items.find((item) => item.id === selectedValue)?.name
+//               : "Selectionner une cuisine"}
+//             <Icons.chedown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+//           </Button>
+//         </FormControl>
+//       </PopoverTrigger>
+//       <PopoverContent className="w-[300px] p-0">
+//         <Command>
+//           <CommandInput placeholder="Rechercher des cuisines..." />
+//           <CommandEmpty>Aucune cuisine trouvée.</CommandEmpty>
+//           <CommandGroup>
+//             <CommandItem
+//               onSelect={() => {
+//                 onSelect(undefined)
+//               }}
+//             >
+//               <Icons.check
+//                 className={cn(
+//                   "mr-2 h-4 w-4",
+//                   undefined === selectedValue ? "opacity-100" : "opacity-0"
+//                 )}
+//               />
+//               Aucune
+//             </CommandItem>
+//             {items.map((item) => (
+//               <CommandItem
+//                 value={item.name}
+//                 key={item.id}
+//                 onSelect={() => {
+//                   onSelect(item.id)
+//                 }}
+//               >
+//                 <Icons.check
+//                   className={cn(
+//                     "mr-2 h-4 w-4",
+//                     item.id === selectedValue ? "opacity-100" : "opacity-0"
+//                   )}
+//                 />
+//                 {item.name}
+//               </CommandItem>
+//             ))}
+//           </CommandGroup>
+//         </Command>
+//       </PopoverContent>
+//     </Popover>
+//   )
+// }
