@@ -433,6 +433,10 @@ function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
         }),
       })
 
+      if (!response.ok) {
+        return console.log(response.statusText)
+      }
+
       const result = await response.json()
 
       setImages(result)
