@@ -1,10 +1,15 @@
 "use client"
 
-import React from "react"
+import React, { useTransition } from "react"
 import { useRouter } from "next/navigation"
 // import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Control, useFieldArray, useForm } from "react-hook-form"
+import {
+  Control,
+  UseFormGetValues,
+  useFieldArray,
+  useForm,
+} from "react-hook-form"
 import * as z from "zod"
 
 import { Ingredient, Unit } from "@/types/data"
@@ -399,12 +404,57 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
+        <ImageButton getValues={form.getValues} />
         <Button type="submit">
           {isSaving && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Créer
         </Button>
       </form>
     </Form>
+  )
+}
+
+function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
+  const [generating, startTransition] = React.useTransition()
+  const [images, setImages] = React.useState<
+    { filename: string; data: string }[]
+  >([])
+  const handleClick = () => {
+    startTransition(async () => {
+      const formData = getValues()
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        body: JSON.stringify({
+          prompt: `Photo vue du dessus d'un plat bien présenté dans une assiette. Le nom du plat est "${
+            formData.name
+          }". Les instructions pour préparer le sont "${formData.steps
+            .map((step) => step.instructionsMarkdown)
+            .join(", ")}"`,
+        }),
+      })
+
+      const result = await response.json()
+
+      setImages(result)
+    })
+  }
+
+  return (
+    <div>
+      <Button disabled={generating} onClick={handleClick}>
+        {generating ? "Generation..." : "Générer une image"}
+      </Button>
+      <div className="grid grid-cols-4 gap-4">
+        {images.map((image) => (
+          <img
+            className="rounded-sm"
+            alt={image.filename}
+            key={image.filename}
+            src={`data:image/png;base64, ${image.data}`}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 
