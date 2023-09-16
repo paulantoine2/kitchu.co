@@ -10,9 +10,9 @@ import {
   fetchHelloFreshRecipe,
   importHelloFreshRecipe,
 } from "@/lib/importHelloFresh"
-import { recipeSchema } from "@/lib/validations/recipe"
+import { importRecipeSchema } from "@/lib/validations/recipe"
 
-type RecipeData = z.infer<typeof recipeSchema>
+type RecipeData = z.infer<typeof importRecipeSchema>
 
 export async function POST(request: Request) {
   try {
@@ -25,8 +25,6 @@ export async function POST(request: Request) {
     if (!url.includes("www.hellofresh")) throw new InvalidImportUrlError()
     const id = url.split("-").pop()
     if (!id) throw new InvalidImportUrlError()
-
-    const recipe_uuid = createRecipeUuid(id)
 
     const result = await fetchHelloFreshRecipe(id)
 
@@ -41,17 +39,19 @@ export async function POST(request: Request) {
         )
 
         if (!helloFreshIngredient) throw new InvalidRecipeError()
-        let ingredient_id = `NOMATCH_${helloFreshIngredient.name}`
 
-        const matchingDbIngredient = await searchIngredient(
-          helloFreshIngredient.name
+        const matchingDbIngredient =
+          (await searchIngredient(helloFreshIngredient.name)) || 0
+
+        const matchingDbUnit = await searchUnit(
+          quantity.unit,
+          matchingDbIngredient
         )
-        if (matchingDbIngredient) ingredient_id = matchingDbIngredient
 
         return {
-          ingredient_id,
+          ingredient_id: matchingDbIngredient,
           amount: quantity.amount || 0,
-          unit: quantity.unit,
+          unit: matchingDbUnit || undefined,
         }
       })
     )
@@ -65,7 +65,6 @@ export async function POST(request: Request) {
         ),
       })),
       is_public: false,
-      tags: [],
       difficulty: recipe.difficulty,
       prep_duration_min: parseInt(recipe.prepTime.slice(2, 4)),
     }
@@ -88,6 +87,18 @@ async function searchIngredient(name: string) {
     .textSearch("name", name, {
       type: "plain",
     })
-  const matchingDbIngredient = response.data?.[0]
-  return matchingDbIngredient?.id || null
+  const matchingDbUnit = response.data?.[0]
+  return matchingDbUnit?.id || null
+}
+
+async function searchUnit(name: string, ingredient_id: number) {
+  const supabase = createRouteHandlerClient<Database>({ cookies })
+  const response = await supabase
+    .from("ingredient_unit")
+    .select("*,ingredient(*)")
+    .textSearch("ingredient.short_name", name, {
+      type: "plain",
+    })
+  const matchingDbUnit = response.data?.[0]
+  return matchingDbUnit?.unit_id || null
 }

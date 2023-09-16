@@ -16,7 +16,7 @@ export default function RecipeCard({
   recipe,
   animationDelay,
 }: {
-  recipe: { name: string; id: string }
+  recipe: { name: string; id: number }
   animationDelay: number
 }) {
   return (
@@ -35,11 +35,6 @@ export default function RecipeCard({
         </div>
         <div className="space-y-2">
           <div className="flex items-center">
-            <Suspense
-              fallback={<Skeleton className="h-5 w-[100px]"></Skeleton>}
-            >
-              <RecipePrice persons={2} id={recipe.id} />
-            </Suspense>
             <div className="h-9 w-9 bg-primary text-white rounded-full flex items-center justify-center ml-auto">
               <Icons.plus />
             </div>

@@ -9,6 +9,77 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      cart_recipe: {
+        Row: {
+          quantity: number
+          recipe_id: number
+          user_id: string
+        }
+        Insert: {
+          quantity: number
+          recipe_id: number
+          user_id: string
+        }
+        Update: {
+          quantity?: number
+          recipe_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_recipe_recipe_id_fkey"
+            columns: ["recipe_id"]
+            referencedRelation: "recipe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_recipe_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      fridge_ingredient: {
+        Row: {
+          ingredient_id: number
+          quantity: number
+          unit_id: number
+          user_id: string
+        }
+        Insert: {
+          ingredient_id: number
+          quantity: number
+          unit_id: number
+          user_id: string
+        }
+        Update: {
+          ingredient_id?: number
+          quantity?: number
+          unit_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fridge_ingredient_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            referencedRelation: "ingredient"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fridge_ingredient_unit_id_fkey"
+            columns: ["unit_id"]
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fridge_ingredient_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       ingredient: {
         Row: {
           category: string
@@ -110,7 +181,6 @@ export interface Database {
           name: string
           prep_time_min: number | null
           steps: Json[] | null
-          full_name: string | null
         }
         Insert: {
           author?: string | null
@@ -226,12 +296,7 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      full_name: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

@@ -5,16 +5,15 @@ import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 // import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { Control, FieldValues, useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { Cuisine, Ingredient, Tag } from "@/types/data"
+import { Cuisine, Ingredient, Tag, Unit } from "@/types/data"
 import { cn } from "@/lib/utils"
 import { recipeSchema } from "@/lib/validations/recipe"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { Icons } from "../icons"
-import IngredientListItem from "../ingredient-list-item"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
@@ -183,15 +182,16 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
       body: JSON.stringify(values),
     })
 
-    setIsSaving(false)
+    console.log(response)
 
     if (!response?.ok) {
+      setIsSaving(false)
       return alert("error")
     }
 
     const body = await response.json()
 
-    router.push(`/recipes/${body.uuid}`)
+    router.push(`/recipes/${body.id}`)
   }
 
   return (
@@ -282,93 +282,17 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                   control={form.control}
                   name={`ingredients.${index}`}
                   render={({ field: rootField }) => (
-                    <FormItem className="flex-1">
-                      <div className="flex flex-row">
-                        <div className="mr-2 flex items-center h-10 w-[350px] rounded-md border border-input px-1 text-sm ring-offset-background">
-                          <div className="overflow-hidden aspect-square w-10 h-10 p-1">
-                            <IngredientImage
-                              ingredient={{
-                                id: rootField.value.ingredient_id,
-                                name:
-                                  ingredients.find(
-                                    (ingr) =>
-                                      ingr.id === rootField.value.ingredient_id
-                                  )?.name || "unknown",
-                              }}
-                              width={100}
-                              height={100}
-                              className="object-cover rounded-full"
-                            />
-                          </div>
-                          {
-                            ingredients.find(
-                              (ingr) =>
-                                ingr.id === rootField.value.ingredient_id
-                            )?.name
-                          }
-                        </div>
-                        <FormField
-                          control={form.control}
-                          name={`ingredients.${index}.quantity`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormControl>
-                                <Input
-                                  placeholder="Quantité"
-                                  type="number"
-                                  className="rounded-r-none border-r-0"
-                                  {...field}
-                                  onChange={(e) =>
-                                    field.onChange(+e.target.value)
-                                  }
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name={`ingredients.${index}.unit`}
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <Select
-                                disabled={!rootField.value.ingredient_id}
-                                onValueChange={field.onChange}
-                                value={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="w-[200px] rounded-l-none">
-                                    <SelectValue placeholder="Unité" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                {/* @todo Dynamic unit based on ingredient */}
-                                <SelectContent>
-                                  <SelectItem value="g">g</SelectItem>
-                                  <SelectItem value="pièce(s)">
-                                    pièce(s)
-                                  </SelectItem>
-                                  <SelectItem value="l">l</SelectItem>
-                                  <SelectItem value="cs">
-                                    Cuil. soupe
-                                  </SelectItem>
-                                  <SelectItem value="cc">Cuil. café</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          type="button"
-                          onClick={() => ingredientsFieldArray.remove(index)}
-                        >
-                          <Icons.close className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </FormItem>
+                    <IngredientField
+                      id={rootField.value.ingredient_id}
+                      name={
+                        ingredients.find(
+                          (ingr) => ingr.id === rootField.value.ingredient_id
+                        )?.name || "unknown"
+                      }
+                      control={form.control}
+                      index={index}
+                      onRemove={() => ingredientsFieldArray.remove(index)}
+                    />
                   )}
                 />
               )
@@ -381,7 +305,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                 {
                   ingredient_id: id,
                   quantity: 0,
-                  unit: "g",
+                  unit: 3,
                 },
                 {
                   shouldFocus: false,
@@ -531,6 +455,109 @@ function IngredientPopover({
         </Command>
       </PopoverContent>
     </Popover>
+  )
+}
+
+function IngredientField({
+  name,
+  id,
+  index,
+  onRemove,
+  control,
+}: {
+  name: string
+  id: number
+  index: number
+  onRemove: () => void
+  control?: Control<FormData> | undefined
+}) {
+  const { supabase } = useSupabase()
+  const [units, setUnits] = React.useState<Unit[]>([])
+
+  React.useEffect(() => {
+    supabase
+      .from("ingredient_unit")
+      .select("unit(*)")
+      .eq("ingredient_id", id)
+      .then((res) => {
+        if (res.data)
+          setUnits(
+            res.data.map((iu) => iu.unit).filter((u) => u !== null) as Unit[]
+          )
+      })
+  }, [id])
+
+  return (
+    <FormItem className="flex-1">
+      <div className="flex flex-row">
+        <div className="mr-2 flex items-center h-10 w-[350px] rounded-md border border-input px-1 text-sm ring-offset-background">
+          <div className="overflow-hidden aspect-square w-10 h-10 p-1">
+            <IngredientImage
+              ingredient={{
+                id,
+                name,
+              }}
+              width={100}
+              height={100}
+              className="object-cover rounded-full"
+            />
+          </div>
+          {name}
+        </div>
+        <FormField
+          control={control}
+          name={`ingredients.${index}.quantity`}
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <Input
+                  autoFocus
+                  placeholder="Quantité"
+                  type="number"
+                  className="rounded-r-none border-r-0 z-10"
+                  {...field}
+                  onChange={(e) => field.onChange(+e.target.value)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name={`ingredients.${index}.unit`}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <Select
+                disabled={!id}
+                onValueChange={(v) => field.onChange(+v)}
+                value={field.value + ""}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-[150px] rounded-none z-10">
+                    <SelectValue placeholder="Unité" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {units.map((unit) => (
+                    <SelectItem key={unit.id} value={unit.id + ""}>
+                      {unit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex h-10 rounded-md border border-input bg-secondary px-3 py-2 text-sm ring-offset-background rounded-l-none border-l-0">
+          / personne
+        </div>
+        <Button variant="ghost" size="icon" type="button" onClick={onRemove}>
+          <Icons.close className="h-4 w-4" />
+        </Button>
+      </div>
+    </FormItem>
   )
 }
 

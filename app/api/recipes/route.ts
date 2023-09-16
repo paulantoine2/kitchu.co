@@ -21,35 +21,40 @@ export async function POST(req: Request) {
 
     const json = await req.json()
     const body = recipeSchema.parse(json)
-    const id = uuid()
 
-    await supabase.from("recipe").insert({
-      id,
-      name: body.name,
-      steps: body.steps.map(({ instructionsMarkdown }, index) => ({
-        images: [],
-        index,
-        instructionsMarkdown,
-        videos: [],
-      })),
-    })
+    const { data, error } = await supabase
+      .from("recipe")
+      .insert({
+        author: session.data.session?.user.id,
+        difficulty: body.difficulty,
+        is_public: body.is_public,
+        prep_time_min: body.prep_duration_min,
+        name: body.name,
+        steps: body.steps.map(({ instructionsMarkdown }, index) => ({
+          images: [],
+          index,
+          instructionsMarkdown,
+          videos: [],
+        })),
+      })
+      .select()
 
-    await supabase.from("quantity").insert(
+    if (error) throw error
+
+    const id = data[0]?.id
+
+    if (!id) throw new Error("Invalid id")
+
+    await supabase.from("recipe_ingredient").insert(
       body.ingredients.map((i) => ({
         ingredient_id: i.ingredient_id,
         recipe_id: id,
-        amount: i.amount,
-        unit: i.unit,
+        quantity: i.quantity,
+        unit_id: i.unit,
       }))
     )
 
-    if (body.cuisine) {
-      await supabase
-        .from("recipe_cuisine")
-        .insert({ recipe_id: id, cuisine_id: body.cuisine })
-    }
-
-    return new Response(JSON.stringify({ uuid: id }))
+    return new Response(JSON.stringify({ id }))
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })

@@ -52,21 +52,22 @@ export default function FridgeModal() {
     startFridgeTransition,
     updateFridgeItem,
   } = useFridge()
-  const quantityRef = useRef(fridge.items.length)
+
+  const quantityRef = useRef(fridge?.length || 0)
   const router = useRouter()
   const isPending = fridgeIsUpdating
 
   useEffect(() => {
-    if (fridge.items.length !== quantityRef.current) {
+    if (fridge && fridge.length !== quantityRef.current) {
       // But only if it's not already open (quantity also changes when editing items in cart).
       if (!isOpen) {
         setIsOpen(true)
       }
 
       // Always update the quantity reference
-      quantityRef.current = fridge.items.length
+      quantityRef.current = fridge.length
     }
-  }, [isOpen, fridge.items.length, quantityRef])
+  }, [isOpen, fridge, quantityRef])
 
   function renderAddButton(className?: string) {
     return (
@@ -97,11 +98,11 @@ export default function FridgeModal() {
           <SheetTitle>Fridge</SheetTitle>
         </SheetHeader>
         <Separator />
-        {fridge.items.length > 0 ? (
+        {fridge && fridge.length > 0 ? (
           <>
             <ScrollArea className="flex-1 px-4">
               <div className="mt-4"></div>
-              {fridge.items.map((item) => (
+              {fridge.map((item) => (
                 <React.Fragment key={item.ingredient?.id}>
                   <div className="group pl-3 pr-1 pt-4 pb-4 space-x-3 flex ">
                     <div className="flex-1">
@@ -126,11 +127,12 @@ export default function FridgeModal() {
                             className="w-[60px] text-center p-0 px-2 border-none z-10  h-[30px]"
                             disabled={isPending}
                             type="number"
-                            onChange={(e) =>
-                              updateFridgeItem(item, {
-                                quantity: +e.target.value,
-                              })
-                            }
+                            onChange={(e) => {
+                              if (item.ingredient)
+                                updateFridgeItem(item.ingredient.id, {
+                                  quantity: +e.target.value,
+                                })
+                            }}
                           />
                           {/* <Button
                             variant="ghost"
@@ -156,7 +158,10 @@ export default function FridgeModal() {
                         <Button
                           variant="ghost"
                           className="p-2 h-[32px]"
-                          onClick={() => removeItemFromFridge(item)}
+                          onClick={() => {
+                            if (item.ingredient)
+                              removeItemFromFridge(item.ingredient.id)
+                          }}
                         >
                           <Icons.trash className="w-4 h-4" />
                         </Button>
