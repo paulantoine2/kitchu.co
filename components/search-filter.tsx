@@ -28,7 +28,7 @@ interface Props {
   title?: string
   options: {
     label: string
-    value: string
+    value: number
     icon?: LucideIcon
   }[]
 }
@@ -73,7 +73,7 @@ export function SearchFilter({ name, title, options }: Props) {
                   </Badge>
                 ) : (
                   options
-                    .filter((option) => selectedValues.has(option.value))
+                    .filter((option) => selectedValues.has(option.value + ""))
                     .map((option) => (
                       <Badge
                         variant="secondary"
@@ -96,15 +96,15 @@ export function SearchFilter({ name, title, options }: Props) {
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
-                const isSelected = selectedValues.has(option.value)
+                const isSelected = selectedValues.has(option.value + "")
                 return (
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
                       if (isSelected) {
-                        selectedValues.delete(option.value)
+                        selectedValues.delete(option.value + "")
                       } else {
-                        selectedValues.add(option.value)
+                        selectedValues.add(option.value + "")
                       }
                       const filterValues = Array.from(selectedValues)
                       onSet(filterValues.length ? filterValues : undefined)

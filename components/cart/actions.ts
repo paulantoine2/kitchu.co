@@ -3,8 +3,8 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
 export async function addItemToCart(props: {
-  persons: number
-  recipe_id: string
+  quantity: number
+  recipe_id: number
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
@@ -12,7 +12,7 @@ export async function addItemToCart(props: {
 }
 
 export async function removeItemFromCart(props: {
-  recipe_id: string
+  recipe_id: number
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()
@@ -24,8 +24,8 @@ export async function removeItemFromCart(props: {
 }
 
 export async function updateCartItem(props: {
-  recipe_id: string
-  updates: { persons: number }
+  recipe_id: number
+  updates: { quantity: number }
   user_id: string
 }) {
   const supabase = createServerSupabaseClient()

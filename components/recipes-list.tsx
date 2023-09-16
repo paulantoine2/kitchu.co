@@ -4,37 +4,24 @@ import Link from "next/link"
 
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
-import { RecipePrice } from "./recipe-price"
 import RecipeCard from "./recipe/recipe-card"
 import { Skeleton } from "./ui/skeleton"
 
 type Props = {
   searchValue: string
-  cuisine?: string
-  tag?: string
   ingredient?: string
   limit?: number
 }
 
-export async function RecipesList({
-  searchValue,
-  cuisine,
-  ingredient,
-  tag,
-  limit,
-}: Props) {
+export async function RecipesList({ searchValue, ingredient, limit }: Props) {
   const supabase = createServerSupabaseClient()
-  let req = supabase
-    .from("recipe")
-    .select(`*,cuisine!inner(*),ingredient!inner(*)`)
+  let req = supabase.from("recipe").select(`*,ingredient!inner(*)`)
 
   if (searchValue)
     req = req.textSearch("name", searchValue, {
       type: "websearch",
     })
 
-  if (cuisine) req = req.in("cuisine.id", cuisine.split(","))
-  if (tag) req = req.in("tag.id", tag.split(","))
   if (ingredient) req = req.in("ingredient.id", ingredient.split(","))
   if (limit) req = req.limit(limit)
 

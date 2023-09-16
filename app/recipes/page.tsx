@@ -26,12 +26,7 @@ export default async function RecipesPage({
       <SearchToolbar />
       <div className="grid grid-cols-4 gap-6 my-4">
         <Suspense>
-          <RecipesList
-            searchValue={searchValue}
-            tag={tag}
-            cuisine={cuisine}
-            ingredient={ingredient}
-          />
+          <RecipesList searchValue={searchValue} ingredient={ingredient} />
         </Suspense>
       </div>
     </>

@@ -9,48 +9,36 @@ import {
 } from "react"
 import { useRouter } from "next/navigation"
 
-import { useSupabase } from "../../app/supabase-provider"
+import { FridgeIngredient } from "@/types/data"
+import { useSupabase } from "@/app/supabase-provider"
+
 import {
   addItemToFridge,
   clearFridge,
   removeItemFromFridge,
   updateFridgeItem,
-} from "./actions"
-
-type FridgeItem = {
-  quantity: number
-  unit: string
-  ingredient: {
-    category: string
-    id: string
-    name: string
-  } | null
-}
-
-type Fridge = {
-  id?: string
-  items: FridgeItem[]
-}
+} from "../../components/fridge/actions"
+import { Fridge } from "./fridge"
 
 type FridgeContext = {
   fridge: Fridge
   fridgeIsUpdating: boolean
   startFridgeTransition: TransitionStartFunction
   addItemToFridge: (
-    ingredient_id: string,
+    ingredient_id: number,
     quantity: number,
-    unit: string
+    unit: number
   ) => void
-  removeItemFromFridge: (item: FridgeItem) => void
+  removeItemFromFridge: (ingredient_id: number) => void
   updateFridgeItem: (
-    item: FridgeItem,
-    updates: { quantity?: number; unit?: string }
+    ingredient_id: number,
+    updates: { quantity?: number; unit?: number }
   ) => void
   clearFridge: () => void
 }
 
 const Context = createContext<FridgeContext>({
-  fridge: { items: [] },
+  fridge: null,
   fridgeIsUpdating: false,
   startFridgeTransition: () => {},
   addItemToFridge: () => {},
@@ -76,14 +64,14 @@ export default function FridgeProvider({
     alert(message)
   }
 
-  function add(ingredient_id: string, quantity: number, unit: string) {
+  function add(ingredient_id: number, quantity: number, unit_id: number) {
     startFridgeTransition(async () => {
       if (!user_id) return
       const { error } = await addItemToFridge({
-        ingredient_id: ingredient_id,
-        quantity: quantity,
-        unit: unit,
-        user_id: user_id,
+        ingredient_id,
+        quantity,
+        unit_id,
+        user_id,
       })
       if (error) return handleError(error.message)
 
@@ -91,12 +79,12 @@ export default function FridgeProvider({
     })
   }
 
-  function remove(item: FridgeItem) {
+  function remove(ingredient_id: number) {
     startFridgeTransition(async () => {
-      if (!item.ingredient || !user_id) return
+      if (!user_id) return
       const { error } = await removeItemFromFridge({
-        ingredient_id: item.ingredient.id,
-        user_id: user_id,
+        ingredient_id,
+        user_id,
       })
       if (error) return handleError(error.message)
 
@@ -105,15 +93,15 @@ export default function FridgeProvider({
   }
 
   function update(
-    item: FridgeItem,
-    updates: { quantity?: number; unit?: string }
+    ingredient_id: number,
+    updates: { quantity?: number; unit?: number }
   ) {
     startFridgeTransition(async () => {
-      if (!item.ingredient || !user_id) return
+      if (!user_id) return
       const { error } = await updateFridgeItem({
-        ingredient_id: item.ingredient.id,
+        ingredient_id,
         updates,
-        user_id: user_id,
+        user_id,
       })
       if (error) return handleError(error.message)
 
@@ -125,7 +113,7 @@ export default function FridgeProvider({
     startFridgeTransition(async () => {
       if (!user_id) return
       const { error } = await clearFridge({
-        user_id: user_id,
+        user_id,
       })
       if (error) return handleError(error.message)
 

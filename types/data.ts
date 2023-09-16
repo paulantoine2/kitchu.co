@@ -1,3 +1,5 @@
+import { Database } from "@/lib/database.types"
+
 export type Salepoint = {
   category: string
   id: string
@@ -7,7 +9,7 @@ export type Salepoint = {
 }
 
 export type Ingredient = {
-  id: string
+  id: number
   name: string
 }
 
@@ -22,11 +24,8 @@ export type Cuisine = {
   name: string
 }
 
-export type Quantity = {
-  ingredient: Ingredient | null
-  amount: number | null
-  unit: string
-}
+export type RecipeIngredient =
+  Database["public"]["Tables"]["recipe_ingredient"]["Row"]
 
 export type Step = {
   index: number
@@ -35,14 +34,23 @@ export type Step = {
   videos: string[]
 }
 
-export type Recipe = {
-  headline: string | null
-  id: string
-  link: string | null
-  name: string
-  full_name: string | null
-  tag: Tag[]
-  cuisine: Cuisine[]
-  ingredient: Ingredient[]
-  steps: Step[]
+export type Recipe = Database["public"]["Tables"]["recipe"]["Row"]
+
+export type Unit = Database["public"]["Tables"]["unit"]["Row"]
+
+export type FridgeIngredient = {
+  quantity: number
+  unit: {
+    id: number
+    short_name: string
+  }
+  ingredient: {
+    category: string
+    id: number
+    name: string
+  }
+}
+
+export type Fridge = {
+  items: FridgeIngredient[]
 }

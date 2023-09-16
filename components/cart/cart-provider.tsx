@@ -16,33 +16,20 @@ import {
   removeItemFromCart,
   updateCartItem,
 } from "./actions"
-
-type CartItem = {
-  persons: number
-  recipe: {
-    id: string
-    name: string
-    headline: string | null
-  } | null
-}
-
-type Cart = {
-  id?: string
-  items: CartItem[]
-}
+import { Cart } from "./cart"
 
 type CartContext = {
   cart: Cart
   cartIsUpdating: boolean
   startCartTransition: TransitionStartFunction
-  addItemToCart: (recipe_id: string, persons: number) => void
-  removeItemFromCart: (item: CartItem) => void
-  updateCartItem: (item: CartItem, updates: { persons: number }) => void
+  addItemToCart: (recipe_id: number, quantity: number) => void
+  removeItemFromCart: (recipe_id: number) => void
+  updateCartItem: (recipe_id: number, updates: { quantity: number }) => void
   clearCart: () => void
 }
 
 const Context = createContext<CartContext>({
-  cart: { items: [] },
+  cart: null,
   cartIsUpdating: false,
   startCartTransition: () => {},
   addItemToCart: () => {},
@@ -68,12 +55,12 @@ export default function CartProvider({
     alert(message)
   }
 
-  function add(recipe_id: string, persons: number) {
+  function add(recipe_id: number, quantity: number) {
     startCartTransition(async () => {
       if (!user_id) return
       const { error } = await addItemToCart({
         recipe_id,
-        persons,
+        quantity,
         user_id,
       })
       if (error) return handleError(error.message)
@@ -82,12 +69,12 @@ export default function CartProvider({
     })
   }
 
-  function remove(item: CartItem) {
+  function remove(recipe_id: number) {
     startCartTransition(async () => {
-      if (!item.recipe || !user_id) return
+      if (!user_id) return
       const { error } = await removeItemFromCart({
-        recipe_id: item.recipe.id,
-        user_id: user_id,
+        recipe_id,
+        user_id,
       })
       if (error) return handleError(error.message)
 
@@ -95,11 +82,11 @@ export default function CartProvider({
     })
   }
 
-  function update(item: CartItem, updates: { persons: number }) {
+  function update(recipe_id: number, updates: { quantity: number }) {
     startCartTransition(async () => {
-      if (!item.recipe || !user_id) return
+      if (!user_id) return
       const { error } = await updateCartItem({
-        recipe_id: item.recipe.id,
+        recipe_id,
         updates,
         user_id,
       })

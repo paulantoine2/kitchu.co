@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 import { Icons } from "../icons"
+import { RecipeImage } from "../recipe/recipe-image"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { ScrollArea } from "../ui/scroll-area"
@@ -52,21 +53,21 @@ export default function CartModal() {
     startCartTransition,
     updateCartItem,
   } = useCart()
-  const quantityRef = useRef(cart.items.length)
+  const quantityRef = useRef(cart?.length || 0)
   const router = useRouter()
   const isPending = cartIsUpdating
 
   useEffect(() => {
-    if (cart.items.length !== quantityRef.current) {
+    if (cart && cart.length !== quantityRef.current) {
       // But only if it's not already open (quantity also changes when editing items in cart).
       if (!isOpen) {
         setIsOpen(true)
       }
 
       // Always update the quantity reference
-      quantityRef.current = cart.items.length
+      quantityRef.current = cart.length
     }
-  }, [isOpen, cart.items.length, quantityRef])
+  }, [isOpen, cart, quantityRef])
 
   function renderAddButton(className?: string) {
     return (
@@ -97,24 +98,22 @@ export default function CartModal() {
           <SheetTitle>Panier</SheetTitle>
         </SheetHeader>
         <Separator />
-        {cart.items.length > 0 ? (
+        {cart && cart.length > 0 ? (
           <>
             <ScrollArea className="flex-1 px-4">
               <div className="mt-4">
-                {cart.items.map((item) => (
+                {cart.map((item) => (
                   <React.Fragment key={item.recipe?.id}>
                     <div className="group pl-3 pr-1 pt-4 pb-4 space-x-3 flex ">
                       <div className="flex-1">
                         <div className="text-sm font-medium truncate">
                           {item.recipe?.name}
                         </div>
-                        <div className="text-sm truncate text-muted-foreground capitalize">
-                          {item.recipe?.headline}
-                        </div>
+
                         <div className="flex space-x-2 mt-2">
                           <div className="border border-input rounded-sm flex">
                             <Input
-                              value={item.persons}
+                              value={item.quantity}
                               className="w-[60px] text-center p-0 px-2 border-none z-10  h-[30px]"
                               disabled={isPending}
                               type="number"
@@ -132,13 +131,11 @@ export default function CartModal() {
                       </div>
                       {item.recipe && (
                         <div className="overflow-hidden rounded-sm aspect-square relative w-16 h-16 ">
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${item.recipe.id}.png`}
-                            alt={item.recipe.name}
+                          <RecipeImage
+                            recipe={item.recipe}
                             fill
                             className="object-cover bg-muted"
                             quality={25}
-                            placeholder="empty"
                           />
                         </div>
                       )}
@@ -168,13 +165,6 @@ export default function CartModal() {
             {renderAddButton()}
           </div>
         )}
-        {/* <Separator />
-        <SheetFooter className="p-4">
-          <Button size="sm">
-            <Icons.check className="mr-2 h-4 w-4" />
-            Sauvegarder les modifications
-          </Button>
-        </SheetFooter> */}
       </SheetContent>
     </Sheet>
   )
