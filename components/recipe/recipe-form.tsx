@@ -1,14 +1,13 @@
 "use client"
 
 import React from "react"
-import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 // import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Control, FieldValues, useFieldArray, useForm } from "react-hook-form"
+import { Control, useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { Cuisine, Ingredient, Tag, Unit } from "@/types/data"
+import { Ingredient, Unit } from "@/types/data"
 import { cn } from "@/lib/utils"
 import { recipeSchema } from "@/lib/validations/recipe"
 import { useSupabase } from "@/app/supabase-provider"
@@ -16,7 +15,6 @@ import { useSupabase } from "@/app/supabase-provider"
 import { Icons } from "../icons"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { Button } from "../ui/button"
-import { Card } from "../ui/card"
 import { Checkbox } from "../ui/checkbox"
 import {
   Command,
@@ -44,7 +42,7 @@ import {
   SelectValue,
 } from "../ui/select"
 import { Textarea } from "../ui/textarea"
-import { TypographyLead, TypographyMuted, TypographyP } from "../ui/typography"
+import { TypographyP } from "../ui/typography"
 import { IngredientImage } from "./ingredient-image"
 
 type FormData = z.infer<typeof recipeSchema>
@@ -69,11 +67,7 @@ export function ImportRecipeFormContainer() {
   )
 }
 
-export function ImportRecipeForm({
-  onData,
-}: {
-  onData: (data: FormData) => void
-}) {
+function ImportRecipeForm({ onData }: { onData: (data: FormData) => void }) {
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState("")
 
@@ -169,7 +163,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
       .then((res) => {
         if (res.data) setIngredients(res.data)
       })
-  }, [])
+  }, [supabase])
 
   async function onSubmit(values: FormData) {
     setIsSaving(true)
@@ -485,7 +479,7 @@ function IngredientField({
             res.data.map((iu) => iu.unit).filter((u) => u !== null) as Unit[]
           )
       })
-  }, [id])
+  }, [id, supabase])
 
   return (
     <FormItem className="flex-1">

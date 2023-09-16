@@ -4,7 +4,6 @@ import Link from "next/link"
 
 import { createServerSupabaseClient } from "@/lib/supabase-server-client"
 
-import { RecipePrice } from "./recipe-price"
 import RecipeCard from "./recipe/recipe-card"
 import { Skeleton } from "./ui/skeleton"
 
