@@ -15,6 +15,7 @@ export const recipeSchema = z.object({
         id: z.number(),
         name: z.string(),
         exists: z.literal(true),
+        picture_url: z.string().optional(),
       }),
       quantity: z.number().positive(),
       unit: z.number(),

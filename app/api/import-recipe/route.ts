@@ -50,6 +50,7 @@ export async function POST(request: Request) {
             id: matchingDbIngredient?.id || 0,
             name: matchingDbIngredient?.name || helloFreshIngredient.name,
             exists: Boolean(matchingDbIngredient),
+            picture_url: matchingDbIngredient?.picture_url,
           },
           quantity: quantity.amount || 0,
           unit: matchingDbUnit || undefined,

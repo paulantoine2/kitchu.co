@@ -19,6 +19,7 @@ import { recipeSchema } from "@/lib/validations/recipe"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useSupabase } from "@/app/supabase-provider"
 
+import { GenerateImageField } from "../common/generate-image-field"
 import { Icons } from "../icons"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { Button } from "../ui/button"
@@ -61,7 +62,7 @@ export function ImportRecipeFormContainer() {
   if (!data) return <ImportRecipeForm onData={setData} />
 
   return (
-    <>
+    <div className="max-w-3xl">
       <Alert className="mb-2" variant="warn">
         <Icons.review className="h-4 w-4" />
         <AlertTitle>Vérification</AlertTitle>
@@ -71,7 +72,7 @@ export function ImportRecipeFormContainer() {
         </AlertDescription>
       </Alert>
       <RecipeForm defaultValues={data} />
-    </>
+    </div>
   )
 }
 
@@ -184,13 +185,19 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
     router.push(`/recipes/${body.id}`)
   }
 
+  const getPrompt = () => {
+    return `Photo vue du dessus d'un plat bien présenté dans une assiette. Le nom du plat est "${
+      form.getValues().name
+    }".`
+  }
+
   return (
     <Form {...form}>
       <DevTool control={form.control} />
       <form
         id="recipe-form"
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-3xl"
+        className="space-y-8"
       >
         <FormField
           control={form.control}
@@ -206,8 +213,8 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
-        <ImageButton
-          getValues={form.getValues}
+        <GenerateImageField
+          prompt={getPrompt}
           onSelect={(imageData) => form.setValue("image_data", imageData)}
         />
         <FormField
@@ -411,92 +418,6 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
         </Button>
       </form>
     </Form>
-  )
-}
-
-function ImageButton({
-  getValues,
-  onSelect,
-}: {
-  getValues: UseFormGetValues<FormData>
-  onSelect: (imageData: string) => void
-}) {
-  const [generating, startTransition] = React.useTransition()
-  const [images, setImages] = React.useState<
-    { filename: string; data: string }[]
-  >([])
-
-  const [selected, setSelected] = React.useState<string>()
-  const handleClick = () => {
-    setImages([])
-    startTransition(async () => {
-      const formData = getValues()
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        body: JSON.stringify({
-          prompt: `Photo vue du dessus d'un plat bien présenté dans une assiette. Le nom du plat est "${formData.name}".`,
-        }),
-      })
-
-      if (!response.ok) {
-        return console.log(response.statusText)
-      }
-
-      const result = await response.json()
-
-      setImages(result)
-    })
-  }
-
-  return (
-    <div>
-      {!images.length && (
-        <div className="grid grid-cols-4 gap-4 mb-2">
-          {generating ? (
-            <>
-              <Skeleton className="max-w-full aspect-square" />
-              <Skeleton className="max-w-full aspect-square" />
-              <Skeleton className="max-w-full aspect-square" />
-              <Skeleton className="max-w-full aspect-square" />
-            </>
-          ) : (
-            <>
-              <div className=" bg-slate-100 max-w-full rounded-sm aspect-square"></div>
-              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
-              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
-              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
-            </>
-          )}
-        </div>
-      )}
-      {images.length > 0 && (
-        <div className="grid grid-cols-4 gap-4 mb-2">
-          {images.map((image) => (
-            <img
-              className={cn(
-                "rounded-sm cursor-pointer",
-                selected === image.filename && "ring-2 ring-ring ring-offset-2"
-              )}
-              alt={image.filename}
-              key={image.filename}
-              src={`data:image/png;base64, ${image.data}`}
-              onClick={() => {
-                setSelected(image.filename)
-                onSelect(image.data)
-              }}
-            />
-          ))}
-        </div>
-      )}
-      <Button
-        size="sm"
-        variant="secondary"
-        disabled={generating}
-        onClick={handleClick}
-      >
-        {generating ? "Generation..." : "Générer des images"}
-      </Button>
-    </div>
   )
 }
 

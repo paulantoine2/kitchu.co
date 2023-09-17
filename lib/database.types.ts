@@ -86,18 +86,21 @@ export interface Database {
           created_at: string
           id: number
           name: string
+          picture_url: string | null
         }
         Insert: {
           category?: string
           created_at?: string
           id?: number
           name: string
+          picture_url?: string | null
         }
         Update: {
           category?: string
           created_at?: string
           id?: number
           name?: string
+          picture_url?: string | null
         }
         Relationships: []
       }
@@ -248,21 +251,6 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
-      }
-      tag: {
-        Row: {
-          id: number
-          name: string
-        }
-        Insert: {
-          id?: number
-          name: string
-        }
-        Update: {
-          id?: number
-          name?: string
-        }
-        Relationships: []
       }
       unit: {
         Row: {
