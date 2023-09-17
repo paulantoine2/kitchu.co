@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useTransition } from "react"
+import React, { PropsWithChildren, useTransition } from "react"
 import { useRouter } from "next/navigation"
-// import { DevTool } from "@hookform/devtools"
+import { DevTool } from "@hookform/devtools"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { CommandLoading } from "cmdk"
 import {
   Control,
   UseFormGetValues,
@@ -15,6 +16,7 @@ import * as z from "zod"
 import { Ingredient, Unit } from "@/types/data"
 import { cn } from "@/lib/utils"
 import { recipeSchema } from "@/lib/validations/recipe"
+import { useDebounce } from "@/hooks/useDebounce"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { Icons } from "../icons"
@@ -47,7 +49,7 @@ import {
   SelectValue,
 } from "../ui/select"
 import { Textarea } from "../ui/textarea"
-import { TypographyP } from "../ui/typography"
+import { TypographyMuted, TypographyP } from "../ui/typography"
 import { IngredientImage } from "./ingredient-image"
 
 type FormData = z.infer<typeof recipeSchema>
@@ -159,17 +161,6 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
 
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
-  const [ingredients, setIngredients] = React.useState<Ingredient[]>([])
-
-  React.useEffect(() => {
-    supabase
-      .from("ingredient")
-      .select("*")
-      .then((res) => {
-        if (res.data) setIngredients(res.data)
-      })
-  }, [supabase])
-
   async function onSubmit(values: FormData) {
     setIsSaving(true)
 
@@ -195,7 +186,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
 
   return (
     <Form {...form}>
-      {/* <DevTool control={form.control} /> */}
+      <DevTool control={form.control} />
       <form
         id="recipe-form"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -282,15 +273,17 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                   name={`ingredients.${index}`}
                   render={({ field: rootField }) => (
                     <IngredientField
-                      id={rootField.value.ingredient_id}
-                      name={
-                        ingredients.find(
-                          (ingr) => ingr.id === rootField.value.ingredient_id
-                        )?.name || "unknown"
-                      }
+                      ingredient={field.ingredient}
                       control={form.control}
                       index={index}
                       onRemove={() => ingredientsFieldArray.remove(index)}
+                      onChange={(newIngredient) =>
+                        ingredientsFieldArray.update(index, {
+                          ingredient: { ...newIngredient, exists: true },
+                          quantity: field.quantity,
+                          unit: 3,
+                        })
+                      }
                     />
                   )}
                 />
@@ -298,11 +291,10 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             })}
           </div>
           <IngredientPopover
-            data={ingredients}
-            onSelect={(id) => {
+            onSelect={(ingredient) => {
               ingredientsFieldArray.append(
                 {
-                  ingredient_id: id,
+                  ingredient: { ...ingredient, exists: true },
                   quantity: 0,
                   unit: 3,
                 },
@@ -311,7 +303,12 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                 }
               )
             }}
-          />
+          >
+            <Button variant="secondary" size="sm">
+              <Icons.add className="h-4 w-4 mr-2" />
+              Ajouter un ingrédient
+            </Button>
+          </IngredientPopover>
         </div>
 
         <div>
@@ -425,11 +422,7 @@ function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
       const response = await fetch("/api/generate-image", {
         method: "POST",
         body: JSON.stringify({
-          prompt: `Photo vue du dessus d'un plat bien présenté dans une assiette. Le nom du plat est "${
-            formData.name
-          }". Les instructions pour préparer le sont "${formData.steps
-            .map((step) => step.instructionsMarkdown)
-            .join(", ")}"`,
+          prompt: `Photo vue du dessus d'un plat bien présenté dans une assiette. Le nom du plat est "${formData.name}".`,
         }),
       })
 
@@ -463,43 +456,68 @@ function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
 }
 
 function IngredientPopover({
-  data,
   onSelect,
-}: {
-  data: Ingredient[]
-  onSelect: (value: number) => void
-}) {
-  const items = data
+  children,
+}: PropsWithChildren<{
+  onSelect: (ingredient: Ingredient) => void
+}>) {
   const [open, setOpen] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const [search, setSearch] = React.useState("")
+  const debouncedSearch = useDebounce(search, 200)
+  const [items, setItems] = React.useState<Ingredient[]>([])
+  const { supabase } = useSupabase()
+
+  const handleChange = (value: string) => {
+    setSearch(value)
+    setLoading(true)
+  }
+
+  React.useEffect(() => {
+    supabase
+      .from("ingredient")
+      .select("*")
+      .ilike("name", `${debouncedSearch}%`)
+      .order("name", { ascending: true })
+      .then((res) => {
+        setLoading(false)
+        if (res.data) setItems(res.data)
+        else setItems([])
+      })
+  }, [supabase, debouncedSearch])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <FormControl>
-          <Button variant="secondary" size="sm">
-            <Icons.add className="h-4 w-4 mr-2" />
-            Ajouter un ingrédient
-          </Button>
-        </FormControl>
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="w-[350px] p-0">
-        <Command>
-          <CommandInput placeholder="Rechercher des ingrédients..." />
-          <CommandEmpty>Aucun ingrédient trouvée.</CommandEmpty>
-          <CommandGroup className="h-[350px] overflow-y-auto">
-            {items.map((item) => (
-              <CommandItem
-                value={item.name}
-                key={item.id}
-                onSelect={() => {
-                  onSelect(item.id)
-                  setOpen(false)
-                }}
-              >
-                {item.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Rechercher des ingrédients..."
+            value={search}
+            onValueChange={handleChange}
+            loading={loading}
+          />
+          {!items.length && (
+            <TypographyMuted className="text-center p-5">
+              Aucun ingrédient trouvé
+            </TypographyMuted>
+          )}
+          {items.length > 0 && (
+            <CommandGroup className="h-[350px] overflow-y-auto">
+              {items.map((item) => (
+                <CommandItem
+                  value={item.name}
+                  key={item.id}
+                  onSelect={() => {
+                    onSelect(item)
+                    setOpen(false)
+                  }}
+                >
+                  {item.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
         </Command>
       </PopoverContent>
     </Popover>
@@ -507,16 +525,16 @@ function IngredientPopover({
 }
 
 function IngredientField({
-  name,
-  id,
+  ingredient,
   index,
   onRemove,
+  onChange,
   control,
 }: {
-  name: string
-  id: number
+  ingredient: Ingredient & { exists: boolean }
   index: number
   onRemove: () => void
+  onChange: (newIngredient: Ingredient) => void
   control?: Control<FormData> | undefined
 }) {
   const { supabase } = useSupabase()
@@ -526,32 +544,42 @@ function IngredientField({
     supabase
       .from("ingredient_unit")
       .select("unit(*)")
-      .eq("ingredient_id", id)
+      .eq("ingredient_id", ingredient.id)
       .then((res) => {
         if (res.data)
           setUnits(
             res.data.map((iu) => iu.unit).filter((u) => u !== null) as Unit[]
           )
       })
-  }, [id, supabase])
+  }, [ingredient.id, supabase])
 
   return (
     <FormItem className="flex-1">
       <div className="flex flex-row">
-        <div className="mr-2 flex items-center h-10 w-[350px] rounded-md border border-input px-1 text-sm ring-offset-background">
-          <div className="overflow-hidden aspect-square w-10 h-10 p-1">
-            <IngredientImage
-              ingredient={{
-                id,
-                name,
-              }}
-              width={100}
-              height={100}
-              className="object-cover rounded-full"
-            />
-          </div>
-          {name}
-        </div>
+        <IngredientPopover onSelect={onChange}>
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn("w-[350px] justify-start relative mr-2")}
+          >
+            {!ingredient.exists && (
+              <Icons.warn className="text-red-500 w-5 h-5" />
+            )}
+            {ingredient.exists && (
+              <div className="overflow-hidden rounded-full aspect-square absolute w-10 h-10 p-1 mr-1 left-0">
+                <IngredientImage
+                  ingredient={ingredient}
+                  width={100}
+                  height={100}
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <span className="flex-1 text-left pl-6">{ingredient.name}</span>
+
+            <Icons.chedown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </IngredientPopover>
         <FormField
           control={control}
           name={`ingredients.${index}.quantity`}
@@ -577,13 +605,12 @@ function IngredientField({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <Select
-                disabled={!id}
                 onValueChange={(v) => field.onChange(+v)}
-                value={field.value + ""}
+                defaultValue={field.value ? field.value + "" : undefined}
               >
                 <FormControl>
                   <SelectTrigger className="w-[150px] rounded-none z-10">
-                    <SelectValue placeholder="Unité" />
+                    <SelectValue placeholder="Choisir unité" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

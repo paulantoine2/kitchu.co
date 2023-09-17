@@ -1,7 +1,7 @@
 import * as z from "zod"
 
 export const recipeSchema = z.object({
-  name: z.string().min(3).max(50),
+  name: z.string().min(3).max(100),
   is_public: z.boolean().default(false).optional(),
   steps: z.array(
     z.object({
@@ -10,7 +10,11 @@ export const recipeSchema = z.object({
   ),
   ingredients: z.array(
     z.object({
-      ingredient_id: z.number(),
+      ingredient: z.object({
+        id: z.number(),
+        name: z.string(),
+        exists: z.literal(true),
+      }),
       quantity: z.number().positive(),
       unit: z.number(),
     })
@@ -20,7 +24,7 @@ export const recipeSchema = z.object({
 })
 
 export const importRecipeSchema = z.object({
-  name: z.string().min(3).max(50),
+  name: z.string().min(3).max(100),
   is_public: z.boolean().default(false).optional(),
   steps: z.array(
     z.object({
@@ -29,7 +33,11 @@ export const importRecipeSchema = z.object({
   ),
   ingredients: z.array(
     z.object({
-      ingredient_id: z.number(),
+      ingredient: z.object({
+        id: z.number(),
+        name: z.string(),
+        exists: z.boolean(),
+      }),
       quantity: z.number().positive().optional(),
       unit: z.number().optional(),
     })

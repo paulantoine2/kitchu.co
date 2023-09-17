@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Database } from "@/lib/database.types"
 import { InvalidImportUrlError, InvalidRecipeError } from "@/lib/exceptions"
 import { fetchHelloFreshRecipe } from "@/lib/importHelloFresh"
+import { makeSupabase } from "@/lib/supabase"
 import { importRecipeSchema } from "@/lib/validations/recipe"
 
 type RecipeData = z.infer<typeof importRecipeSchema>
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
 
     if (!recipe.yields[0]) throw new InvalidRecipeError()
 
-    const quantities = await Promise.all(
+    const ingredients = await Promise.all(
       recipe.yields[0].ingredients.map(async (quantity) => {
         const helloFreshIngredient = recipe.ingredients.find(
           (ingr) => ingr.id === quantity.id
@@ -36,25 +37,29 @@ export async function POST(request: Request) {
 
         if (!helloFreshIngredient) throw new InvalidRecipeError()
 
-        const matchingDbIngredient =
-          (await searchIngredient(helloFreshIngredient.name)) || 0
-
-        const matchingDbUnit = await searchUnit(
-          quantity.unit,
-          matchingDbIngredient
+        const matchingDbIngredient = await searchIngredient(
+          helloFreshIngredient.name
         )
 
+        const matchingDbUnit = matchingDbIngredient
+          ? await searchUnit(quantity.unit, matchingDbIngredient.id)
+          : undefined
+
         return {
-          ingredient_id: matchingDbIngredient,
-          amount: quantity.amount || 0,
+          ingredient: {
+            id: matchingDbIngredient?.id || 0,
+            name: matchingDbIngredient?.name || helloFreshIngredient.name,
+            exists: Boolean(matchingDbIngredient),
+          },
+          quantity: quantity.amount || 0,
           unit: matchingDbUnit || undefined,
         }
       })
     )
 
     const recipeData: RecipeData = {
-      name: recipe.name,
-      ingredients: quantities,
+      name: recipe.name + " " + recipe.headline,
+      ingredients,
       steps: recipe.steps.map((step) => ({
         instructionsMarkdown: NodeHtmlMarkdown.translate(
           step.instructionsMarkdown
@@ -74,27 +79,23 @@ export async function POST(request: Request) {
   }
 }
 
-async function searchIngredient(name: string) {
-  const supabase = createRouteHandlerClient<Database>({ cookies })
-  const response = await supabase
+async function searchIngredient(ingredientName: string) {
+  const response = await makeSupabase({})
     .from("ingredient")
     .select("*")
+    .ilike("name", `${ingredientName}%`)
     .order("name", { ascending: true })
-    .textSearch("name", name, {
-      type: "plain",
-    })
-  const matchingDbUnit = response.data?.[0]
-  return matchingDbUnit?.id || null
+  const matchingDbIngredient = response.data?.[0]
+  return matchingDbIngredient || null
 }
 
-async function searchUnit(name: string, ingredient_id: number) {
-  const supabase = createRouteHandlerClient<Database>({ cookies })
-  const response = await supabase
+async function searchUnit(unitName: string, ingredient_id: number) {
+  const response = await makeSupabase({})
     .from("ingredient_unit")
-    .select("*,ingredient(*)")
-    .textSearch("ingredient.short_name", name, {
-      type: "plain",
-    })
+    .select("*,unit!inner(*)")
+    .eq("ingredient_id", ingredient_id)
+    .ilike("unit.short_name", `${unitName}`)
+  console.log(response.data)
   const matchingDbUnit = response.data?.[0]
   return matchingDbUnit?.unit_id || null
 }
