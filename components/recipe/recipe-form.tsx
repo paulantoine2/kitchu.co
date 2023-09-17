@@ -48,6 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select"
+import { Skeleton } from "../ui/skeleton"
 import { Textarea } from "../ui/textarea"
 import { TypographyMuted, TypographyP } from "../ui/typography"
 import { IngredientImage } from "./ingredient-image"
@@ -136,7 +137,6 @@ function ImportRecipeForm({ onData }: { onData: (data: FormData) => void }) {
 }
 
 export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
-  const { supabase } = useSupabase()
   const router = useRouter()
   const form = useForm<FormData>({
     resolver: zodResolver(recipeSchema),
@@ -206,7 +206,10 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
-
+        <ImageButton
+          getValues={form.getValues}
+          onSelect={(imageData) => form.setValue("image_data", imageData)}
+        />
         <FormField
           control={form.control}
           name="difficulty"
@@ -401,7 +404,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
             </FormItem>
           )}
         />
-        <ImageButton getValues={form.getValues} />
+
         <Button type="submit">
           {isSaving && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Créer
@@ -411,12 +414,21 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
   )
 }
 
-function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
+function ImageButton({
+  getValues,
+  onSelect,
+}: {
+  getValues: UseFormGetValues<FormData>
+  onSelect: (imageData: string) => void
+}) {
   const [generating, startTransition] = React.useTransition()
   const [images, setImages] = React.useState<
     { filename: string; data: string }[]
   >([])
+
+  const [selected, setSelected] = React.useState<string>()
   const handleClick = () => {
+    setImages([])
     startTransition(async () => {
       const formData = getValues()
       const response = await fetch("/api/generate-image", {
@@ -438,19 +450,52 @@ function ImageButton({ getValues }: { getValues: UseFormGetValues<FormData> }) {
 
   return (
     <div>
-      <Button disabled={generating} onClick={handleClick}>
-        {generating ? "Generation..." : "Générer une image"}
+      {!images.length && (
+        <div className="grid grid-cols-4 gap-4 mb-2">
+          {generating ? (
+            <>
+              <Skeleton className="max-w-full aspect-square" />
+              <Skeleton className="max-w-full aspect-square" />
+              <Skeleton className="max-w-full aspect-square" />
+              <Skeleton className="max-w-full aspect-square" />
+            </>
+          ) : (
+            <>
+              <div className=" bg-slate-100 max-w-full rounded-sm aspect-square"></div>
+              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
+              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
+              <div className="bg-slate-100 max-w-full rounded-sm aspect-square"></div>
+            </>
+          )}
+        </div>
+      )}
+      {images.length > 0 && (
+        <div className="grid grid-cols-4 gap-4 mb-2">
+          {images.map((image) => (
+            <img
+              className={cn(
+                "rounded-sm cursor-pointer",
+                selected === image.filename && "ring-2 ring-ring ring-offset-2"
+              )}
+              alt={image.filename}
+              key={image.filename}
+              src={`data:image/png;base64, ${image.data}`}
+              onClick={() => {
+                setSelected(image.filename)
+                onSelect(image.data)
+              }}
+            />
+          ))}
+        </div>
+      )}
+      <Button
+        size="sm"
+        variant="secondary"
+        disabled={generating}
+        onClick={handleClick}
+      >
+        {generating ? "Generation..." : "Générer des images"}
       </Button>
-      <div className="grid grid-cols-4 gap-4">
-        {images.map((image) => (
-          <img
-            className="rounded-sm"
-            alt={image.filename}
-            key={image.filename}
-            src={`data:image/png;base64, ${image.data}`}
-          />
-        ))}
-      </div>
     </div>
   )
 }

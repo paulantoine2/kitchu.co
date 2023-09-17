@@ -3,6 +3,7 @@ import * as z from "zod"
 export const recipeSchema = z.object({
   name: z.string().min(3).max(100),
   is_public: z.boolean().default(false).optional(),
+  image_data: z.string().optional(),
   steps: z.array(
     z.object({
       instructionsMarkdown: z.string(),
