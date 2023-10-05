@@ -31,7 +31,7 @@ function getGravatarURL(email: string) {
   return `https://www.gravatar.com/avatar/${hash}`
 }
 
-export function UserNav({ Buttons }: { Buttons: React.ReactNode }) {
+export function UserNav({ Buttons }: { Buttons?: React.ReactNode }) {
   const { session, supabase } = useSupabase()
   const { push } = useRouter()
 

@@ -34,3 +34,43 @@ export function MainNav() {
     </React.Fragment>
   )
 }
+
+export function MainAdminNav() {
+  const pathname = usePathname()
+
+  return (
+    <React.Fragment>
+      <Link
+        href="/admin/recipes"
+        className={cn(
+          "text-sm font-medium transition-colors hover:text-foreground/80",
+          pathname === "/admin/recipes"
+            ? "text-foreground"
+            : "text-foreground/60"
+        )}
+      >
+        Recettes
+      </Link>
+      <Link
+        href="/admin/ingredients"
+        className={cn(
+          "text-sm font-medium transition-colors hover:text-foreground/80",
+          pathname === "/admin/ingredients"
+            ? "text-foreground"
+            : "text-foreground/60"
+        )}
+      >
+        Ingrédients
+      </Link>
+      <Link
+        href="/admin/units"
+        className={cn(
+          "text-sm font-medium transition-colors hover:text-foreground/80",
+          pathname === "/admin/units" ? "text-foreground" : "text-foreground/60"
+        )}
+      >
+        Unités
+      </Link>
+    </React.Fragment>
+  )
+}

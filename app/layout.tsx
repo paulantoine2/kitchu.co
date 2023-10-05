@@ -1,17 +1,9 @@
-import { Inter, Jomhuria } from "next/font/google"
-
-import { ThemeProvider } from "@/components/theme-provider"
+import { Inter } from "next/font/google"
 
 import "./globals.css"
-import { Suspense } from "react"
 import { Metadata } from "next"
-import { Analytics } from "@vercel/analytics/react"
 
 import { cn } from "@/lib/utils"
-import { Toaster } from "@/components/ui/toaster"
-import { Cart } from "@/components/cart/cart"
-import { Fridge } from "@/components/fridge/fridge"
-import { SiteHeader } from "@/components/layout/site-header"
 
 import SupabaseProvider from "./supabase-provider"
 
@@ -32,18 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(inter.variable)}>
       <body>
-        <SupabaseProvider>
-          <Fridge>
-            <Cart>
-              <div className="relative flex min-h-screen flex-col">
-                <SiteHeader />
-                <div className="flex-1">{children}</div>
-                <Analytics />
-              </div>
-              <Toaster />
-            </Cart>
-          </Fridge>
-        </SupabaseProvider>
+        <SupabaseProvider>{children}</SupabaseProvider>
       </body>
     </html>
   )
