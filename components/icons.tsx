@@ -9,14 +9,17 @@ import {
   Carrot,
   Check,
   CheckCircle2,
+  ChefHat,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  Clock10,
   Delete,
   Drumstick,
   Facebook,
   Fish,
+  Heart,
   Import,
   Info,
   Loader2,
@@ -70,6 +73,9 @@ export const Icons: Record<string, Icon> = {
   create: PencilRuler,
   import: Import,
   review: SearchCheck,
+  chef: ChefHat,
+  clock: Clock10,
+  love: Heart,
   apple: React.forwardRef((props: LucideProps, ref) => (
     <svg
       width="24"

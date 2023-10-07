@@ -32,7 +32,7 @@ export function TypographyH2({
   return (
     <h2
       className={cn(
-        "scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0",
+        "font-serif scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0",
         className
       )}
       {...props}
@@ -52,7 +52,7 @@ export function TypographyH3({
   return (
     <Comp
       className={cn(
-        "scroll-m-20 text-2xl font-semibold tracking-tight",
+        "font-serif scroll-m-20 text-2xl font-semibold tracking-tight",
         className
       )}
       {...props}

@@ -24,7 +24,10 @@ import { Icons } from "@/components/icons"
 import { UserAuthForm } from "@/components/user-auth-form"
 
 export const metadata: Metadata = {
-  description: `La liste de course intelligente qui vous fait faire des économies de temps et d'argent, réduit le gaspillage alimentaire et vous fait manger mieux.`,
+  title:
+    "Kitchu | La liste de courses intelligente pour préparer vos meilleures recettes",
+  description:
+    "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
   keywords:
     "courses,recettes,cuisine,régime,drive,liste,gaspi,frigo,gaspillage,ingrédients",
   twitter: {
@@ -39,148 +42,140 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   return (
-    <div>
-      <div className="transition-all animate-fade-in container">
-        <div className="flex flex-col justify-center items-start mt-10 lg:h-[500px] gap-5 z-20 relative">
-          <h1 className="hidden">Kitchu</h1>
-          <TypographyH1>
-            La liste de courses intelligente <br /> pour préparer vos
-            <br />
-            meilleures recettes
-          </TypographyH1>
-          <TypographyLead>
-            Trouvez des idées de recettes, <br />
-            évitez le gaspillage, <br />
-            estimez le cout de vos repas
-          </TypographyLead>
-          <Button asChild aria-label="signup">
-            <Link href="#signup">Pré-inscription</Link>
-          </Button>
-        </div>
-        <Image
-          alt="demo"
-          className="lg:hidden -mt-[50px] -ml-[100px]"
-          style={{ maxWidth: "calc(100% + 100px)" }}
-          src="/ui-mobile.png"
-          width={1104}
-          height={883}
-        />
-        <div className="gap-10 relative z-10 hidden lg:flex ">
-          <RecipeCard
-            name="Mafé revisité au poulet & carotte"
-            headline="avec des cacahuètes & du riz"
-            price={3.45}
-            imgSrc="/recipe1.jpeg"
-            animationDelay={200}
-          />
-          <RecipeCard
-            name="Quesadillas veggie & guacamole maison"
-            headline="avec du cheddar & du citron vert"
-            price={2.21}
-            imgSrc="/recipe2.jpeg"
-            animationDelay={300}
-          />
-          <RecipeCard
-            name="Porc & sauce fraise-balsamique façon brasserie"
-            headline="avec des pommes de terre rôties & du poireau"
-            price={4.06}
-            imgSrc="/recipe3.jpeg"
-            animationDelay={400}
-          />
-          <List />
-          <Image
-            className="opacity-0 absolute right-0 bottom-[475px] transition-all animate-fade-in"
-            style={{ animationDelay: `600ms` }}
-            alt="bag"
-            src="/bag.png"
-            width={350}
-            height={350}
-          />
-        </div>
-        <div className="relative flex flex-wrap gap-8 justify-around my-20 lg:my-[150px] grayscale">
-          <Image height={30} width={181} src="/carrefour.png" alt="Carrefour" />
-          <Image height={30} width={121} src="/leclerc.png" alt="Carrefour" />
-          <Image height={30} width={100} src="/auchan.png" alt="Carrefour" />
-          <Image
-            height={30}
-            width={154}
-            src="/intermarche.png"
-            alt="Carrefour"
-          />
-          <Image height={30} width={124} src="/superu.png" alt="Carrefour" />
-        </div>
-        <div className="flex flex-col items-center text-center">
-          <TypographyH1 className="lg:text-4xl mb-3">
-            Qu&apos;est ce que Kitchu ?
-          </TypographyH1>
-          <TypographyLead>
-            L&apos;app qui vous fait gagner du temps et de l&apos;argent en
-            planifiant vos
-            <br />
-            repas et vos courses de manière intelligente.
-          </TypographyLead>
-        </div>
-        <div className="flex flex-col md:grid gap-4 grid-rows-2 grid-flow-col my-[100px]">
-          <FeatureCard
-            icon="💡"
-            title="Trouvez des idées de recettes"
-            description="Recherchez par ingrédients, catégories, ou simplement inspirez-vous des suggestions quotidiennes."
-          />
-          <FeatureCard
-            icon="♻️"
-            title="Évitez le gaspillage alimentaire"
-            description="Recevez des suggestions de recettes pour utiliser les excédents d'ingrédients et éviter le gaspillage."
-          />
-
-          <FeatureCard
-            icon="‍‍👨🏻‍🎨"
-            title="Organisez vos propres recettes"
-            description="Créez et importez vos recettes favorites depuis d'autres sites de cuisine pour les retrouver facilement."
-          />
-
-          <FeatureCard
-            icon="💵"
-            title="Calculez le coût au supermarché"
-            description="Sélectionnez votre magasin préféré et notre application calculera le coût exact des ingrédients pour chaque recette."
-          />
-          <FeatureCard
-            icon="🛒"
-            title="Liste de courses intelligente"
-            description={
-              <>
-                Ajoutez automatiquement les produits nécessaires à votre liste
-                de courses à partir d&apos;une recette, en fonction du nombre de
-                convives, des ingrédients déjà en votre possession et des autres
-                repas que vous avez planifiés.
-                <br />
-                <br />
-                Commandez en 1 clic en retrait ou en livraison dans vos
-                enseignes préférées.
-              </>
-            }
-            className="md:row-span-2"
-          />
-        </div>
-        <div
-          className="flex flex-col items-center text-center mb-32"
-          id="signup"
-        >
-          <TypographyH1 className="lg:text-4xl mb-3">
-            Soyez parmi les premiers à découvrir Kitchu
-          </TypographyH1>
-          <TypographyLead>
-            Inscrivez-vous dès maintenant pour être informé(e) en avant-première
-            du
-            <br /> lancement de notre application.
-          </TypographyLead>
-          <div className="mx-auto flex align-center mt-20 w-full flex-col justify-center space-y-6 sm:w-[350px]">
-            <UserAuthForm />
-          </div>
-        </div>
-        <TypographyMuted className="text-center mb-5">
-          kitchu.co - 2023
-        </TypographyMuted>
+    <div className="transition-all animate-fade-in container">
+      <SignUpAlert />
+      <div className="flex flex-col justify-center items-start mt-10 lg:h-[700px] gap-5 z-20 relative">
+        <Logo height="30" />
+        <h1 className="hidden">Kitchu</h1>
+        <TypographyH1>
+          La liste de courses intelligente <br /> pour préparer vos
+          <br />
+          meilleures recettes
+        </TypographyH1>
+        <TypographyLead>
+          Trouvez des idées de recettes, <br />
+          évitez le gaspillage, <br />
+          estimez le cout de vos repas
+        </TypographyLead>
+        <Button asChild aria-label="signup">
+          <Link href="#signup">Pré-inscription</Link>
+        </Button>
       </div>
+      <Image
+        alt="demo"
+        className="lg:hidden -mt-[50px] -ml-[100px]"
+        style={{ maxWidth: "calc(100% + 100px)" }}
+        src="/ui-mobile.png"
+        width={1104}
+        height={883}
+      />
+      <div className="gap-10 relative z-10 hidden lg:flex ">
+        <RecipeCard
+          name="Mafé revisité au poulet & carotte"
+          headline="avec des cacahuètes & du riz"
+          price={3.45}
+          imgSrc="/recipe1.jpeg"
+          animationDelay={200}
+        />
+        <RecipeCard
+          name="Quesadillas veggie & guacamole maison"
+          headline="avec du cheddar & du citron vert"
+          price={2.21}
+          imgSrc="/recipe2.jpeg"
+          animationDelay={300}
+        />
+        <RecipeCard
+          name="Porc & sauce fraise-balsamique façon brasserie"
+          headline="avec des pommes de terre rôties & du poireau"
+          price={4.06}
+          imgSrc="/recipe3.jpeg"
+          animationDelay={400}
+        />
+        <List />
+        <Image
+          className="opacity-0 absolute right-0 bottom-[475px] transition-all animate-fade-in"
+          style={{ animationDelay: `600ms` }}
+          alt="bag"
+          src="/bag.png"
+          width={350}
+          height={350}
+        />
+      </div>
+      <div className="relative flex flex-wrap gap-8 justify-around my-20 lg:my-[150px] grayscale">
+        <Image height={30} width={181} src="/carrefour.png" alt="Carrefour" />
+        <Image height={30} width={121} src="/leclerc.png" alt="Carrefour" />
+        <Image height={30} width={100} src="/auchan.png" alt="Carrefour" />
+        <Image height={30} width={154} src="/intermarche.png" alt="Carrefour" />
+        <Image height={30} width={124} src="/superu.png" alt="Carrefour" />
+      </div>
+      <div className="flex flex-col items-center text-center">
+        <TypographyH1 className="lg:text-4xl mb-3">
+          Qu&apos;est ce que Kitchu ?
+        </TypographyH1>
+        <TypographyLead>
+          L&apos;app qui vous fait gagner du temps et de l&apos;argent en
+          planifiant vos
+          <br />
+          repas et vos courses de manière intelligente.
+        </TypographyLead>
+      </div>
+      <div className="flex flex-col md:grid gap-4 grid-rows-2 grid-flow-col my-[100px]">
+        <FeatureCard
+          icon="💡"
+          title="Trouvez des idées de recettes"
+          description="Recherchez par ingrédients, catégories, ou simplement inspirez-vous des suggestions quotidiennes."
+        />
+        <FeatureCard
+          icon="♻️"
+          title="Évitez le gaspillage alimentaire"
+          description="Recevez des suggestions de recettes pour utiliser les excédents d'ingrédients et éviter le gaspillage."
+        />
+
+        <FeatureCard
+          icon="‍‍👨🏻‍🎨"
+          title="Organisez vos propres recettes"
+          description="Créez et importez vos recettes favorites depuis d'autres sites de cuisine pour les retrouver facilement."
+        />
+
+        <FeatureCard
+          icon="💵"
+          title="Calculez le coût au supermarché"
+          description="Sélectionnez votre magasin préféré et notre application calculera le coût exact des ingrédients pour chaque recette."
+        />
+        <FeatureCard
+          icon="🛒"
+          title="Liste de courses intelligente"
+          description={
+            <>
+              Ajoutez automatiquement les produits nécessaires à votre liste de
+              courses à partir d&apos;une recette, en fonction du nombre de
+              convives, des ingrédients déjà en votre possession et des autres
+              repas que vous avez planifiés.
+              <br />
+              <br />
+              Commandez en 1 clic en retrait ou en livraison dans vos enseignes
+              préférées.
+            </>
+          }
+          className="md:row-span-2"
+        />
+      </div>
+      <div className="flex flex-col items-center text-center mb-32" id="signup">
+        <TypographyH1 className="lg:text-4xl mb-3">
+          Soyez parmi les premiers à découvrir Kitchu
+        </TypographyH1>
+        <TypographyLead>
+          Inscrivez-vous dès maintenant pour être informé(e) en avant-première
+          du
+          <br /> lancement de notre application.
+        </TypographyLead>
+        <div className="mx-auto flex align-center mt-20 w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <UserAuthForm />
+        </div>
+      </div>
+      <TypographyMuted className="text-center mb-5">
+        kitchu.co - 2023
+      </TypographyMuted>
     </div>
   )
 }
