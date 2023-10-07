@@ -16,3 +16,11 @@ export const createUrl = (
 
   return `${pathname}${queryString}`
 }
+
+export function removeImageDataPrefix(dataUrl: string): string {
+  const prefix = "data:image/png;base64, "
+  if (dataUrl.startsWith(prefix)) {
+    return dataUrl.slice(prefix.length)
+  }
+  return dataUrl
+}

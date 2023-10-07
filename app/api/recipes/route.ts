@@ -1,9 +1,12 @@
 import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { decode } from "base64-arraybuffer"
+import { v4 as uuidv4 } from "uuid"
 import { z } from "zod"
 
 import { Database } from "@/lib/database.types"
 import { supabaseAdmin } from "@/lib/supabase"
+import { removeImageDataPrefix } from "@/lib/utils"
 import { recipeSchema } from "@/lib/validations/recipe"
 
 export async function POST(req: Request) {
@@ -21,6 +24,23 @@ export async function POST(req: Request) {
 
     console.log(body)
 
+    const imageId = uuidv4()
+
+    if (body.picture_data) {
+      const { data, error } = await supabaseAdmin.storage
+        .from("images")
+        .upload(
+          `recipe/${imageId}.png`,
+          decode(removeImageDataPrefix(body.picture_data)),
+          {
+            contentType: "image/png",
+            upsert: true,
+          }
+        )
+      console.log(data, error)
+      if (error) throw error
+    }
+
     const recipeInsert = await supabaseAdmin
       .from("recipe")
       .insert({
@@ -35,6 +55,9 @@ export async function POST(req: Request) {
           instructionsMarkdown,
           videos: [],
         })),
+        ...(body.picture_data && {
+          picture_url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${imageId}.png`,
+        }),
       })
       .select()
 

@@ -215,7 +215,7 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
         />
         <GenerateImageField
           prompt={getPrompt}
-          onSelect={(imageData) => form.setValue("image_data", imageData)}
+          onSelect={(imageData) => form.setValue("picture_data", imageData)}
         />
         <FormField
           control={form.control}
@@ -408,10 +408,20 @@ export function RecipeForm({ defaultValues }: { defaultValues?: FormData }) {
                   Faites profiter de votre recette avec la communauté Kitchu !
                 </FormDescription>
               </div>
+              <FormMessage />
             </FormItem>
           )}
         />
-
+        <FormField
+          control={form.control}
+          name="picture_data"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-sm border p-4">
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormMessage />
         <Button type="submit">
           {isSaving && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Créer
@@ -591,6 +601,7 @@ function IngredientField({
             </FormItem>
           )}
         />
+        <FormMessage />
         <div className="flex h-10 rounded-md border border-input bg-secondary px-3 py-2 text-sm ring-offset-background rounded-l-none border-l-0">
           / personne
         </div>

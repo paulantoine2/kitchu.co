@@ -5,6 +5,7 @@ import { z } from "zod"
 
 import { Database } from "@/lib/database.types"
 import { supabaseAdmin } from "@/lib/supabase"
+import { removeImageDataPrefix } from "@/lib/utils"
 import { ingredientSchema } from "@/lib/validations/ingredient"
 
 const routeContextSchema = z.object({
@@ -76,12 +77,4 @@ export async function PATCH(
 
     return new Response(null, { status: 500 })
   }
-}
-
-function removeImageDataPrefix(dataUrl: string): string {
-  const prefix = "data:image/png;base64, "
-  if (dataUrl.startsWith(prefix)) {
-    return dataUrl.slice(prefix.length)
-  }
-  return dataUrl
 }
