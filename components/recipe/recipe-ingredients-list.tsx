@@ -20,7 +20,7 @@ import { IngredientImage } from "./ingredient-image"
 type RecipeIngredient = {
   quantity: number
   unit: { id: number; short_name: string }
-  ingredient: { id: number; name: string }
+  ingredient: { id: number; name: string; picture_url: string | null }
 }
 
 export function RecipeIngredientsList({

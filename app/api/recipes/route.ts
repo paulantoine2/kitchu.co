@@ -1,14 +1,10 @@
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { v4 as uuid } from "uuid"
 import { z } from "zod"
 
 import { Database } from "@/lib/database.types"
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { supabaseAdmin } from "@/lib/supabase"
 import { recipeSchema } from "@/lib/validations/recipe"
-
-export const dynamic = "force-dynamic"
 
 export async function POST(req: Request) {
   try {
@@ -20,9 +16,12 @@ export async function POST(req: Request) {
     }
 
     const json = await req.json()
+
     const body = recipeSchema.parse(json)
 
-    const { data, error } = await supabase
+    console.log(body)
+
+    const recipeInsert = await supabaseAdmin
       .from("recipe")
       .insert({
         author: session.data.session?.user.id,
@@ -39,23 +38,30 @@ export async function POST(req: Request) {
       })
       .select()
 
-    if (error) throw error
+    if (recipeInsert.error) throw recipeInsert.error
 
-    const id = data[0]?.id
+    const id = recipeInsert.data[0]?.id
 
     if (!id) throw new Error("Invalid id")
 
-    await supabase.from("recipe_ingredient").insert(
-      body.ingredients.map((i) => ({
-        ingredient_id: i.ingredient_id,
-        recipe_id: id,
-        quantity: i.quantity,
-        unit_id: i.unit,
-      }))
-    )
+    const ingredientInsert = await supabaseAdmin
+      .from("recipe_ingredient")
+      .insert(
+        body.ingredients.map((i) => ({
+          ingredient_id: i.ingredient.id,
+          recipe_id: id,
+          quantity: i.quantity,
+          unit_id: i.unit,
+        }))
+      )
 
+    if (ingredientInsert.error) {
+      await supabaseAdmin.from("recipe").delete().eq("id", id)
+      throw ingredientInsert.error
+    }
     return new Response(JSON.stringify({ id }))
   } catch (error) {
+    console.error(error)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }

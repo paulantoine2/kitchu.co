@@ -16,7 +16,7 @@ async function getRecipe(id: number) {
       `
         *,
         recipe_ingredient (
-          quantity,unit(id,short_name),ingredient(id,name)
+          quantity,unit(id,short_name),ingredient(id,name,picture_url)
         )
       `
     )
@@ -66,6 +66,7 @@ export default async function RecipePage({
                 ingredient: {
                   id: ri.ingredient?.id || 0,
                   name: ri.ingredient?.name || "",
+                  picture_url: ri.ingredient?.picture_url || null,
                 },
               }))}
               recipe_id={params.id}

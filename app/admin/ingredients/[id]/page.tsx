@@ -1,20 +1,28 @@
 import { notFound } from "next/navigation"
 
-import { makeSupabase } from "@/lib/supabase"
+import { makeSupabase, supabase } from "@/lib/supabase"
 import { TypographyH1 } from "@/components/ui/typography"
 import { IngredientForm } from "@/components/ingredient/ingredient-form"
 
+export const revalidate = 0
+
 async function getIngredient(id: number) {
-  const { data, error } = await makeSupabase({ cache: "no-cache" })
+  const { data, error } = await supabase
     .from("ingredient")
     .select(
       `
-        *
-        
+        *,
+        unit(*)
       `
     )
     .eq("id", id)
     .single()
+
+  return data
+}
+
+async function getUnits() {
+  const { data, error } = await supabase.from("unit").select(`*`)
 
   return data
 }
@@ -28,6 +36,8 @@ export default async function IngredientPage({
 
   if (!ingredient) return notFound()
 
+  const units = await getUnits()
+
   console.log(ingredient)
 
   return (
@@ -40,8 +50,10 @@ export default async function IngredientPage({
         defaultValues={{
           category: ingredient.category,
           name: ingredient.name,
-          picture_data: ingredient.picture_url || undefined,
+          units: ingredient.unit.map((u) => u.id),
         }}
+        units={units || []}
+        pictureUrl={ingredient.picture_url}
       />
     </div>
   )

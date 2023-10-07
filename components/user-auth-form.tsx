@@ -44,6 +44,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       },
     })
 
+    await supabase.auth.signInWithPassword({
+      email: data.email.toLowerCase(),
+      password: data.password,
+    })
+
     setIsLoading(false)
 
     if (result.error) {
@@ -100,6 +105,24 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {errors?.email && (
               <p className="px-1 text-xs text-red-600">
                 {errors.email.message}
+              </p>
+            )}
+          </div>
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="email">
+              Password
+            </Label>
+            <Input
+              id="pasword"
+              type="password"
+              autoComplete="password"
+              autoCorrect="off"
+              disabled={disabled}
+              {...register("password")}
+            />
+            {errors?.password && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.password.message}
               </p>
             )}
           </div>

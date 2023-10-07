@@ -4,6 +4,7 @@ import { decode } from "base64-arraybuffer"
 import { z } from "zod"
 
 import { Database } from "@/lib/database.types"
+import { supabaseAdmin } from "@/lib/supabase"
 import { ingredientSchema } from "@/lib/validations/ingredient"
 
 const routeContextSchema = z.object({
@@ -22,20 +23,13 @@ export async function PATCH(
 
     const id = params.ingredientId
 
-    const supabase = createRouteHandlerClient<Database>({ cookies })
-    const session = await supabase.auth.getSession()
-
-    if (!session) {
-      return new Response("Unauthorized", { status: 403 })
-    }
-
     const json = await req.json()
     const body = ingredientSchema.parse(json)
 
     console.log(body)
 
     if (body.picture_data) {
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabaseAdmin.storage
         .from("images")
         .upload(
           `ingredient/${id}.png`,
@@ -49,7 +43,7 @@ export async function PATCH(
       if (error) throw error
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("ingredient")
       .update({
         name: body.name,
@@ -61,6 +55,17 @@ export async function PATCH(
       .select()
 
     if (error) throw error
+
+    await supabaseAdmin.from("ingredient_unit").delete().eq("ingredient_id", id)
+
+    console.log(body)
+
+    if (body.units.length)
+      await supabaseAdmin
+        .from("ingredient_unit")
+        .insert(
+          body.units.map((unit) => ({ ingredient_id: +id, unit_id: unit }))
+        )
 
     return new Response(JSON.stringify({ id }))
   } catch (error) {

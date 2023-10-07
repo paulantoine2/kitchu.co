@@ -32,7 +32,7 @@ export default function Search() {
       <Input
         type="search"
         name="search"
-        placeholder="Search for recipes..."
+        placeholder="Search..."
         autoComplete="off"
         defaultValue={searchParams?.get("q") || ""}
       />

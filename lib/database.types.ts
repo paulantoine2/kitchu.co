@@ -182,6 +182,7 @@ export interface Database {
           id: number
           is_public: boolean
           name: string
+          picture_url: string | null
           prep_time_min: number | null
           steps: Json[] | null
         }
@@ -191,6 +192,7 @@ export interface Database {
           id?: number
           is_public?: boolean
           name: string
+          picture_url?: string | null
           prep_time_min?: number | null
           steps?: Json[] | null
         }
@@ -200,6 +202,7 @@ export interface Database {
           id?: number
           is_public?: boolean
           name?: string
+          picture_url?: string | null
           prep_time_min?: number | null
           steps?: Json[] | null
         }

@@ -34,7 +34,7 @@ export default async function AdminLayout({
           <UserNav />
         </div>
       </header>
-      <main>{children}</main>
+      <main className="container">{children}</main>
     </>
   )
 }
