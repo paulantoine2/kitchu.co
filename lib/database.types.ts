@@ -11,18 +11,18 @@ export interface Database {
     Tables: {
       cart_recipe: {
         Row: {
-          persons: number
-          recipe_id: string
+          quantity: number
+          recipe_id: number
           user_id: string
         }
         Insert: {
-          persons: number
-          recipe_id: string
+          quantity: number
+          recipe_id: number
           user_id: string
         }
         Update: {
-          persons?: number
-          recipe_id?: string
+          quantity?: number
+          recipe_id?: number
           user_id?: string
         }
         Relationships: [
@@ -40,52 +40,40 @@ export interface Database {
           }
         ]
       }
-      cuisine: {
+      fridge_ingredient: {
         Row: {
-          icon: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          icon?: string | null
-          id: string
-          name: string
-        }
-        Update: {
-          icon?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
-      fridge: {
-        Row: {
-          ingredient_id: string
+          ingredient_id: number
           quantity: number
-          unit: string
+          unit_id: number
           user_id: string
         }
         Insert: {
-          ingredient_id: string
+          ingredient_id: number
           quantity: number
-          unit: string
+          unit_id: number
           user_id: string
         }
         Update: {
-          ingredient_id?: string
+          ingredient_id?: number
           quantity?: number
-          unit?: string
+          unit_id?: number
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fridge_ingredient_id_fkey"
+            foreignKeyName: "fridge_ingredient_ingredient_id_fkey"
             columns: ["ingredient_id"]
             referencedRelation: "ingredient"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fridge_user_id_fkey"
+            foreignKeyName: "fridge_ingredient_unit_id_fkey"
+            columns: ["unit_id"]
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fridge_ingredient_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -95,20 +83,54 @@ export interface Database {
       ingredient: {
         Row: {
           category: string
-          id: string
+          created_at: string
+          id: number
           name: string
+          picture_url: string | null
         }
         Insert: {
           category?: string
-          id: string
+          created_at?: string
+          id?: number
           name: string
+          picture_url?: string | null
         }
         Update: {
           category?: string
-          id?: string
+          created_at?: string
+          id?: number
           name?: string
+          picture_url?: string | null
         }
         Relationships: []
+      }
+      ingredient_unit: {
+        Row: {
+          ingredient_id: number
+          unit_id: number
+        }
+        Insert: {
+          ingredient_id: number
+          unit_id: number
+        }
+        Update: {
+          ingredient_id?: number
+          unit_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_unit_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            referencedRelation: "ingredient"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredient_unit_unit_id_fkey"
+            columns: ["unit_id"]
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       market_chain: {
         Row: {
@@ -124,77 +146,6 @@ export interface Database {
           name?: string
         }
         Relationships: []
-      }
-      market_product: {
-        Row: {
-          external_id: string
-          id: number
-          ingredient: string
-          name: string
-          sale_unit: string
-          sale_volume: number
-        }
-        Insert: {
-          external_id: string
-          id?: number
-          ingredient: string
-          name: string
-          sale_unit: string
-          sale_volume: number
-        }
-        Update: {
-          external_id?: string
-          id?: number
-          ingredient?: string
-          name?: string
-          sale_unit?: string
-          sale_volume?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "market_product_ingredient_fkey"
-            columns: ["ingredient"]
-            referencedRelation: "ingredient"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      market_product_price: {
-        Row: {
-          price_kg: number
-          product_id: number
-          sale_price: number
-          salepoint_id: number
-          updated_at: string
-        }
-        Insert: {
-          price_kg: number
-          product_id: number
-          sale_price: number
-          salepoint_id: number
-          updated_at: string
-        }
-        Update: {
-          price_kg?: number
-          product_id?: number
-          sale_price?: number
-          salepoint_id?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "market_product_price_product_id_fkey"
-            columns: ["product_id"]
-            referencedRelation: "market_product"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_product_price_salepoint_id_fkey"
-            columns: ["salepoint_id"]
-            referencedRelation: "market_salepoint"
-            referencedColumns: ["id"]
-          }
-        ]
       }
       market_salepoint: {
         Row: {
@@ -224,130 +175,110 @@ export interface Database {
           }
         ]
       }
-      quantity: {
+      recipe: {
         Row: {
-          amount: number | null
-          ingredient_id: string
-          recipe_id: string
-          unit: string
+          author: string | null
+          difficulty: number | null
+          id: number
+          is_public: boolean
+          name: string
+          picture_url: string | null
+          prep_time_min: number | null
+          steps: Json[] | null
         }
         Insert: {
-          amount?: number | null
-          ingredient_id: string
-          recipe_id: string
-          unit?: string
+          author?: string | null
+          difficulty?: number | null
+          id?: number
+          is_public?: boolean
+          name: string
+          picture_url?: string | null
+          prep_time_min?: number | null
+          steps?: Json[] | null
         }
         Update: {
-          amount?: number | null
-          ingredient_id?: string
-          recipe_id?: string
-          unit?: string
+          author?: string | null
+          difficulty?: number | null
+          id?: number
+          is_public?: boolean
+          name?: string
+          picture_url?: string | null
+          prep_time_min?: number | null
+          steps?: Json[] | null
         }
         Relationships: [
           {
-            foreignKeyName: "quantity_ingredient_id_fkey"
+            foreignKeyName: "recipe_author_fkey"
+            columns: ["author"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      recipe_ingredient: {
+        Row: {
+          ingredient_id: number
+          quantity: number
+          recipe_id: number
+          unit_id: number
+        }
+        Insert: {
+          ingredient_id: number
+          quantity: number
+          recipe_id: number
+          unit_id: number
+        }
+        Update: {
+          ingredient_id?: number
+          quantity?: number
+          recipe_id?: number
+          unit_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredient_ingredient_id_fkey"
             columns: ["ingredient_id"]
             referencedRelation: "ingredient"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "quantity_recipe_id_fkey"
-            columns: ["recipe_id"]
-            referencedRelation: "recipe"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      recipe: {
-        Row: {
-          headline: string | null
-          id: string
-          link: string | null
-          name: string
-          full_name: string | null
-        }
-        Insert: {
-          headline?: string | null
-          id: string
-          link?: string | null
-          name: string
-        }
-        Update: {
-          headline?: string | null
-          id?: string
-          link?: string | null
-          name?: string
-        }
-        Relationships: []
-      }
-      recipe_cuisine: {
-        Row: {
-          cuisine_id: string
-          recipe_id: string
-        }
-        Insert: {
-          cuisine_id: string
-          recipe_id: string
-        }
-        Update: {
-          cuisine_id?: string
-          recipe_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "recipe_cuisine_cuisine_id_fkey"
-            columns: ["cuisine_id"]
-            referencedRelation: "cuisine"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "recipe_cuisine_recipe_id_fkey"
-            columns: ["recipe_id"]
-            referencedRelation: "recipe"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      recipe_tag: {
-        Row: {
-          recipe_id: string
-          tag_id: string
-        }
-        Insert: {
-          recipe_id: string
-          tag_id: string
-        }
-        Update: {
-          recipe_id?: string
-          tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "recipe_tag_recipe_id_fkey"
+            foreignKeyName: "recipe_ingredient_recipe_id_fkey"
             columns: ["recipe_id"]
             referencedRelation: "recipe"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "recipe_tag_tag_id_fkey"
-            columns: ["tag_id"]
-            referencedRelation: "tag"
+            foreignKeyName: "recipe_ingredient_unit_id_fkey"
+            columns: ["unit_id"]
+            referencedRelation: "unit"
             referencedColumns: ["id"]
           }
         ]
       }
-      tag: {
+      unit: {
         Row: {
-          id: string
+          id: number
+          internal_name: string
           name: string
+          ratio_to_mass: number | null
+          ratio_to_volume: number | null
+          short_name: string | null
         }
         Insert: {
-          id: string
+          id?: number
+          internal_name: string
           name: string
+          ratio_to_mass?: number | null
+          ratio_to_volume?: number | null
+          short_name?: string | null
         }
         Update: {
-          id?: string
+          id?: number
+          internal_name?: string
           name?: string
+          ratio_to_mass?: number | null
+          ratio_to_volume?: number | null
+          short_name?: string | null
         }
         Relationships: []
       }
@@ -356,12 +287,7 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      full_name: {
-        Args: {
-          "": unknown
-        }
-        Returns: string
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

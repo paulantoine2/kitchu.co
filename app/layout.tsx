@@ -1,16 +1,9 @@
 import { Inter } from "next/font/google"
 
-import { ThemeProvider } from "@/components/theme-provider"
-
 import "./globals.css"
-import { Suspense } from "react"
 import { Metadata } from "next"
-import { Analytics } from "@vercel/analytics/react"
 
-import { Toaster } from "@/components/ui/toaster"
-import { Cart } from "@/components/cart/cart"
-import { Fridge } from "@/components/fridge/fridge"
-import { SiteHeader } from "@/components/layout/site-header"
+import { cn } from "@/lib/utils"
 
 import SupabaseProvider from "./supabase-provider"
 
@@ -29,15 +22,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={cn(inter.variable)}>
       <body>
-        <SupabaseProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-            <Analytics />
-          </div>
-          <Toaster />
-        </SupabaseProvider>
+        <SupabaseProvider>{children}</SupabaseProvider>
       </body>
     </html>
   )
