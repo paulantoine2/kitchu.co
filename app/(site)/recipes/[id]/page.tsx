@@ -51,11 +51,11 @@ export default async function RecipePage({
 
   return (
     <div className="container space-y-8 my-8">
-      <div className="relative w-full h-[400px] rounded-md overflow-hidden">
-        <RecipeImage recipe={data} fill className="object-cover bg-muted" />
-      </div>
-      <div className="flex flex-row">
-        <div className="w-[58%] space-y-8">
+      <div className="flex flex-row gap-16 items-start">
+        <div className="relative flex-1 aspect-square rounded-md overflow-hidden">
+          <RecipeImage recipe={data} fill className="object-cover bg-muted" />
+        </div>
+        <div className="space-y-8 w-[40%]">
           <TypographyH1>{data.name}</TypographyH1>
           <div className="grid grid-cols-2">
             <div className="flex gap-4 items-center">
@@ -73,35 +73,25 @@ export default async function RecipePage({
               </div>
             </div>
           </div>
-        </div>
-        <div className="w-[33%] ml-[9%] space-y-4 sticky top-16">
-          <Card className="space-y-4 p-6">
-            <div className="flex items-center">
-              <TypographyH3>3.43 €</TypographyH3>
-              <TypographySmall>par portion</TypographySmall>
-            </div>
-
-            <RecipeIngredientsList
-              recipe_ingredients={data.recipe_ingredient.map((ri) => ({
-                quantity: ri.quantity,
-                unit: {
-                  id: ri.unit?.id || 0,
-                  short_name: ri.unit?.short_name || "",
-                },
-                ingredient: {
-                  id: ri.ingredient?.id || 0,
-                  name: ri.ingredient?.name || "",
-                  picture_url: ri.ingredient?.picture_url || null,
-                },
-              }))}
-              recipe_id={params.id}
-            />
-          </Card>
+          <RecipeIngredientsList
+            recipe_ingredients={data.recipe_ingredient.map((ri) => ({
+              quantity: ri.quantity,
+              unit: {
+                id: ri.unit?.id || 0,
+                short_name: ri.unit?.short_name || "",
+              },
+              ingredient: {
+                id: ri.ingredient?.id || 0,
+                name: ri.ingredient?.name || "",
+                picture_url: ri.ingredient?.picture_url || null,
+              },
+            }))}
+            recipe_id={params.id}
+          />
         </div>
       </div>
-
       <Separator />
-      <TypographyH3>Ingrédients</TypographyH3>
+      <TypographyH2>Ingrédients</TypographyH2>
       <div className="grid grid-cols-4 gap-4">
         {data.recipe_ingredient.map((ri, index) => (
           <RecipeIngredientListItem
@@ -123,7 +113,7 @@ export default async function RecipePage({
         ))}
       </div>
       <Separator />
-      <TypographyH3>Préparation</TypographyH3>
+      <TypographyH2>Préparation</TypographyH2>
       {data.steps &&
         data.steps.map((step) => {
           return <StepBody key={(step as Step).index} step={step as Step} />

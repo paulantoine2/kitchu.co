@@ -15,6 +15,7 @@ import {
   Drumstick,
   Facebook,
   Fish,
+  Heart,
   Info,
   Loader2,
   LucideProps,
@@ -58,6 +59,7 @@ export const Icons: Record<string, Icon> = {
   info: Info,
   chef: ChefHat,
   clock: Clock10,
+  love: Heart,
   apple: React.forwardRef((props: LucideProps, ref) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
       <path

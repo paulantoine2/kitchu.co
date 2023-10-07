@@ -39,7 +39,7 @@ export function RecipeIngredientsList({
   }
 
   return (
-    <>
+    <div className="space-y-4">
       <div className="flex items-center w-full">
         <Button
           variant="outline"
@@ -59,36 +59,41 @@ export function RecipeIngredientsList({
           <Icons.plus className="h-4 w-4" />
         </Button>
       </div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="w-full">
+            <Button
+              className="w-full"
+              size="lg"
+              disabled={pending}
+              onClick={handleAddToCart}
+            >
+              <Icons.cart className="h-5 w-5 mr-3" />
+              Ajouter les ingrédients au panier
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="w-[300px]">
+              Les produits dont vous avez besoin pour préparer cette recette
+              sont automatiquement ajoutés au panier en quantité necessaire en
+              fonction du nombre de personnes, des excès d&apos;ingredients
+              d&aposautres recettes ajoutées, et des ingrédients présents dans
+              votre fridge.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <Button
         className="w-full"
         size="lg"
         disabled={pending}
         onClick={handleAddToCart}
+        variant="outline"
       >
-        <Icons.cart className="h-4 w-4 mr-2" />
-        Ajouter au panier
+        <Icons.love className="h-5 w-5 mr-3" />
+        Ajouter aux favoris
       </Button>
-      <p className="text-sm text-muted-foreground text-center">
-        Les produits dont vous aurez besoin pour préparer cette recette seront
-        ajoutés au panier.
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger className="align-text-top">
-              <Icons.info className="h-4 w-4 ml-2" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="w-[300px]">
-                Les produits dont vous avez besoin pour préparer cette recette
-                sont automatiquement ajoutés au panier en quantité necessaire en
-                fonction du nombre de personnes, des excès d&aposingredients
-                d&aposautres recettes ajoutées, et des ingrédients présents dans
-                votre fridge.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </p>
-    </>
+    </div>
   )
 }
 
