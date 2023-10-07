@@ -43,9 +43,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   return (
     <div className="transition-all animate-fade-in container">
-      <SignUpAlert />
-      <div className="flex flex-col justify-center items-start mt-10 lg:h-[700px] gap-5 z-20 relative">
-        <Logo height="30" />
+      <div className="flex flex-col justify-center items-start mt-10 lg:h-[600px] gap-5 z-20 relative">
         <h1 className="hidden">Kitchu</h1>
         <TypographyH1>
           La liste de courses intelligente <br /> pour préparer vos
