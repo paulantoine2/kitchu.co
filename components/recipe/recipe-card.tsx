@@ -1,15 +1,23 @@
 import React from "react"
 import Link from "next/link"
 
-import { Icons } from "../icons"
-import { TypographySmall } from "../ui/typography"
-import { RecipeImage } from "./recipe-image"
+import { Recipe } from "@/types/data"
+
+import { RecipePrice } from "../recipe-price"
+import { Skeleton } from "../ui/skeleton"
+import {
+  TypographyH3,
+  TypographyH4,
+  TypographyLarge,
+  TypographyLead,
+  TypographyMuted,
+} from "../ui/typography"
 
 export default function RecipeCard({
   recipe,
   animationDelay,
 }: {
-  recipe: { name: string; id: number }
+  recipe: Recipe
   animationDelay: number
 }) {
   return (
@@ -19,22 +27,19 @@ export default function RecipeCard({
         style={{ animationDelay: `${animationDelay}ms` }}
       >
         <div className="overflow-hidden rounded-md aspect-square relative">
-          <RecipeImage
-            recipe={recipe}
+          <Image
+            src={recipe.picture_url || "./recipePlaceholder.svg"}
+            alt={recipe.name}
             fill
             className="object-cover bg-muted"
             quality={25}
           />
         </div>
-        <div className="space-y-2">
-          <div className="flex items-center">
-            <div className="h-9 w-9 bg-primary text-white rounded-full flex items-center justify-center ml-auto">
-              <Icons.plus />
-            </div>
-          </div>
-          <TypographySmall className="line-clamp-2 leading-5">
+        <div className="space-y-1">
+          <TypographyLarge className="line-clamp-2">
             {recipe.name}
-          </TypographySmall>
+          </TypographyLarge>
+          <TypographyMuted>{recipe.prep_time_min} min</TypographyMuted>
         </div>
       </div>
     </Link>

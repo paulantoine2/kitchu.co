@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 
-import { createServerSupabaseClient } from "@/lib/supabase-server-client"
+import { supabase } from "@/lib/supabase"
 
 import RecipeCard from "./recipe/recipe-card"
 import { Skeleton } from "./ui/skeleton"
@@ -14,7 +14,6 @@ type Props = {
 }
 
 export async function RecipesList({ searchValue, ingredient, limit }: Props) {
-  const supabase = createServerSupabaseClient()
   let req = supabase.from("recipe").select(`*,ingredient!inner(*)`)
 
   if (searchValue)

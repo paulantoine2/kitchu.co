@@ -63,7 +63,7 @@ async function IngredientFilter() {
   return (
     <SearchFilter
       name="ingredient"
-      options={data.map((t) => ({ label: t.name, value: t.id }))}
+      options={data.map((t) => ({ label: t.name, value: t.id + "" }))}
       title="Ingredients"
     />
   )

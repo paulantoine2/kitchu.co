@@ -7,6 +7,10 @@ import { MainNav } from "@/components/main-nav"
 import CartModal from "../cart/cart-modal"
 import { Logo } from "../common/logo"
 import FridgeModal from "../fridge/fridge-modal"
+import { Icons } from "../icons"
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+import Search from "./search"
 import { StoreSelectorDialog } from "./store-selector"
 import { UserNav } from "./user-nav"
 
@@ -17,24 +21,21 @@ export async function SiteHeader() {
 
   return (
     <header className="supports-backdrop-blur:bg-background/60 sticky top-0 z-40 w-full border-b bg-background/60 shadow-sm backdrop-blur">
-      <div className="container flex h-16 items-center">
-        <nav className="flex items-center space-x-6 w-full">
+      <div className="container grid grid-cols-3 h-16 items-center justify-between">
+        <nav className="flex items-center space-x-6">
           <Link href="/">
-            <Logo height="26" />
+            <Logo height="22" />
           </Link>
 
           {data && <StoreSelectorDialog market_chains={data} />}
           <MainNav />
         </nav>
-
-        <UserNav
-          Buttons={
-            <Suspense>
-              <FridgeModal />
-              <CartModal />
-            </Suspense>
-          }
-        />
+        <Search />
+        <div className="flex justify-end">
+          <Button size="sm" variant="secondary">
+            S&apos;inscrire
+          </Button>
+        </div>
       </div>
     </header>
   )
