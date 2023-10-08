@@ -1,12 +1,6 @@
-import { Suspense } from "react"
-import Image from "next/image"
-import Link from "next/link"
-
 import { supabase } from "@/lib/supabase"
 
-import { RecipePrice } from "./recipe-price"
 import RecipeCard from "./recipe/recipe-card"
-import { Skeleton } from "./ui/skeleton"
 
 type Props = {
   searchValue: string
@@ -29,7 +23,7 @@ export async function RecipesList({ searchValue, ingredient, limit }: Props) {
 
   const { data: recipes, error } = await req
 
-  if (!recipes || !recipes.length) return <p>No results</p>
+  if (!recipes || !recipes.length) return <p>Pas de résultats</p>
 
   const id = new Date().toISOString()
 

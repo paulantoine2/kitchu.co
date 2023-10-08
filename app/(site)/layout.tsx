@@ -1,8 +1,6 @@
 import { Analytics } from "@vercel/analytics/react"
 
 import { Toaster } from "@/components/ui/toaster"
-import { Cart } from "@/components/cart/cart"
-import { Fridge } from "@/components/fridge/fridge"
 import SiteFooter from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 

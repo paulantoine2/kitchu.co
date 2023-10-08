@@ -1,18 +1,10 @@
-import React, { Suspense } from "react"
+import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 
 import { Recipe } from "@/types/data"
 
-import { RecipePrice } from "../recipe-price"
-import { Skeleton } from "../ui/skeleton"
-import {
-  TypographyH3,
-  TypographyH4,
-  TypographyLarge,
-  TypographyLead,
-  TypographyMuted,
-} from "../ui/typography"
+import { TypographyLarge, TypographyMuted } from "../ui/typography"
 
 export default function RecipeCard({
   recipe,
