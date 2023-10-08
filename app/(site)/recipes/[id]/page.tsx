@@ -28,6 +28,17 @@ import { RecipeImage } from "@/components/recipe/recipe-image"
 
 import PersonsProvider, { IngredientQuantity } from "./persons-provider"
 
+// Return a list of `params` to populate the [id] dynamic segment
+export async function generateStaticParams() {
+  const { data, error } = await supabase.from("recipe").select(`id`)
+
+  console.log(data, error)
+
+  return (data || []).map(({ id }) => ({
+    id: id + "",
+  }))
+}
+
 async function getRecipe(id: number) {
   const { data, error } = await supabase
     .from("recipe")
