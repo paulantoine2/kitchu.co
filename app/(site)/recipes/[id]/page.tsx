@@ -12,9 +12,11 @@ import {
   TypographyH3,
   TypographyH4,
   TypographyMuted,
+  TypographyP,
   TypographySmall,
 } from "@/components/ui/typography"
 import { Icons } from "@/components/icons"
+import RecipeCard from "@/components/recipe/recipe-card"
 import { RecipeImage } from "@/components/recipe/recipe-image"
 import {
   RecipeIngredientListItem,
@@ -118,6 +120,12 @@ export default async function RecipePage({
         data.steps.map((step) => {
           return <StepBody key={(step as Step).index} step={step as Step} />
         })}
+      <Separator />
+      <TypographyH2>Valeurs nutritionelles</TypographyH2>
+      <TypographyP>On y travaille 👀</TypographyP>
+      <Separator />
+      <TypographyH2>Ces recettes peuvent vous intéresser</TypographyH2>
+      <RecipesRecom exclude_id={params.id} />
     </div>
   )
 }
@@ -135,6 +143,32 @@ async function StepBody({ step }: { step: Step }) {
           __html: content,
         }}
       />
+    </div>
+  )
+}
+
+async function getRecipesRecom(exclude_id: number) {
+  const { data, error } = await supabase
+    .from("recipe")
+    .select(
+      `
+        *
+      `
+    )
+    .neq("id", exclude_id)
+    .limit(3)
+
+  return data
+}
+
+async function RecipesRecom({ exclude_id }: { exclude_id: number }) {
+  const recipes = await getRecipesRecom(exclude_id)
+
+  return (
+    <div className="grid grid-cols-3 gap-8">
+      {recipes?.map((recipe) => (
+        <RecipeCard animationDelay={0} key={recipe.id} recipe={recipe} />
+      ))}
     </div>
   )
 }
