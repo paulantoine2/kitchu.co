@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { RecipeJsonLd } from "next-seo"
 
 import { Step } from "@/types/data"
 import markdownToHtml from "@/lib/markDownToHTML"
@@ -69,6 +70,26 @@ export default async function RecipePage({
 
   return (
     <PersonsProvider>
+      <RecipeJsonLd
+        useAppDir
+        name={data.name}
+        description="Un plat délicieux."
+        datePublished="2023-10-08"
+        authorName={["Kitchu"]}
+        totalTime={`PT${data.prep_time_min}M`}
+        yields="2"
+        category="Plat principal"
+        calories={270}
+        images={[data.picture_url || "/recipePlaceholder.svg"]}
+        ingredients={data.recipe_ingredient.map(
+          (ri) =>
+            `${ri.quantity * 2} ${ri.unit?.short_name} ${ri.ingredient?.name}`
+        )}
+        instructions={(data.steps || []).map((step) => ({
+          name: (step as Step).index,
+          text: (step as Step).instructionsMarkdown,
+        }))}
+      />
       <div className="container space-y-8 my-8">
         <div className="flex flex-row gap-16 items-start">
           <div className="relative flex-1 aspect-square rounded-md overflow-hidden">
