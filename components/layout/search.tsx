@@ -29,7 +29,10 @@ export default function Search() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-row gap-2 items-center">
+    <form
+      onSubmit={onSubmit}
+      className="flex flex-row col-span-4 gap-2 items-center"
+    >
       <Input
         className="flex-1"
         type="search"
