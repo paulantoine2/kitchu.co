@@ -17,6 +17,8 @@ export default function PersonsSelector() {
         size="icon"
         onClick={() => setPersons((prev) => prev - 1)}
         disabled={persons === 1}
+        name="Diminuer le nombre de personnes"
+        title="Diminuer le nombre de personnes"
       >
         <Icons.minus className="h-4 w-4" />
       </Button>
@@ -25,6 +27,8 @@ export default function PersonsSelector() {
         variant="outline"
         size="icon"
         onClick={() => setPersons((prev) => prev + 1)}
+        name="Augmenter le nombre de personnes"
+        title="Augmenter le nombre de personnes"
       >
         <Icons.plus className="h-4 w-4" />
       </Button>

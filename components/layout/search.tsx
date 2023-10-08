@@ -34,11 +34,16 @@ export default function Search() {
         className="flex-1"
         type="search"
         name="search"
-        placeholder="Chercher des recettes"
+        placeholder="Rechercher des recettes..."
         autoComplete="off"
         defaultValue={searchParams?.get("q") || ""}
       />
-      <Button variant="secondary" size="icon">
+      <Button
+        variant="secondary"
+        size="icon"
+        name="Rechercher"
+        title="Rechercher"
+      >
         <Icons.search className="w-4 h-4" />
       </Button>
     </form>

@@ -16,6 +16,7 @@ import {
 import {
   TypographyH1,
   TypographyH2,
+  TypographyH3,
   TypographyH4,
   TypographyMuted,
   TypographyP,
@@ -201,7 +202,7 @@ async function StepBody({ step }: { step: Step }) {
 
   return (
     <div>
-      <TypographyH4 className="mb-4">{step.index + 1}</TypographyH4>
+      <TypographyH3 className="mb-4">{step.index + 1}</TypographyH3>
       <div
         className="markdown"
         key={step.index}

@@ -25,7 +25,6 @@ export default function RecipeCard({
             alt={recipe.name}
             fill
             className="object-cover bg-muted"
-            quality={25}
           />
         </div>
         <div className="space-y-1">
