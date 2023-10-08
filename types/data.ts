@@ -8,10 +8,7 @@ export type Salepoint = {
   rating_count: number
 }
 
-export type Ingredient = {
-  id: number
-  name: string
-}
+export type Ingredient = Database["public"]["Tables"]["ingredient"]["Row"]
 
 export type Tag = {
   id: string

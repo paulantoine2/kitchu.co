@@ -1,27 +1,32 @@
+import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { Step } from "@/types/data"
-import { Json } from "@/lib/database.types"
 import markdownToHtml from "@/lib/markDownToHTML"
 import { supabase } from "@/lib/supabase"
-import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   TypographyH1,
   TypographyH2,
-  TypographyH3,
   TypographyH4,
   TypographyMuted,
   TypographyP,
   TypographySmall,
 } from "@/components/ui/typography"
 import { Icons } from "@/components/icons"
+import { IngredientImage } from "@/components/ingredient/ingredient-image"
+import PersonsSelector from "@/components/recipe/persons-selector"
 import RecipeCard from "@/components/recipe/recipe-card"
 import { RecipeImage } from "@/components/recipe/recipe-image"
-import {
-  RecipeIngredientListItem,
-  RecipeIngredientsList,
-} from "@/components/recipe/recipe-ingredients-list"
+
+import PersonsProvider, { IngredientQuantity } from "./persons-provider"
 
 async function getRecipe(id: number) {
   const { data, error } = await supabase
@@ -47,86 +52,115 @@ export default async function RecipePage({
 }) {
   const data = await getRecipe(params.id)
 
-  console.log(data)
-
   if (!data) notFound()
 
+  const difficulty = ["Facile", "Intermédiaire", "Avancé"]
+
   return (
-    <div className="container space-y-8 my-8">
-      <div className="flex flex-row gap-16 items-start">
-        <div className="relative flex-1 aspect-square rounded-md overflow-hidden">
-          <RecipeImage recipe={data} fill className="object-cover bg-muted" />
-        </div>
-        <div className="space-y-8 w-[40%]">
-          <TypographyH1>{data.name}</TypographyH1>
-          <div className="grid grid-cols-2">
-            <div className="flex gap-4 items-center">
-              <Icons.chef />
-              <div className="space-y-1">
-                <TypographyMuted>Difficulté</TypographyMuted>
-                <TypographySmall>Intermédiaire</TypographySmall>
-              </div>
-            </div>
-            <div className="flex gap-2 items-center">
-              <Icons.clock />
-              <div className="space-y-1">
-                <TypographyMuted>Temps de préparation</TypographyMuted>
-                <TypographySmall>35 min</TypographySmall>
-              </div>
-            </div>
+    <PersonsProvider>
+      <div className="container space-y-8 my-8">
+        <div className="flex flex-row gap-16 items-start">
+          <div className="relative flex-1 aspect-square rounded-md overflow-hidden">
+            <RecipeImage recipe={data} fill className="object-cover bg-muted" />
           </div>
-          <RecipeIngredientsList
-            recipe_ingredients={data.recipe_ingredient.map((ri) => ({
-              quantity: ri.quantity,
-              unit: {
-                id: ri.unit?.id || 0,
-                short_name: ri.unit?.short_name || "",
-              },
-              ingredient: {
-                id: ri.ingredient?.id || 0,
-                name: ri.ingredient?.name || "",
-                picture_url: ri.ingredient?.picture_url || null,
-              },
-            }))}
-            recipe_id={params.id}
-          />
+          <div className="space-y-8 w-[40%]">
+            <TypographyH1>{data.name}</TypographyH1>
+            <div className="grid grid-cols-2">
+              {data.difficulty && (
+                <div className="flex gap-4 items-center">
+                  <Icons.chef />
+                  <div className="space-y-1">
+                    <TypographyMuted>Difficulté</TypographyMuted>
+                    <TypographySmall>
+                      {difficulty[data.difficulty - 1]}
+                    </TypographySmall>
+                  </div>
+                </div>
+              )}
+              {data.prep_time_min && (
+                <div className="flex gap-2 items-center">
+                  <Icons.clock />
+                  <div className="space-y-1">
+                    <TypographyMuted>Temps de préparation</TypographyMuted>
+                    <TypographySmall>{data.prep_time_min} min</TypographySmall>
+                  </div>
+                </div>
+              )}
+            </div>
+            <PersonsSelector />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="w-full">
+                  <Button className="w-full" size="lg" asChild>
+                    <Link href="/">
+                      <Icons.cart className="h-5 w-5 mr-3" />
+                      Ajouter les ingrédients au panier
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="w-[300px]">
+                    Les produits dont vous avez besoin pour préparer cette
+                    recette sont automatiquement ajoutés au panier en quantité
+                    necessaire en fonction du nombre de personnes, des excès
+                    d&apos;ingredients d&aposautres recettes ajoutées, et des
+                    ingrédients présents dans votre fridge.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <Button className="w-full" size="lg" asChild variant="outline">
+              <Link href="/">
+                <Icons.love className="h-5 w-5 mr-3" />
+                Ajouter aux favoris
+              </Link>
+            </Button>
+          </div>
         </div>
+        <Separator />
+        <TypographyH2>Ingrédients</TypographyH2>
+        <div className="grid grid-cols-4 gap-4">
+          {data.recipe_ingredient.map((ri, index) => (
+            <div
+              key={index}
+              className="space-x-3 transition-all animate-fade-in flex items-center"
+            >
+              {ri.ingredient && (
+                <div className="overflow-hidden rounded-md aspect-square relative w-16 h-16">
+                  <IngredientImage
+                    ingredient={ri.ingredient}
+                    width={80}
+                    height={80}
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div className="overflow-hidden flex-1">
+                <h3 className="text-sm font-medium truncate">
+                  {ri.ingredient?.name}
+                </h3>
+                <IngredientQuantity
+                  quantity={ri.quantity}
+                  unit={ri.unit?.short_name || ""}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Separator />
+        <TypographyH2>Préparation</TypographyH2>
+        {data.steps &&
+          data.steps.map((step) => {
+            return <StepBody key={(step as Step).index} step={step as Step} />
+          })}
+        <Separator />
+        <TypographyH2>Valeurs nutritionelles</TypographyH2>
+        <TypographyP>On y travaille 👀</TypographyP>
+        <Separator />
+        <TypographyH2>Ces recettes peuvent vous intéresser</TypographyH2>
+        <RecipesRecom exclude_id={params.id} />
       </div>
-      <Separator />
-      <TypographyH2>Ingrédients</TypographyH2>
-      <div className="grid grid-cols-4 gap-4">
-        {data.recipe_ingredient.map((ri, index) => (
-          <RecipeIngredientListItem
-            persons={2}
-            key={index}
-            recipe_ingredient={{
-              quantity: ri.quantity,
-              unit: {
-                id: ri.unit?.id || 0,
-                short_name: ri.unit?.short_name || "",
-              },
-              ingredient: {
-                id: ri.ingredient?.id || 0,
-                name: ri.ingredient?.name || "",
-                picture_url: ri.ingredient?.picture_url || null,
-              },
-            }}
-          />
-        ))}
-      </div>
-      <Separator />
-      <TypographyH2>Préparation</TypographyH2>
-      {data.steps &&
-        data.steps.map((step) => {
-          return <StepBody key={(step as Step).index} step={step as Step} />
-        })}
-      <Separator />
-      <TypographyH2>Valeurs nutritionelles</TypographyH2>
-      <TypographyP>On y travaille 👀</TypographyP>
-      <Separator />
-      <TypographyH2>Ces recettes peuvent vous intéresser</TypographyH2>
-      <RecipesRecom exclude_id={params.id} />
-    </div>
+    </PersonsProvider>
   )
 }
 

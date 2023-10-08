@@ -171,9 +171,6 @@ export default async function HomePage() {
           <UserAuthForm />
         </div>
       </div>
-      <TypographyMuted className="text-center mb-5">
-        kitchu.co - 2023
-      </TypographyMuted>
     </div>
   )
 }

@@ -1,18 +1,8 @@
-import { Suspense } from "react"
 import Link from "next/link"
 
-import { supabase } from "@/lib/supabase"
-import { MainNav } from "@/components/main-nav"
-
-import CartModal from "../cart/cart-modal"
 import { Logo } from "../common/logo"
-import FridgeModal from "../fridge/fridge-modal"
-import { Icons } from "../icons"
 import { Button } from "../ui/button"
-import { Input } from "../ui/input"
 import Search from "./search"
-import { StoreSelectorDialog } from "./store-selector"
-import { UserNav } from "./user-nav"
 
 export async function SiteHeader() {
   return (
@@ -25,8 +15,8 @@ export async function SiteHeader() {
         </nav>
         <Search />
         <div className="flex justify-end">
-          <Button size="sm" variant="secondary">
-            S&apos;inscrire
+          <Button size="sm" variant="secondary" asChild>
+            <Link href="/">S&apos;inscrire</Link>
           </Button>
         </div>
       </div>
