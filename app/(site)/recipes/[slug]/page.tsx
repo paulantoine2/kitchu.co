@@ -32,16 +32,14 @@ import PersonsProvider, { IngredientQuantity } from "./persons-provider"
 
 // Return a list of `params` to populate the [id] dynamic segment
 export async function generateStaticParams() {
-  const { data, error } = await supabase.from("recipe").select(`id`)
+  const { data, error } = await supabase.from("recipe").select(`slug`)
 
-  console.log(data, error)
-
-  return (data || []).map(({ id }) => ({
-    id: id + "",
+  return (data || []).map(({ slug }) => ({
+    slug,
   }))
 }
 
-async function getRecipe(id: number) {
+async function getRecipe(slug: string) {
   const { data, error } = await supabase
     .from("recipe")
     .select(
@@ -52,7 +50,7 @@ async function getRecipe(id: number) {
         )
       `
     )
-    .eq("id", id)
+    .eq("slug", slug)
     .single()
 
   return data
@@ -61,9 +59,9 @@ async function getRecipe(id: number) {
 export default async function RecipePage({
   params,
 }: {
-  params: { id: number }
+  params: { slug: string }
 }) {
-  const data = await getRecipe(params.id)
+  const data = await getRecipe(params.slug)
 
   if (!data) notFound()
 
@@ -93,10 +91,16 @@ export default async function RecipePage({
       />
       <div className="container space-y-8 my-8">
         <div className="flex flex-row gap-16 items-start">
-          <div className="relative flex-1 aspect-square rounded-md overflow-hidden">
-            <RecipeImage recipe={data} fill className="object-cover bg-muted" />
+          <div className="relative w-1/2 aspect-square rounded-md overflow-hidden">
+            <RecipeImage
+              className="bg-muted"
+              recipe={data}
+              width={560}
+              height={560}
+              quality={100}
+            />
           </div>
-          <div className="space-y-8 w-[40%]">
+          <div className="space-y-8 flex-1">
             <TypographyH1>{data.name}</TypographyH1>
             <div className="grid grid-cols-2">
               {data.difficulty && (
@@ -120,44 +124,43 @@ export default async function RecipePage({
                 </div>
               )}
             </div>
-            <PersonsSelector />
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="w-full">
-                  <Button className="w-full" size="lg" asChild>
-                    <Link href="/">
-                      <Icons.cart className="h-5 w-5 mr-3" />
-                      Ajouter les ingrédients au panier
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="w-[300px]">
-                    Les produits dont vous avez besoin pour préparer cette
-                    recette sont automatiquement ajoutés au panier en quantité
-                    necessaire en fonction du nombre de personnes, des excès
-                    d&apos;ingredients d&aposautres recettes ajoutées, et des
-                    ingrédients présents dans votre fridge.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <Button className="w-full" size="lg" asChild variant="outline">
-              <Link href="/">
-                <Icons.love className="h-5 w-5 mr-3" />
-                Ajouter aux favoris
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-4">
+              <PersonsSelector />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="w-full">
+                    <Button className="w-full" size="lg" asChild>
+                      <Link href="/">
+                        <Icons.cart className="h-5 w-5 mr-3" />
+                        Ajouter les ingrédients au panier
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="w-[300px]">
+                      Les produits dont vous avez besoin pour préparer cette
+                      recette sont automatiquement ajoutés au panier en quantité
+                      necessaire en fonction du nombre de personnes, des excès
+                      d&apos;ingredients d&aposautres recettes ajoutées, et des
+                      ingrédients présents dans votre fridge.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Button className="w-full" size="lg" asChild variant="outline">
+                <Link href="/">
+                  <Icons.love className="h-5 w-5 mr-3" />
+                  Ajouter aux favoris
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
         <Separator />
         <TypographyH2>Ingrédients</TypographyH2>
         <div className="grid grid-cols-4 gap-4">
           {data.recipe_ingredient.map((ri, index) => (
-            <div
-              key={index}
-              className="space-x-3 transition-all animate-fade-in flex items-center"
-            >
+            <div key={index} className="space-x-3 flex items-center">
               {ri.ingredient && (
                 <div className="overflow-hidden rounded-md aspect-square relative w-16 h-16">
                   <IngredientImage
@@ -191,7 +194,7 @@ export default async function RecipePage({
         <TypographyP>On y travaille 👀</TypographyP>
         <Separator />
         <TypographyH2>Ces recettes peuvent vous intéresser</TypographyH2>
-        <RecipesRecom exclude_id={params.id} />
+        <RecipesRecom exclude_id={data.id} />
       </div>
     </PersonsProvider>
   )

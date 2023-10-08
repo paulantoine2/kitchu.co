@@ -14,9 +14,9 @@ export default function RecipeCard({
   animationDelay: number
 }) {
   return (
-    <Link href={`/recipes/${recipe.id}`}>
+    <Link href={`/recipes/${recipe.slug}`}>
       <div
-        className="space-y-3 transition-all animate-fade-in opacity-0"
+        className="space-y-3"
         style={{ animationDelay: `${animationDelay}ms` }}
       >
         <div className="overflow-hidden rounded-md aspect-square relative">

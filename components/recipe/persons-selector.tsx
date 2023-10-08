@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { usePersons } from "@/app/(site)/recipes/[id]/persons-provider"
+import { usePersons } from "@/app/(site)/recipes/[slug]/persons-provider"
 
 import { Icons } from "../icons"
 import { Button } from "../ui/button"
