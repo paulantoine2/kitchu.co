@@ -25,11 +25,10 @@ import { UserAuthForm } from "@/components/user-auth-form"
 
 export const metadata: Metadata = {
   title:
-    "Kitchu | La liste de courses intelligente pour préparer vos meilleures recettes",
+    "Kitchu — La liste de courses intelligente pour préparer vos meilleures recettes",
   description:
     "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
-  keywords:
-    "courses,recettes,cuisine,régime,drive,liste,gaspi,frigo,gaspillage,ingrédients",
+  keywords: "courses,recettes,cuisine,hellofresh,jow,marmiton",
   twitter: {
     title: "Kitchu: La liste de courses intelligente",
     description:
@@ -171,9 +170,6 @@ export default async function HomePage() {
           <UserAuthForm />
         </div>
       </div>
-      <TypographyMuted className="text-center mb-5">
-        kitchu.co - 2023
-      </TypographyMuted>
     </div>
   )
 }

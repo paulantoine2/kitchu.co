@@ -184,6 +184,7 @@ export interface Database {
           name: string
           picture_url: string | null
           prep_time_min: number | null
+          slug: string
           steps: Json[] | null
         }
         Insert: {
@@ -194,6 +195,7 @@ export interface Database {
           name: string
           picture_url?: string | null
           prep_time_min?: number | null
+          slug?: string
           steps?: Json[] | null
         }
         Update: {
@@ -204,6 +206,7 @@ export interface Database {
           name?: string
           picture_url?: string | null
           prep_time_min?: number | null
+          slug?: string
           steps?: Json[] | null
         }
         Relationships: [

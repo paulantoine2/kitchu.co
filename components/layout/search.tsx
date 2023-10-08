@@ -33,16 +33,24 @@ export default function Search({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-row gap-2 items-center">
+    <form
+      onSubmit={onSubmit}
+      className="flex flex-row col-span-4 gap-2 items-center"
+    >
       <Input
         className="flex-1"
         type="search"
         name="search"
-        placeholder="Chercher des recettes"
+        placeholder="Rechercher des recettes..."
         autoComplete="off"
         defaultValue={searchParams?.get("q") || ""}
       />
-      <Button variant="secondary" size="icon">
+      <Button
+        variant="secondary"
+        size="icon"
+        name="Rechercher"
+        title="Rechercher"
+      >
         <Icons.search className="w-4 h-4" />
       </Button>
     </form>
