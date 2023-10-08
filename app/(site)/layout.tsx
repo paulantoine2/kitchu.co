@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "@/components/ui/toaster"
 import { Cart } from "@/components/cart/cart"
 import { Fridge } from "@/components/fridge/fridge"
+import SiteFooter from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 
 export default function SiteLayout({
@@ -11,15 +12,14 @@ export default function SiteLayout({
   children: React.ReactNode
 }) {
   return (
-    <Fridge>
-      <Cart>
-        <div className="relative flex min-h-screen flex-col">
-          <SiteHeader />
-          <div className="flex-1">{children}</div>
-          <Analytics />
-        </div>
-        <Toaster />
-      </Cart>
-    </Fridge>
+    <>
+      <div className="relative flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="flex-1">{children}</main>
+        <SiteFooter />
+        <Analytics />
+      </div>
+      <Toaster />
+    </>
   )
 }
