@@ -54,7 +54,7 @@ export function UserNav({ Buttons }: { Buttons?: React.ReactNode }) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem
               onClick={() => {
-                push("/recipes/create")
+                push("/admin/recipes/create")
               }}
             >
               <Icons.add className="mr-2 h-4 w-4" />

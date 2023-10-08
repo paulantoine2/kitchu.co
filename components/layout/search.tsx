@@ -8,7 +8,11 @@ import { Icons } from "../icons"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
-export default function Search() {
+export default function Search({
+  redirectToPathname,
+}: {
+  redirectToPathname?: string
+}) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathName = usePathname()
@@ -25,7 +29,7 @@ export default function Search() {
     } else {
       newParams.delete("q")
     }
-    router.push(createUrl("/recipes", newParams))
+    router.push(createUrl(redirectToPathname || pathName, newParams))
   }
 
   return (

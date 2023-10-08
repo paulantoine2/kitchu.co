@@ -3,6 +3,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
+import { TypographySmall } from "@/components/ui/typography"
 import { Logo } from "@/components/common/logo"
 import { UserNav } from "@/components/layout/user-nav"
 import { MainAdminNav } from "@/components/main-nav"
@@ -27,7 +28,8 @@ export default async function AdminLayout({
         <div className="container flex h-16 items-center">
           <nav className="flex items-center space-x-6 w-full">
             <Link href="/admin">
-              <Logo height="26" />
+              <Logo height="22" />
+              <TypographySmall>Admin</TypographySmall>
             </Link>
             <MainAdminNav />
           </nav>

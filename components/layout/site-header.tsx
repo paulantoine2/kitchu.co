@@ -26,11 +26,8 @@ export async function SiteHeader() {
           <Link href="/">
             <Logo height="22" />
           </Link>
-
-          {data && <StoreSelectorDialog market_chains={data} />}
-          <MainNav />
         </nav>
-        <Search />
+        <Search redirectToPathname="/recipes" />
         <div className="flex justify-end">
           <Button size="sm" variant="secondary">
             S&apos;inscrire
