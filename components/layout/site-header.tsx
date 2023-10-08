@@ -10,6 +10,7 @@ import FridgeModal from "../fridge/fridge-modal"
 import { Icons } from "../icons"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import Search from "./search"
 import { StoreSelectorDialog } from "./store-selector"
 import { UserNav } from "./user-nav"
 
@@ -22,17 +23,12 @@ export async function SiteHeader() {
             <Logo height="22" />
           </Link>
         </nav>
-        <Button
-          asChild
-          className="justify-between"
-          variant="secondary"
-          size="lg"
-        >
-          <Link href="/recipes">
-            Chercher des recettes...
-            <Icons.search className="w-4 h-4 " />
-          </Link>
-        </Button>
+        <Search />
+        <div className="flex justify-end">
+          <Button size="sm" variant="secondary">
+            S&apos;inscrire
+          </Button>
+        </div>
       </div>
     </header>
   )

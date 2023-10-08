@@ -119,7 +119,10 @@ export function TypographyLarge({
   ...props
 }: PropsWithChildren<TypographyProps>) {
   return (
-    <div className={cn("text-lg font-semibold", className)} {...props}>
+    <div
+      className={cn("font-serif text-lg font-semibold", className)}
+      {...props}
+    >
       {children}
     </div>
   )

@@ -5,8 +5,6 @@ import { SearchFilter } from "./search-filter"
 export async function SearchToolbar() {
   return (
     <div className="my-4 gap-4 flex">
-      <TagFilter />
-      <CuisineFilter />
       <IngredientFilter />
     </div>
   )
@@ -66,7 +64,7 @@ async function IngredientFilter() {
   return (
     <SearchFilter
       name="ingredient"
-      options={data.map((t) => ({ label: t.name, value: t.id }))}
+      options={data.map((t) => ({ label: t.name, value: t.id + "" }))}
       title="Ingredients"
     />
   )

@@ -2,14 +2,23 @@ import React, { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 
+import { Recipe } from "@/types/data"
+
 import { RecipePrice } from "../recipe-price"
 import { Skeleton } from "../ui/skeleton"
+import {
+  TypographyH3,
+  TypographyH4,
+  TypographyLarge,
+  TypographyLead,
+  TypographyMuted,
+} from "../ui/typography"
 
 export default function RecipeCard({
   recipe,
   animationDelay,
 }: {
-  recipe: { name: string; headline: string | null; id: string }
+  recipe: Recipe
   animationDelay: number
 }) {
   return (
@@ -20,7 +29,7 @@ export default function RecipeCard({
       >
         <div className="overflow-hidden rounded-md aspect-square relative">
           <Image
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/recipe/${recipe.id}.png`}
+            src={recipe.picture_url || "./recipePlaceholder.svg"}
             alt={recipe.name}
             fill
             className="object-cover bg-muted"
@@ -28,13 +37,10 @@ export default function RecipeCard({
           />
         </div>
         <div className="space-y-1">
-          <h3 className="text-sm font-medium truncate">{recipe.name}</h3>
-          <p className="text-sm text-muted-foreground truncate">
-            {recipe.headline}
-          </p>
-          <Suspense fallback={<Skeleton className="h-5 w-[100px]"></Skeleton>}>
-            <RecipePrice persons={2} id={recipe.id} />
-          </Suspense>
+          <TypographyLarge className="line-clamp-2">
+            {recipe.name}
+          </TypographyLarge>
+          <TypographyMuted>{recipe.prep_time_min} min</TypographyMuted>
         </div>
       </div>
     </Link>
