@@ -23,6 +23,22 @@ import SignUpAlert from "@/components/common/sign-up-alert"
 import { Icons } from "@/components/icons"
 import { UserAuthForm } from "@/components/user-auth-form"
 
+export const metadata: Metadata = {
+  title:
+    "Kitchu — La liste de courses intelligente pour préparer vos meilleures recettes",
+  description:
+    "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
+  keywords: "courses,recettes,cuisine,hellofresh,jow,marmiton",
+  twitter: {
+    title: "Kitchu: La liste de courses intelligente",
+    description:
+      "Trouvez des idées de recettes, évitez le gaspillage, estimez le cout de vos repas",
+    card: "summary_large_image",
+    site: "https://www.kitchu.co/",
+  },
+  robots: "index, follow",
+}
+
 export default async function HomePage() {
   return (
     <div className="transition-all animate-fade-in container">

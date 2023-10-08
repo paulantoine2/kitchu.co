@@ -1,3 +1,4 @@
+import { Metadata, ResolvingMetadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { RecipeJsonLd } from "next-seo"
@@ -30,13 +31,49 @@ import { RecipeImage } from "@/components/recipe/recipe-image"
 
 import PersonsProvider, { IngredientQuantity } from "./persons-provider"
 
-// Return a list of `params` to populate the [id] dynamic segment
+type Props = {
+  params: { slug: string }
+}
+
 export async function generateStaticParams() {
   const { data, error } = await supabase.from("recipe").select(`slug`)
 
   return (data || []).map(({ slug }) => ({
     slug,
   }))
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const recipe = await getRecipe(params.slug)
+
+  if (!recipe) return {}
+
+  const title = recipe.name
+  const description =
+    "Un plat délicieux à cuisiner avec des ingrédients commandable en 1 clic !"
+
+  return {
+    title,
+    description,
+    keywords: "cuisine,hellofresh,marmiton,recette,jow,seazon",
+    openGraph: {
+      images: recipe.picture_url ? [recipe.picture_url] : [],
+      type: "article",
+      title,
+      description,
+      url: "https://www.kitchu.co/",
+    },
+    twitter: {
+      images: recipe.picture_url ? [recipe.picture_url] : [],
+      title,
+      description,
+      card: "summary",
+      site: "https://www.kitchu.co/",
+    },
+  }
 }
 
 async function getRecipe(slug: string) {
@@ -56,11 +93,7 @@ async function getRecipe(slug: string) {
   return data
 }
 
-export default async function RecipePage({
-  params,
-}: {
-  params: { slug: string }
-}) {
+export default async function RecipePage({ params }: Props) {
   const data = await getRecipe(params.slug)
 
   if (!data) notFound()
