@@ -123,21 +123,21 @@ export default async function RecipePage({ params }: Props) {
         }))}
       />
       <div className="container space-y-8 my-8">
-        <div className="flex flex-row gap-16 items-start">
-          <div className="relative w-1/2 aspect-square rounded-md overflow-hidden">
+        <div className="md:flex md:flex-row md:gap-8 lg:gap-16 items-start">
+          <div className="relative md:w-1/2 aspect-square rounded-md overflow-hidden">
             <RecipeImage
-              className="bg-muted"
+              className="bg-muted w-full"
               recipe={data}
               width={560}
               height={560}
               quality={100}
             />
           </div>
-          <div className="space-y-8 flex-1">
+          <div className="space-y-8 flex-1 max-md:mt-8">
             <TypographyH1>{data.name}</TypographyH1>
             <div className="grid grid-cols-2">
               {data.difficulty && (
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-2 items-center">
                   <Icons.chef />
                   <div className="space-y-1">
                     <TypographyMuted>Difficulté</TypographyMuted>
@@ -151,7 +151,7 @@ export default async function RecipePage({ params }: Props) {
                 <div className="flex gap-2 items-center">
                   <Icons.clock />
                   <div className="space-y-1">
-                    <TypographyMuted>Temps de préparation</TypographyMuted>
+                    <TypographyMuted>Temps de prép.</TypographyMuted>
                     <TypographySmall>{data.prep_time_min} min</TypographySmall>
                   </div>
                 </div>
@@ -191,15 +191,15 @@ export default async function RecipePage({ params }: Props) {
         </div>
         <Separator />
         <TypographyH2>Ingrédients</TypographyH2>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4">
           {data.recipe_ingredient.map((ri, index) => (
-            <div key={index} className="space-x-3 flex items-center">
+            <div key={index} className="gap-4 flex items-center">
               {ri.ingredient && (
                 <div className="overflow-hidden rounded-md aspect-square relative w-16 h-16">
                   <IngredientImage
                     ingredient={ri.ingredient}
-                    width={80}
-                    height={80}
+                    width={64}
+                    height={64}
                     className="object-cover"
                   />
                 </div>
@@ -239,7 +239,7 @@ async function StepBody({ step }: { step: Step }) {
   return (
     <div>
       <TypographyH3 className="mb-4">{step.index + 1}</TypographyH3>
-      <div
+      <TypographyP
         className="markdown"
         key={step.index}
         dangerouslySetInnerHTML={{
@@ -268,7 +268,7 @@ async function RecipesRecom({ exclude_id }: { exclude_id: number }) {
   const recipes = await getRecipesRecom(exclude_id)
 
   return (
-    <div className="grid grid-cols-3 gap-8">
+    <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
       {recipes?.map((recipe) => (
         <RecipeCard animationDelay={0} key={recipe.id} recipe={recipe} />
       ))}

@@ -32,7 +32,7 @@ export function TypographyH2({
   return (
     <h2
       className={cn(
-        "font-serif scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0",
+        "font-serif scroll-m-20 text-2xl lg:text-3xl font-semibold tracking-tight transition-colors first:mt-0",
         className
       )}
       {...props}
